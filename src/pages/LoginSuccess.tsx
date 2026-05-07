@@ -24,7 +24,7 @@ const LoginSuccess = () => {
     setDebugInfo(`Token: ${accessToken ? "present" : "missing"}, VaultId: ${vaultId || "none"}`);
 
     if (!accessToken) {
-      setError("Token de autenticação não encontrado nos parâmetros da URL. Verifique se o login foi concluído corretamente.");
+      setError("Authentication token not found in URL parameters. Please verify that the login completed correctly.");
       setTimeout(() => navigate("/", { replace: true }), 3000);
       return;
     }
@@ -42,7 +42,7 @@ const LoginSuccess = () => {
         .catch(() => navigate("/", { replace: true }))
         .finally(() => setLoading(false));
     } catch (err) {
-      setError("Erro ao salvar dados de autenticação. Verifique as permissões do navegador.");
+      setError("Error saving authentication data. Please check your browser permissions.");
       setTimeout(() => navigate("/", { replace: true }), 3000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,12 +52,12 @@ const LoginSuccess = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center space-y-4">
-          <div className="text-red-500 text-sm">
-            <p>Erro: {error}</p>
+          <div className="text-foreground/80 text-sm">
+            <p>Error: {error}</p>
             <p className="text-xs text-muted-foreground mt-2">Debug: {debugInfo}</p>
           </div>
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Redirecionando em alguns segundos...</p>
+          <p className="text-muted-foreground">Redirecting in a few seconds...</p>
         </div>
       </div>
     );
@@ -68,7 +68,7 @@ const LoginSuccess = () => {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center space-y-4">
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Processando autenticação...</p>
+          <p className="text-muted-foreground">Processing authentication...</p>
           <p className="text-xs text-muted-foreground">{debugInfo}</p>
         </div>
       </div>
