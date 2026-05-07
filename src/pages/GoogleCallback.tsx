@@ -69,7 +69,7 @@ export default function GoogleCallback() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center space-y-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm text-muted-foreground">Finalizando login com Google...</p>
+        <p className="text-sm text-muted-foreground">Finishing Google sign-in...</p>
       </div>
     </div>
   );
