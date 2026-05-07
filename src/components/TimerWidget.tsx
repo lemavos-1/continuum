@@ -84,7 +84,7 @@ function FlipClockOverlay({ timeString, onClose }: { timeString: string; onClose
           </div>
 
           <div className="text-center text-sm text-zinc-400 max-w-md">
-            Pressione <span className="font-semibold text-white">Esc</span> ou clique no botão fechar para sair do modo Flip Clock
+            Press <span className="font-semibold text-white">Esc</span> or click the close button to exit Flip Clock mode
           </div>
         </div>
       </div>
