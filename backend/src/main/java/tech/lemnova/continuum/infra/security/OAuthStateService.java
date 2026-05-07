@@ -19,7 +19,7 @@ public class OAuthStateService {
 
     private static final long STATE_EXPIRATION_MS = 5 * 60 * 1000L; // 5 minutos
     private static final String STATE_TYPE = "oauth_state";
-    private static final String CALLBACK_PATH = "/auth/google/callback";
+    private static final String CALLBACK_PATH = "/google-callback";
 
     private final Key stateKey;
     private final String frontendCallbackUrl;

@@ -90,7 +90,7 @@ const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<HomeRoute />} />
     <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-    <Route path="/auth/google/callback" element={<GoogleCallback />} />
+    <Route path="/google-callback" element={<GoogleCallback />} />
     <Route path="/login-successful" element={<LoginSuccess />} />
     <Route path="/login-token" element={<LoginSuccess />} />
     <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
