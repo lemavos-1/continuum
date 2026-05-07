@@ -71,7 +71,7 @@ export function CommandPalette() {
 
   const handleCreateNote = useCallback(async () => {
     try {
-      const { data } = await notesApi.create(query || "Nova Nota", "");
+      const { data } = await notesApi.create(query || "New Note", "");
       setOpen(false);
       setQuery("");
       navigate(`/notes/${data.id}`);
