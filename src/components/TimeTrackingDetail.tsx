@@ -166,7 +166,7 @@ export function TimeTrackingDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="p-6">
             <p className="text-sm text-zinc-400 mb-2">Total Time</p>
-            <p className="text-3xl font-mono font-bold text-cyan-400">
+            <p className="text-3xl font-mono font-bold text-zinc-400">
               {totalTimeSummary?.formattedTotal || '00:00:00'}
             </p>
             <p className="text-xs text-zinc-500 mt-2">
@@ -176,7 +176,7 @@ export function TimeTrackingDetail() {
 
           <Card className="p-6">
             <p className="text-sm text-zinc-400 mb-2">This Week</p>
-            <p className="text-3xl font-mono font-bold text-emerald-400">
+            <p className="text-3xl font-mono font-bold text-zinc-400">
               {formatSeconds(weeklyStats.current)}
             </p>
             <p className="text-xs text-zinc-500 mt-2">
@@ -186,7 +186,7 @@ export function TimeTrackingDetail() {
 
           <Card className="p-6">
             <p className="text-sm text-zinc-400 mb-2">Total Sessions</p>
-            <p className="text-3xl font-mono font-bold text-purple-400">
+            <p className="text-3xl font-mono font-bold text-zinc-400">
               {totalTimeSummary?.entriesCount || 0}
             </p>
             <p className="text-xs text-zinc-500 mt-2">days tracked</p>
@@ -278,7 +278,7 @@ export function TimeTrackingDetail() {
                   </p>
                 </div>
                 <div className="text-right flex items-center gap-3">
-                  <span className="font-mono font-bold text-cyan-400">
+                  <span className="font-mono font-bold text-zinc-400">
                     {entry.formattedDuration}
                   </span>
                   <Button
@@ -287,7 +287,7 @@ export function TimeTrackingDetail() {
                     onClick={() => deleteEntry(entry.id)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-4 h-4 text-zinc-500" />
                   </Button>
                 </div>
               </div>

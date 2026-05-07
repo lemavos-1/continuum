@@ -226,9 +226,9 @@ export default function Dashboard() {
             <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
               <div className="flex items-center justify-between gap-4 mb-5">
                 <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <Activity className="h-4 w-4 text-emerald-400" /> System Usage
+                  <Activity className="h-4 w-4 text-zinc-400" /> System Usage
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-purple-400">
+                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-zinc-400">
                   {user?.plan || "FREE"}
                 </span>
               </div>
@@ -270,7 +270,7 @@ export default function Dashboard() {
             <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
               <div className="flex items-center justify-between gap-4 mb-5">
                 <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <FolderOpen className="h-4 w-4 text-sky-400" /> Recent Notes
+                  <FolderOpen className="h-4 w-4 text-zinc-400" /> Recent Notes
                 </div>
                 <button
                   type="button"
@@ -308,7 +308,7 @@ export default function Dashboard() {
           <section className="xl:col-span-7 rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
             <div className="flex items-center justify-between gap-4 mb-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Activity className="h-4 w-4 text-emerald-400" /> Today's Activities
+                <Activity className="h-4 w-4 text-zinc-400" /> Today's Activities
               </div>
               <button
                 type="button"
@@ -348,11 +348,11 @@ export default function Dashboard() {
                   <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Nodes</p>
                 </div>
                 <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
-                  <p className="text-3xl font-semibold text-sky-400">{totalNotes}</p>
+                  <p className="text-3xl font-semibold text-zinc-400">{totalNotes}</p>
                   <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Notes</p>
                 </div>
                 <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
-                  <p className="text-3xl font-semibold text-emerald-400">{totalEntities}</p>
+                  <p className="text-3xl font-semibold text-zinc-400">{totalEntities}</p>
                   <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Entidades</p>
                 </div>
               </div>

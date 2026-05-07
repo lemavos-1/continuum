@@ -70,7 +70,7 @@ export function DayDetailsModal({ dayData, isOpen, onClose }: DayDetailsModalPro
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-cyan-500">
+                <div className="text-2xl font-bold text-zinc-500">
                   {totalHours > 0 ? `${totalHours}:${totalMinutes.toString().padStart(2, '0')}` : `${totalMinutes}m`}
                 </div>
               </div>
@@ -91,7 +91,7 @@ export function DayDetailsModal({ dayData, isOpen, onClose }: DayDetailsModalPro
                         <Badge variant="secondary">
                           {entry.entityTitle || `Entity ${entry.entityId}`}
                         </Badge>
-                        <span className="text-sm font-medium text-cyan-500">
+                        <span className="text-sm font-medium text-zinc-500">
                           {formatDuration(entry.durationSeconds)}
                         </span>
                       </div>

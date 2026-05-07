@@ -140,8 +140,8 @@ export default function Profile() {
             </div>
 
             <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-                <BadgeCheck className="w-5 h-5 text-emerald-400" />
+              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
+                <BadgeCheck className="w-5 h-5 text-zinc-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-white/90">Account Status</p>
@@ -178,8 +178,8 @@ export default function Profile() {
 
             {/* History Info */}
             <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-blue-400" />
+              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-zinc-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-white/90">History Retention</p>
@@ -189,8 +189,8 @@ export default function Profile() {
 
             {/* Security Info */}
             <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-purple-400" />
+              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
+                <Lock className="w-5 h-5 text-zinc-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-white/90">Security</p>
@@ -226,16 +226,16 @@ export default function Profile() {
                     key={resource.label}
                     className={`rounded-xl border backdrop-blur-sm p-4 space-y-3 transition-all ${
                       isCritical
-                        ? "border-rose-500/50 bg-rose-500/10"
+                        ? "border-zinc-500/50 bg-zinc-500/10"
                         : isWarning
-                        ? "border-amber-500/50 bg-amber-500/10"
+                        ? "border-zinc-500/50 bg-zinc-500/10"
                         : "border-white/10 bg-white/5"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold text-white/90">{resource.label}</span>
                       <span className={`text-xs font-mono font-medium ${
-                        isCritical ? "text-rose-300" : isWarning ? "text-amber-300" : "text-white/60"
+                        isCritical ? "text-zinc-300" : isWarning ? "text-zinc-300" : "text-white/60"
                       }`}>
                         {unlimited ? "∞" : `${resource.current.toFixed(resource.suffix ? 1 : 0)}/${resource.max}${resource.suffix ?? ""}`}
                       </span>
@@ -244,10 +244,10 @@ export default function Profile() {
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${
                           isCritical
-                            ? "bg-gradient-to-r from-rose-500 to-rose-400"
+                            ? "bg-gradient-to-r from-zinc-500 to-zinc-400"
                             : isWarning
-                            ? "bg-gradient-to-r from-amber-500 to-amber-400"
-                            : "bg-gradient-to-r from-purple-500 to-purple-400"
+                            ? "bg-gradient-to-r from-zinc-500 to-zinc-400"
+                            : "bg-gradient-to-r from-zinc-500 to-zinc-400"
                         }`}
                         style={{ width: `${unlimited ? 0 : percent}%` }}
                       />

@@ -234,7 +234,7 @@ export function TimerWidget({
     <div className="relative flex flex-col items-center gap-4 p-4 bg-zinc-900/50 rounded-lg border border-white/5">
       <h3 className="text-lg font-medium text-white">{entityName}</h3>
 
-      <div className="text-4xl font-mono font-bold text-cyan-400">
+      <div className="text-4xl font-mono font-bold text-zinc-400">
         {timeString}
       </div>
 

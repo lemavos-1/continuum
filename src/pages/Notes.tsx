@@ -19,11 +19,11 @@ function getTypeBadgeColor(type?: string): string {
   if (!type) return "bg-white/5 text-white/70";
   const hash = type.charCodeAt(0);
   const colors = [
-    "bg-purple-500/20 text-purple-200 border border-purple-500/30",
-    "bg-blue-500/20 text-blue-200 border border-blue-500/30",
-    "bg-teal-500/20 text-teal-200 border border-teal-500/30",
-    "bg-amber-500/20 text-amber-200 border border-amber-500/30",
-    "bg-rose-500/20 text-rose-200 border border-rose-500/30",
+    "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
   ];
   return colors[hash % colors.length];
 }
@@ -221,7 +221,7 @@ export default function Notes() {
                         onClick={(e) => toggleFavorite(note.id, e)}
                         className="flex-shrink-0 p-1.5 rounded-lg transition-colors hover:bg-white/10"
                       >
-                        <Heart className={cn("w-4 h-4", note.favorite ? "fill-rose-400 text-rose-400" : "text-white/40 hover:text-white/60")} />
+                        <Heart className={cn("w-4 h-4", note.favorite ? "fill-zinc-400 text-zinc-400" : "text-white/40 hover:text-white/60")} />
                       </button>
                     </div>
 
@@ -240,9 +240,9 @@ export default function Notes() {
                       <span className="text-xs text-white/40">{new Date(note.updatedAt).toLocaleDateString("en-US")}</span>
                       <button
                         onClick={(e) => handleDeleteNote(note.id, e)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded hover:bg-rose-500/20"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded hover:bg-zinc-500/20"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-rose-400/60 hover:text-rose-400" />
+                        <Trash2 className="w-3.5 h-3.5 text-zinc-400/60 hover:text-zinc-400" />
                       </button>
                     </div>
                   </div>

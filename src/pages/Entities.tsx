@@ -23,12 +23,12 @@ const typeLabels: Record<string, string> = { PERSON: "Person", PROJECT: "Project
 // Dynamic badge colors based on type
 function getEntityBadgeColor(type: EntityType): string {
   const colors: Record<EntityType, string> = {
-    PERSON: "bg-blue-500/20 text-blue-200 border border-blue-500/30",
-    PROJECT: "bg-purple-500/20 text-purple-200 border border-purple-500/30",
-    TOPIC: "bg-amber-500/20 text-amber-200 border border-amber-500/30",
-    ORGANIZATION: "bg-teal-500/20 text-teal-200 border border-teal-500/30",
-    ACTIVITY: "bg-rose-500/20 text-rose-200 border border-rose-500/30",
-    ACCURRENCY: "bg-pink-500/20 text-pink-200 border border-pink-500/30",
+    PERSON: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    PROJECT: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    TOPIC: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    ORGANIZATION: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    ACTIVITY: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
+    ACCURRENCY: "bg-zinc-500/20 text-zinc-200 border border-zinc-500/30",
   };
   return colors[type] || "";
 }
@@ -207,17 +207,17 @@ export default function Entities() {
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5 gap-2">
                           <div className="flex items-center gap-1">
                       {entity.type === "ACTIVITY" && streak > 0 && (
-                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-500/20 border border-rose-500/30">
-                          <Flame className="w-3.5 h-3.5 text-rose-400" />
-                          <span className="text-xs font-semibold text-rose-200">{streak}</span>
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-zinc-500/20 border border-zinc-500/30">
+                          <Flame className="w-3.5 h-3.5 text-zinc-400" />
+                          <span className="text-xs font-semibold text-zinc-200">{streak}</span>
                         </div>
                       )}
                       {entity.type === "PROJECT" && (() => {
                         const summary = getTimeSummaryForEntity(entity.id);
                         return summary ? (
-                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/20 border border-blue-500/30">
-                            <Clock className="w-3.5 h-3.5 text-blue-400" />
-                            <span className="text-xs font-semibold text-blue-200">{summary.formattedTotal}</span>
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-zinc-500/20 border border-zinc-500/30">
+                            <Clock className="w-3.5 h-3.5 text-zinc-400" />
+                            <span className="text-xs font-semibold text-zinc-200">{summary.formattedTotal}</span>
                           </div>
                         ) : null;
                       })()}
@@ -225,9 +225,9 @@ export default function Entities() {
                     
                     <button
                       onClick={(e) => handleDelete(entity.id, e)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-rose-500/20"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-zinc-500/20"
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-rose-400/60 hover:text-rose-400" />
+                      <Trash2 className="w-3.5 h-3.5 text-zinc-400/60 hover:text-zinc-400" />
                     </button>
                   </div>
                 </div>

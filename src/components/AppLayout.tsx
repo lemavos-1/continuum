@@ -50,8 +50,8 @@ const mainItems = [
 ];
 
 const trackingChildren = [
-  { to: "/projects", icon: Timer, label: "Projects", color: "bg-violet-400", filter: "PROJECT" },
-  { to: "/activities", icon: Activity, label: "Accurrency", color: "bg-pink-400", filter: "ACCURRENCY" },
+  { to: "/projects", icon: Timer, label: "Projects", color: "bg-zinc-400", filter: "PROJECT" },
+  { to: "/activities", icon: Activity, label: "Accurrency", color: "bg-zinc-400", filter: "ACCURRENCY" },
 ];
 
 function NavItem({
@@ -266,7 +266,7 @@ function SidebarBody({
                   className="flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left text-sm text-zinc-200 hover:bg-white/5"
                 >
                   {r.type === "NOTE" ? (
-                    <StickyNote className="mt-0.5 h-4 w-4 text-sky-300" />
+                    <StickyNote className="mt-0.5 h-4 w-4 text-zinc-300" />
                   ) : (
                     <Network className="mt-0.5 h-4 w-4 text-zinc-400" />
                   )}
@@ -409,7 +409,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 collapsed && !mobile && "justify-center px-0",
               )}
             >
-              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-pink-500 text-xs font-semibold text-white">
+              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-zinc-500 to-zinc-500 text-xs font-semibold text-white">
                 {usernameInitial}
               </div>
               {showLabel && (
@@ -461,7 +461,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <DropdownMenuSeparator className="bg-white/10" />
             <DropdownMenuItem
               onClick={handleLogout}
-              className="cursor-pointer text-rose-300 focus:bg-rose-500/10 focus:text-rose-200"
+              className="cursor-pointer text-zinc-300 focus:bg-zinc-500/10 focus:text-zinc-200"
             >
               <LogOut className="mr-2 h-4 w-4" /> Logout
             </DropdownMenuItem>

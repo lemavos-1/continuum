@@ -59,10 +59,10 @@ export function TimeAnalyticsCalendar({ projectId, onDayClick }: TimeAnalyticsCa
 
   const getIntensityClass = (seconds: number): string => {
     if (seconds === 0) return 'bg-zinc-50 dark:bg-zinc-900';
-    if (seconds < 1800) return 'bg-blue-100 dark:bg-blue-900/20'; // < 30min
-    if (seconds < 3600) return 'bg-blue-200 dark:bg-blue-800/30'; // < 1h
-    if (seconds < 7200) return 'bg-blue-300 dark:bg-blue-700/40'; // < 2h
-    return 'bg-blue-400 dark:bg-blue-600/50'; // >= 2h
+    if (seconds < 1800) return 'bg-zinc-100 dark:bg-zinc-900/20'; // < 30min
+    if (seconds < 3600) return 'bg-zinc-200 dark:bg-zinc-800/30'; // < 1h
+    if (seconds < 7200) return 'bg-zinc-300 dark:bg-zinc-700/40'; // < 2h
+    return 'bg-zinc-400 dark:bg-zinc-600/50'; // >= 2h
   };
 
   if (!canAccessAnalytics) {
@@ -94,25 +94,25 @@ export function TimeAnalyticsCalendar({ projectId, onDayClick }: TimeAnalyticsCa
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-cyan-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {formatDuration(monthlyStats.totalSeconds)}
             </div>
             <div className="text-sm text-zinc-500">Total Time</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {monthlyStats.activeDays}
             </div>
             <div className="text-sm text-zinc-500">Active Days</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {monthlyStats.totalEntries}
             </div>
             <div className="text-sm text-zinc-500">Time Entries</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {formatDuration(monthlyStats.averageDaily)}
             </div>
             <div className="text-sm text-zinc-500">Daily Average</div>
@@ -175,7 +175,7 @@ export function TimeAnalyticsCalendar({ projectId, onDayClick }: TimeAnalyticsCa
                   min-h-[80px] p-2 border border-zinc-200 dark:border-zinc-700 rounded-lg cursor-pointer
                   transition-all hover:shadow-md
                   ${isCurrentMonth ? 'bg-white dark:bg-zinc-800' : 'bg-zinc-50 dark:bg-zinc-900 opacity-50'}
-                  ${isToday ? 'ring-2 ring-cyan-500' : ''}
+                  ${isToday ? 'ring-2 ring-zinc-500' : ''}
                 `}
                 onClick={() => dayData && onDayClick?.(dayData)}
               >
