@@ -9,32 +9,25 @@ AMARELO='\033[1;33m'
 VERMELHO='\033[0;31m'
 NC='\033[0m'
 
-# Mensagem padrão de commit
-MSG_GENERICA="auto-update: $(date '+%d/%m/%Y %H:%M:%S')"
+# --- VERSÃO ATUAL ---
+# VERSION: 5.35
 
-echo -e "${CIANO}--- Auto-Commit Codespace ---${NC}"
+ULTIMA_V=$(grep "^# VERSION:" "$0" | cut -d ' ' -f 3)
 
-# 1. Verificar se há algo para salvar
-MUDANCAS=$(git status --porcelain)
+# 4. Se chegou aqui, tem mudança! Pergunta a versão.
+echo -e "\n${AMARELO}--------------------------------------${NC}"
+echo -e "Última versão registrada: ${VERDE}$ULTIMA_V${NC}"
+read -p "Nova versão detectada! Digite o número: " NOVA_V
+echo -e "${AMARELO}--------------------------------------${NC}\n"
 
-if [ -z "$MUDANCAS" ]; then
-    echo -e "${VERMELHO}⚠ Nada para commitar no momento.${NC}"
-    exit 0
-fi
-
-# 2. Mostrar o que está sendo enviado (rápido)
-echo -e "${AMARELO}Arquivos alterados:${NC}"
-echo "$MUDANCAS"
-echo -e "${AMARELO}--------------------------------------${NC}"
-
-# 3. Executar o fluxo sem perguntas
-echo -e "${CIANO}Adicionando arquivos...${NC}"
+# 5. Commit e Push
+echo -e "${CIANO}Subindo alterações para Produção...${NC}"
 git add .
-
-echo -e "${CIANO}Commitando com mensagem padrão...${NC}"
-git commit -m "$MSG_GENERICA" -q
-
-echo -e "${CIANO}Dando push para o GitHub...${NC}"
+git commit -m "v$NOVA_V" -q
 git push -q
+cd ..
 
-echo -e "\n${VERDE}✔ Tudo pronto! Código enviado com sucesso.${NC}"
+# 6. O script se atualiza apenas se houve sucesso
+sed -i "s/^# VERSION: $ULTIMA_V/# VERSION: $NOVA_V/" "$0"
+
+echo -e "\n${VERDE}✔ Sucesso! Versão $NOVA_V lançada e script atualizado.${NC}"
