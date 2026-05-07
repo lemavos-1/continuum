@@ -54,8 +54,8 @@ export default function GoogleCallback() {
         .catch((err) => {
           console.error("Google Auth Error:", err);
           toast({
-            title: "Erro na autenticação",
-            description: err.response?.data?.message || "Ocorreu um erro com o Google.",
+            title: "Authentication error",
+            description: err.response?.data?.message || "Something went wrong with Google sign-in.",
             variant: "destructive",
           });
           navigate("/");
