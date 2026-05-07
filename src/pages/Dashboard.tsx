@@ -349,7 +349,7 @@ export default function Dashboard() {
                 </div>
                 <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
                   <p className="text-3xl font-semibold text-sky-400">{totalNotes}</p>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Notas</p>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Notes</p>
                 </div>
                 <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
                   <p className="text-3xl font-semibold text-emerald-400">{totalEntities}</p>
