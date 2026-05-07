@@ -54,7 +54,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private boolean isRateLimitedEndpoint(String path) {
         return path.equals("/api/auth/login") || path.equals("/api/auth/register") ||
                path.equals("/auth/login") || path.equals("/auth/register") ||
-               path.equals("/api/google-callback") || path.equals("/google-callback") ||
+               path.equals("/api/auth/google/callback") ||
                path.equals("/api/auth/resend-verification") || path.equals("/auth/resend-verification");
     }
 

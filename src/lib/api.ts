@@ -90,7 +90,7 @@ api.interceptors.request.use((config) => {
     url === "/api/auth/login" ||
     url === "/api/auth/register" ||
     url === "/api/auth/refresh" ||
-    url === "/api/google-callback";
+    url === "/api/auth/google/callback";
   if (!skipAuth) {
     const token = getAccessToken();
     if (token) {
@@ -135,12 +135,12 @@ export const authApi = {
     api.post("/api/auth/register", { username, email, password }),
   googleStart: () => api.get("/api/auth/google/url"),
   
-  // CORREÇÃO: Enviando o redirectUri para o Backend bater com o que o Google espera
+  // CORREÇÃO: Enviando o redirectUri para o Backend (com #) e bater com o que o Google espera
   googleCallback: (code: string, state?: string) =>
-    api.post("/api/google-callback", { 
+    api.post("/api/auth/google/callback", { 
       code, 
       state,
-      redirectUri: window.location.origin + '/google-callback'
+      redirectUri: window.location.origin + '/#/google-callback'
     }),
 
   logout: () => {
