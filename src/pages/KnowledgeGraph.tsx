@@ -41,12 +41,12 @@ interface GraphEdge {
 
 // Resolved via CSS variables to follow design tokens
 const TYPE_COLORS: Record<string, string> = {
-  NOTE: "hsl(0, 0%, 92%)",
-  ACTIVITY: "hsl(142, 71%, 45%)",
-  PERSON: "hsl(45, 93%, 58%)",
-  PROJECT: "hsl(217, 91%, 60%)",
-  TOPIC: "hsl(270, 70%, 65%)",
-  ORGANIZATION: "hsl(25, 90%, 58%)",
+  NOTE: "hsl(0, 0%, 95%)",
+  ACTIVITY: "hsl(0, 0%, 78%)",
+  PERSON: "hsl(0, 0%, 65%)",
+  PROJECT: "hsl(0, 0%, 55%)",
+  TOPIC: "hsl(0, 0%, 45%)",
+  ORGANIZATION: "hsl(0, 0%, 38%)",
 };
 
 const TYPE_LABELS: Record<string, string> = {
