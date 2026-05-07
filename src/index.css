@@ -459,27 +459,29 @@
   }
 
   .continuum-entity-mention {
-    @apply inline-flex items-center px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-medium text-[0.9em] cursor-pointer transition-colors;
-    border: 1px solid hsl(var(--primary) / 0.2);
+    @apply inline-flex items-center px-1.5 py-0.5 rounded-md font-medium text-[0.9em] cursor-pointer transition-colors;
+    background: hsl(0 0% 100% / 0.06);
+    color: hsl(var(--foreground));
+    border: 1px solid transparent;
   }
-  .continuum-entity-mention:hover { @apply bg-primary/20; }
-  .continuum-entity-mention::before { content: "@"; @apply opacity-60 mr-0.5; }
+  .continuum-entity-mention:hover { background: hsl(0 0% 100% / 0.12); }
+  .continuum-entity-mention::before { content: "@"; @apply opacity-50 mr-0.5; }
 
   .continuum-note-mention {
     @apply inline-flex items-center px-1.5 py-0.5 rounded-md text-[0.9em] font-medium cursor-pointer transition-colors;
-    background: hsl(174 100% 41% / 0.12);
-    color: hsl(174 100% 55%);
-    border: 1px solid hsl(174 100% 41% / 0.25);
+    background: hsl(0 0% 100% / 0.06);
+    color: hsl(var(--foreground));
+    border: 1px solid transparent;
   }
-  .continuum-note-mention:hover { background: hsl(174 100% 41% / 0.22); }
-  .continuum-note-mention::before { content: "#"; @apply opacity-60 mr-0.5; }
+  .continuum-note-mention:hover { background: hsl(0 0% 100% / 0.12); }
+  .continuum-note-mention::before { content: "#"; @apply opacity-50 mr-0.5; }
 
-  /* Code block syntax (highlight.js minimal dark) */
+  /* Code block syntax — neutralized to monochrome */
   .hljs-comment, .hljs-quote { @apply text-muted-foreground italic; }
-  .hljs-keyword, .hljs-selector-tag { color: hsl(330 80% 70%); }
-  .hljs-string, .hljs-doctag { color: hsl(140 60% 65%); }
-  .hljs-number, .hljs-literal { color: hsl(30 90% 65%); }
-  .hljs-title, .hljs-section, .hljs-name { color: hsl(200 90% 70%); }
-  .hljs-variable, .hljs-template-variable { color: hsl(45 90% 70%); }
-  .hljs-attr, .hljs-attribute { color: hsl(280 80% 75%); }
+  .hljs-keyword, .hljs-selector-tag { color: hsl(0 0% 85%); font-weight: 600; }
+  .hljs-string, .hljs-doctag { color: hsl(0 0% 75%); }
+  .hljs-number, .hljs-literal { color: hsl(0 0% 80%); }
+  .hljs-title, .hljs-section, .hljs-name { color: hsl(0 0% 95%); }
+  .hljs-variable, .hljs-template-variable { color: hsl(0 0% 80%); }
+  .hljs-attr, .hljs-attribute { color: hsl(0 0% 70%); }
 }
