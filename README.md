@@ -28,6 +28,12 @@
 
 ### V6 (lemavos)
 - started: 04-05-2026
+- ended: undefined (07-05-2026)
+- updates: undefined
+
+
+### V7 (lemavos-7)
+- started: 07-05-2026
 - ended: 
 - updates:
 
