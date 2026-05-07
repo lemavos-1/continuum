@@ -212,11 +212,11 @@ export default function Dashboard() {
             >
               <ChartContainer config={{}} className="h-full">
                 <LineChart data={noteTimeline} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="#324152" strokeDasharray="3 3" />
+                  <CartesianGrid stroke="#262626" strokeDasharray="3 3" />
                   <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
                   <YAxis tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: "rgb(15, 23, 42)", borderColor: "#374151" }} />
-                  <Line type="monotone" dataKey="count" stroke="#60a5fa" strokeWidth={3} dot={false} />
+                  <Tooltip contentStyle={{ background: "#0a0a0a", borderColor: "#262626" }} />
+                  <Line type="monotone" dataKey="count" stroke="#e4e4e7" strokeWidth={3} dot={false} />
                 </LineChart>
               </ChartContainer>
             </div>
@@ -395,11 +395,11 @@ export default function Dashboard() {
                 {selectedTimer && timerChartData.length > 0 ? (
                   <ChartContainer config={{}} className="h-full">
                     <LineChart data={timerChartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                      <CartesianGrid stroke="#324152" strokeDasharray="3 3" />
+                      <CartesianGrid stroke="#262626" strokeDasharray="3 3" />
                       <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
                       <YAxis tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                      <Tooltip contentStyle={{ background: "rgb(15, 23, 42)", borderColor: "#374151" }} />
-                      <Line type="monotone" dataKey="value" stroke="#34d399" strokeWidth={3} dot={false} />
+                      <Tooltip contentStyle={{ background: "#0a0a0a", borderColor: "#262626" }} />
+                      <Line type="monotone" dataKey="value" stroke="#a1a1aa" strokeWidth={3} dot={false} />
                     </LineChart>
                   </ChartContainer>
                 ) : (
