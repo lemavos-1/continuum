@@ -54,8 +54,8 @@ export default function GoogleCallback() {
         .catch((err) => {
           console.error("Google Auth Error:", err);
           toast({
-            title: "Erro na autenticação",
-            description: err.response?.data?.message || "Ocorreu um erro com o Google.",
+            title: "Authentication error",
+            description: err.response?.data?.message || "Something went wrong with Google sign-in.",
             variant: "destructive",
           });
           navigate("/");
@@ -69,7 +69,7 @@ export default function GoogleCallback() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center space-y-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm text-muted-foreground">Finalizando login com Google...</p>
+        <p className="text-sm text-muted-foreground">Finishing Google sign-in...</p>
       </div>
     </div>
   );

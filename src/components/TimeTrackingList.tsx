@@ -102,7 +102,7 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
                     key={entity.id}
                     className={`p-4 cursor-pointer transition-all ${
                       isEntityTimerActive && showTimer
-                        ? 'ring-2 ring-cyan-500 bg-cyan-950/20'
+                        ? 'ring-2 ring-zinc-500 bg-zinc-950/20'
                         : 'hover:border-white/20'
                     }`}
                     onClick={() => navigate(`/entities/${entity.id}`)}
@@ -133,7 +133,7 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
                         <div className="bg-zinc-950/50 rounded-lg p-3 space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-xs text-zinc-400">Total Time</span>
-                            <span className="font-mono font-bold text-cyan-400">
+                            <span className="font-mono font-bold text-zinc-400">
                               {summary?.formattedTotal || '00:00:00'}
                             </span>
                           </div>

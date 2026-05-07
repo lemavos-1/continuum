@@ -74,7 +74,7 @@ export function ActivityAnalyticsCalendar({
 
   const getIntensityClass = (isCompleted: boolean): string => {
     if (!isCompleted) return 'bg-zinc-50 dark:bg-zinc-900';
-    return 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-500/50';
+    return 'bg-zinc-100 dark:bg-zinc-900/30 border-zinc-500/50';
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -95,7 +95,7 @@ export function ActivityAnalyticsCalendar({
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <Check className="w-5 h-5 text-emerald-500" />
+            <Check className="w-5 h-5 text-zinc-500" />
             Completion Summary
           </h3>
           <Badge variant="secondary">
@@ -105,19 +105,19 @@ export function ActivityAnalyticsCalendar({
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-emerald-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {monthlyStats.totalCompletions}
             </div>
             <div className="text-sm text-zinc-500">Total Completions</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-cyan-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {monthlyStats.activeDays}
             </div>
             <div className="text-sm text-zinc-500">Days Completed</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-500">
+            <div className="text-2xl font-bold text-zinc-500">
               {trackingDates.length > 0 ? ((monthlyStats.activeDays / new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()) * 100).toFixed(0) : 0}%
             </div>
             <div className="text-sm text-zinc-500">This Month</div>
@@ -130,7 +130,7 @@ export function ActivityAnalyticsCalendar({
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-emerald-500" />
+            <Calendar className="w-6 h-6 text-zinc-500" />
             {format(currentDate, 'MMMM yyyy')}
           </h2>
           <div className="flex gap-2">
@@ -181,8 +181,8 @@ export function ActivityAnalyticsCalendar({
                   min-h-[80px] p-2 border border-zinc-200 dark:border-zinc-700 rounded-lg
                   transition-all hover:shadow-md cursor-default
                   ${isCurrentMonth ? 'bg-white dark:bg-zinc-800' : 'bg-zinc-50 dark:bg-zinc-900 opacity-50'}
-                  ${isToday ? 'ring-2 ring-cyan-500' : ''}
-                  ${isCompleted ? 'bg-emerald-500/10 dark:bg-emerald-900/20' : ''}
+                  ${isToday ? 'ring-2 ring-zinc-500' : ''}
+                  ${isCompleted ? 'bg-zinc-500/10 dark:bg-zinc-900/20' : ''}
                 `}
               >
                 <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
@@ -191,8 +191,8 @@ export function ActivityAnalyticsCalendar({
 
                 {isCompleted ? (
                   <div className="flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/30 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-emerald-400" />
+                    <div className="w-6 h-6 rounded-full bg-zinc-500/30 flex items-center justify-center">
+                      <Check className="w-4 h-4 text-zinc-400" />
                     </div>
                   </div>
                 ) : (
@@ -212,7 +212,7 @@ export function ActivityAnalyticsCalendar({
               <span>Not completed</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-emerald-500/30 border border-emerald-500/50"></div>
+              <div className="w-4 h-4 rounded bg-zinc-500/30 border border-zinc-500/50"></div>
               <span>Completed</span>
             </div>
           </div>

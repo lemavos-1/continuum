@@ -87,17 +87,17 @@ export function ActivityCompletionCalendar({
                 aspect-square rounded-md overflow-hidden relative text-xs font-medium
                 transition-all border
                 ${isCompleted
-                  ? 'border-emerald-500/50 text-emerald-400'
+                  ? 'border-zinc-500/50 text-zinc-400'
                   : isToday
-                  ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400'
+                  ? 'bg-zinc-500/10 border-zinc-500/50 text-zinc-400'
                   : 'bg-zinc-900/50 border-zinc-700 text-zinc-600'
                 }
               `}
               title={format(date, 'MMM d')}
             >
               {isCompleted ? (
-                <div className="absolute inset-0 bg-emerald-500/20 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-emerald-400" />
+                <div className="absolute inset-0 bg-zinc-500/20 flex items-center justify-center">
+                  <Check className="w-4 h-4 text-zinc-400" />
                 </div>
               ) : isToday ? (
                 <span>•</span>
@@ -110,7 +110,7 @@ export function ActivityCompletionCalendar({
       {/* Sequence & Action */}
       <div className="flex items-center justify-between pt-2">
         <div className="text-xs text-zinc-400">
-          <span className="font-semibold text-emerald-400">{trackingDates.length}</span> sequence
+          <span className="font-semibold text-zinc-400">{trackingDates.length}</span> sequence
         </div>
         <Button
           size="sm"
