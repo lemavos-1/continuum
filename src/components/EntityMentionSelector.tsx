@@ -156,7 +156,7 @@ export const EntityMentionSelector = memo(function EntityMentionSelector({
         <div className="px-3 py-1.5 border-t border-border/50 text-xs text-muted-foreground flex items-center justify-between">
           <span>
             {filteredEntities.length === 0
-              ? 'Digite para buscar'
+              ? 'Type to search'
               : `${filteredEntities.length} encontrada${filteredEntities.length !== 1 ? 's' : ''}`}
           </span>
           <span className="hidden sm:inline">↑↓ navigate · Enter select · Esc close</span>
