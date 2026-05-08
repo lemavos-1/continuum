@@ -49,10 +49,12 @@ public class AuthController {
     @Operation(summary = "Google OAuth callback")
     public ResponseEntity<AuthResponse> googleCallback(@Valid @RequestBody GoogleAuthCallbackRequest request) {
         OAuthStateService.OAuthState state = oauthStateService.parseState(request.state());
-        
+
+        // CRÍTICO: o redirect_uri da troca de code DEVE ser idêntico ao enviado na
+        // etapa 1. Ignoramos qualquer valor que o cliente mandar.
         GoogleOAuthService.GoogleUserInfo userInfo = googleOAuthService.exchangeCodeForUserInfo(
                 request.code(),
-                request.redirectUri(), 
+                state.redirectUri(),
                 state.nonce()
         );
         return ResponseEntity.ok(authService.googleAuth(userInfo));
