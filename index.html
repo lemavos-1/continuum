@@ -44,6 +44,37 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // SPA + HashRouter normalization for OAuth redirects.
+      // Backend / Google may redirect to:
+      //   /google-callback?code=...&state=...
+      //   /?access_token=...&refresh_token=...&vault_id=...
+      //   /login-successful?...   /login-token?...
+      // HashRouter only reads what comes after `#`, so rewrite to hash form
+      // BEFORE React boots.
+      (function () {
+        try {
+          var path = window.location.pathname;
+          var search = window.location.search;
+          var hash = window.location.hash;
+
+          // If we already have a hash route, do nothing.
+          if (hash && hash.indexOf("#/") === 0) return;
+
+          var hashRoutes = ["/google-callback", "/login-successful", "/login-token"];
+          var isHashRoute = hashRoutes.indexOf(path) !== -1;
+          var hasAuthQuery = search && /(?:^|[?&])(code|access_token|login_token|token|jwt)=/.test(search);
+
+          if (isHashRoute) {
+            window.history.replaceState({}, "", "/#" + path + search);
+          } else if (path === "/" && hasAuthQuery) {
+            window.history.replaceState({}, "", "/#/" + search);
+          }
+        } catch (e) {
+          // no-op
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
