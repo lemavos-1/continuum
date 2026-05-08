@@ -47,12 +47,14 @@ public class OAuthStateService {
                 .setSubject("google-oauth")
                 .claim("type", STATE_TYPE)
                 .claim("nonce", nonce)
-                .claim("redirectUri", finalFrontendUrl) // Salvamos o destino final (com hash)
+                // IMPORTANTE: guardamos a URL EXATA enviada ao Google na etapa 1.
+                // O Google exige que a etapa 2 (troca do code) use a mesma string.
+                .claim("redirectUri", googleRedirectUrl)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + STATE_EXPIRATION_MS))
                 .signWith(stateKey, SignatureAlgorithm.HS256)
                 .compact();
-        return new OAuthState(stateToken, nonce, googleRedirectUrl); // Google recebe a URL limpa
+        return new OAuthState(stateToken, nonce, googleRedirectUrl);
     }
 
     public OAuthState parseState(String stateToken) {
@@ -67,8 +69,8 @@ public class OAuthStateService {
                 throw new BadRequestException("Invalid OAuth state token");
             }
 
-            return new OAuthState(stateToken, 
-                                 claims.get("nonce", String.class), 
+            return new OAuthState(stateToken,
+                                 claims.get("nonce", String.class),
                                  claims.get("redirectUri", String.class));
         } catch (Exception ex) {
             throw new BadRequestException("Google OAuth state validation failed: " + ex.getMessage());
@@ -76,5 +78,6 @@ public class OAuthStateService {
     }
 
     public String getGoogleRedirectUrl() { return googleRedirectUrl; }
+    public String getFinalFrontendUrl() { return finalFrontendUrl; }
     public static record OAuthState(String signedState, String nonce, String redirectUri) {}
 }

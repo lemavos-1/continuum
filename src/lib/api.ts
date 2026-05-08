@@ -135,12 +135,13 @@ export const authApi = {
     api.post("/api/auth/register", { username, email, password }),
   googleStart: () => api.get("/api/auth/google/url"),
   
-  // CORREÇÃO: Enviando o redirectUri para o Backend (com #) e bater com o que o Google espera
+  // O backend ignora este redirectUri e usa o que ele mesmo enviou ao Google
+  // (assinado dentro do state). Mandamos só para satisfazer a validação @NotBlank.
   googleCallback: (code: string, state?: string) =>
-    api.post("/api/auth/google/callback", { 
-      code, 
+    api.post("/api/auth/google/callback", {
+      code,
       state,
-      redirectUri: window.location.origin + '/#/google-callback'
+      redirectUri: window.location.origin + "/google-callback",
     }),
 
   logout: () => {
