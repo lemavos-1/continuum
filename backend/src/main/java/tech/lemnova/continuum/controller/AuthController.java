@@ -13,9 +13,6 @@ import tech.lemnova.continuum.infra.google.GoogleOAuthService;
 import tech.lemnova.continuum.infra.security.CustomUserDetails;
 import tech.lemnova.continuum.infra.security.OAuthStateService;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Endpoints for user authentication")
@@ -78,21 +75,7 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        
-        // CORREÇÃO DO ERRO DE COMPILAÇÃO:
-        // Em vez de user.getUser(), usamos um Map para retornar os dados básicos.
-        // Se sua classe CustomUserDetails tiver getUserId(), use-o aqui.
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("email", user.getUsername());
-        
-        try {
-            // Tentativa segura de pegar o ID se o método existir
-            // userData.put("id", user.getUserId()); 
-        } catch (Exception e) {
-            // Ignora se não existir
-        }
-
-        return ResponseEntity.ok(userData);
+        return ResponseEntity.ok(authService.getContext(user.getUserId()));
     }
 
     @PostMapping("/logout")
