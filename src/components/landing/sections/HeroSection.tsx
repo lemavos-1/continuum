@@ -6,6 +6,7 @@
  */
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
+import { Link } from "react-router-dom";
 import KnowledgeGraph from "@/components/landing/KnowledgeGraph";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -66,10 +67,10 @@ export default function HeroSection() {
 
             {/* CTAs */}
             <motion.div {...fadeUp(0.4)} className="flex flex-wrap gap-3">
-              <a href="#cta" className="btn-primary animate-pulse-glow">
+              <Link to="/register" className="btn-primary animate-pulse-glow">
                 Get started
                 <ArrowRight size={16} />
-              </a>
+              </Link>
               <a href="#how-it-works" className="btn-secondary">
                 <Play size={14} className="opacity-70" />
                 See how it works
