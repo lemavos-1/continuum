@@ -67,7 +67,10 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/health", "/error", "/actuator/**").permitAll()
-                // Endpoints públicos de Auth (Google Callback e URL)
+                // Public authentication endpoints
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/google/callback").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/google/url").permitAll()
                 // Swagger / Docs
