@@ -190,6 +190,7 @@ export default function Login() {
                   variant="outline"
                   type="button"
                   onClick={handleGoogleLogin}
+                  disabled={googleLoading}
                   className="w-full border border-[oklch(0.72_0.14_195/0.3)] bg-[oklch(0.72_0.14_195/0.05)] hover:bg-[oklch(0.72_0.14_195/0.1)] text-[oklch(0.93_0.005_60)] transition-colors"
                 >
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
