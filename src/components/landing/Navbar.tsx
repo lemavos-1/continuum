@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import AppLogo from "./AppLogo";
 
 const navLinks = [
@@ -19,11 +18,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const handleGoogleLogin = async () => {
-    await login("", "");
-  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -70,10 +64,10 @@ export default function Navbar() {
         {/* CTA Desktop */}
         <div className="hidden md:flex items-center gap-3">
           <button
-            onClick={handleGoogleLogin}
+            onClick={() => navigate("/login")}
             className="btn-primary text-sm py-2 px-5"
           >
-            Login with Google
+            Sign in
           </button>
         </div>
 
@@ -111,12 +105,12 @@ export default function Navbar() {
               <div className="grid grid-cols-1 gap-3 pt-2">
                 <button
                   onClick={() => {
-                    handleGoogleLogin();
+                    navigate("/login");
                     setMobileOpen(false);
                   }}
                   className="btn-primary text-sm py-2.5 px-4"
                 >
-                  Login with Google
+                  Sign in
                 </button>
               </div>
             </nav>
