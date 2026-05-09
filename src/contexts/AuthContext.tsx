@@ -84,12 +84,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
+    const { data } = await authApi.login(email, password);
+    setTokens(data.accessToken ?? data.token, data.refreshToken ?? "");
+    await fetchUser();
+  };
+
+  const loginWithGoogle = async () => {
     const { data } = await authApi.googleStart();
     window.location.href = data.authorizationUrl;
   };
 
   const register = async (username: string, email: string, password: string) => {
-    await authApi.register(username, email, password);
+    const { data } = await authApi.register(username, email, password);
+    if (data?.accessToken || data?.token) {
+      setTokens(data.accessToken ?? data.token, data.refreshToken ?? "");
+      await fetchUser();
+    }
   };
 
   const logout = async () => {
