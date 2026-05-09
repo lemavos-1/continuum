@@ -6,7 +6,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useInView } from "@/hooks/useInView";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -14,7 +13,6 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 export default function CTASection() {
   const { ref, inView } = useInView(0.15);
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   return (
     <section id="cta" ref={ref} className="relative py-28 lg:py-40 overflow-hidden">
@@ -84,10 +82,10 @@ export default function CTASection() {
                 transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}
               >
                 <button
-                  onClick={() => login("", "")}
+                  onClick={() => navigate("/register")}
                   className="btn-primary animate-pulse-glow text-lg"
                 >
-                  Continue with Google
+                  Create account
                   <ArrowRight size={20} />
                 </button>
               </motion.div>
