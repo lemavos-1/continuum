@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2, ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, Loader2, ArrowLeft, Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import KnowledgeGraph from "@/components/landing/KnowledgeGraph";
@@ -16,17 +18,37 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleGoogleLogin = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     try {
-      await login("", "");
-    } catch {
+      await login(email, password);
+      navigate("/dashboard");
+    } catch (err: any) {
+      toast({
+        title: "Login failed",
+        description: err?.response?.data?.message || "Check your email and password.",
+        variant: "destructive",
+      });
+    } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch {
+      setGoogleLoading(false);
       toast({ title: "Error starting Google login", variant: "destructive" });
     }
   };
@@ -98,15 +120,40 @@ export default function Login() {
                 }}
               />
 
-              <div className="relative space-y-6">
-                <motion.div {...fadeUp(0.3)} className="text-sm text-muted-foreground">
-                  Continue with Google to sign in and access your Continuum workspace.
+              <form onSubmit={handleSubmit} className="relative space-y-5">
+                <motion.div {...fadeUp(0.3)} className="space-y-2">
+                  <Label htmlFor="email" className="text-sm text-[oklch(0.7_0.005_60)]">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[oklch(0.5_0.008_260)]" />
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="pl-10 bg-[oklch(0.12_0.015_260)] border-[oklch(0.72_0.14_195/0.2)] text-[oklch(0.93_0.005_60)]"
+                    />
+                  </div>
                 </motion.div>
 
-                <motion.div
-                  {...fadeUp(0.4)}
-                  className="w-full mt-8 relative group"
-                >
+                <motion.div {...fadeUp(0.35)} className="space-y-2">
+                  <Label htmlFor="password" className="text-sm text-[oklch(0.7_0.005_60)]">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[oklch(0.5_0.008_260)]" />
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="pl-10 bg-[oklch(0.12_0.015_260)] border-[oklch(0.72_0.14_195/0.2)] text-[oklch(0.93_0.005_60)]"
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div {...fadeUp(0.4)} className="w-full pt-2 relative group">
                   <div
                     className="absolute inset-0 rounded-lg blur-lg group-hover:blur-xl transition-all duration-300"
                     style={{
@@ -114,20 +161,15 @@ export default function Login() {
                     }}
                   />
                   <Button
-                    type="button"
+                    type="submit"
                     className="w-full relative bg-[oklch(0.72_0.14_195)] text-[oklch(0.09_0.012_260)] hover:bg-[oklch(0.72_0.14_195/0.9)] font-medium tracking-wide transition-all"
-                    onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    {loading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <ArrowRight className="w-4 h-4 mr-2" />
-                    )}
-                    {loading ? "Starting login..." : "Login with Google"}
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+                    {loading ? "Signing in..." : "Sign In"}
                   </Button>
                 </motion.div>
-              </div>
+              </form>
 
               {/* Divider */}
               <motion.div {...fadeUp(0.45)} className="relative my-6">
@@ -148,6 +190,7 @@ export default function Login() {
                   variant="outline"
                   type="button"
                   onClick={handleGoogleLogin}
+                  disabled={googleLoading}
                   className="w-full border border-[oklch(0.72_0.14_195/0.3)] bg-[oklch(0.72_0.14_195/0.05)] hover:bg-[oklch(0.72_0.14_195/0.1)] text-[oklch(0.93_0.005_60)] transition-colors"
                 >
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
