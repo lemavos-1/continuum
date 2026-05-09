@@ -134,6 +134,45 @@ public class AuthService {
         return buildAuthResponseWithTokenPair(user);
     }
 
+    @Transactional
+    public AuthResponse register(String username, String email, String password) {
+        if (email == null || email.isBlank()) throw new BadRequestException("Email is required");
+        if (users.existsByEmail(email)) throw new BadRequestException("Email already in use");
+        if (users.existsByUsername(username)) throw new BadRequestException("Username already in use");
+        String vaultId = UUID.randomUUID().toString().replace("-", "");
+        User user = User.builder()
+                .username(username)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .role("USER")
+                .active(true)
+                .emailVerified(true)
+                .plan(PlanType.FREE)
+                .vaultId(vaultId)
+                .entityCount(0)
+                .noteCount(0)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+        user = users.save(user);
+        createFreeSubscription(user.getId());
+        initVaultAsync(vaultId);
+        return buildAuthResponseWithTokenPair(user);
+    }
+
+    @Transactional
+    public AuthResponse login(String email, String password) {
+        User user = users.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Invalid email or password"));
+        if (user.getPassword() == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadRequestException("Invalid email or password");
+        }
+        if (!Boolean.TRUE.equals(user.getActive())) {
+            throw new BadRequestException("Account is not active");
+        }
+        return buildAuthResponseWithTokenPair(user);
+    }
+
     /**
      * Revoga todos os tokens do usuário (logout).
      * Atualiza lastLogoutAt para invalidar tokens anteriores.
