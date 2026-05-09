@@ -33,6 +33,18 @@ public class AuthController {
         this.oauthStateService = oauthStateService;
     }
 
+    @PostMapping("/register")
+    @Operation(summary = "Register with email and password")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request.username(), request.email(), request.password()));
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "Login with email and password")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request.email(), request.password()));
+    }
+
     @GetMapping("/google/url")
     @Operation(summary = "Start Google OAuth2 login")
     public ResponseEntity<GoogleAuthUrlResponse> startGoogleOAuth() {
