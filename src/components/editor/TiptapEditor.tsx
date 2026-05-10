@@ -322,14 +322,24 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         const vaultFile = response.data;
         const vaultUrl = `/vault/download/${encodeURIComponent(vaultFile.id)}`;
 
-        editor.chain().focus().insertContent([
-          {
-            type: "text",
-            text: vaultFile.fileName,
-            marks: [{ type: "link", attrs: { href: vaultUrl } }],
-          },
-          { type: "text", text: " " },
-        ]).run();
+        if (isImageFile(file)) {
+          editor.chain().focus().insertContent([
+            {
+              type: "vaultImage",
+              attrs: { vaultId: vaultFile.id, alt: vaultFile.fileName },
+            },
+            { type: "paragraph" },
+          ]).run();
+        } else {
+          editor.chain().focus().insertContent([
+            {
+              type: "text",
+              text: vaultFile.fileName,
+              marks: [{ type: "link", attrs: { href: vaultUrl } }],
+            },
+            { type: "text", text: " " },
+          ]).run();
+        }
 
         toast({ title: "File uploaded", description: `${vaultFile.fileName} inserted into your note.` });
       } catch (error: any) {
