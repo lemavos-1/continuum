@@ -236,6 +236,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
           HTMLAttributes: { class: "text-primary underline underline-offset-4 cursor-pointer" },
         }),
         Image.configure({ HTMLAttributes: { class: "rounded-lg my-4 max-w-full" } }),
+        VaultImage,
         TaskList,
         TaskItem.configure({ nested: true }),
         Table.configure({ resizable: true }),
