@@ -363,6 +363,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       getHTML: () => editor?.getHTML() || "",
       getText: () => editor?.getText() || "",
       getEditor: () => editor,
+      triggerUpload: () => fileInputRef.current?.click(),
     }));
 
     useEffect(() => {
