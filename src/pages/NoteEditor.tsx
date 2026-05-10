@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Save, Loader2, Check, PanelRight, PanelRightClose, Settings } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Check, PanelRight, PanelRightClose, Settings, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TiptapEditor, type TiptapEditorHandle } from "@/components/TiptapEditor";
 import { BacklinksPanel } from "@/components/BacklinksPanel";
