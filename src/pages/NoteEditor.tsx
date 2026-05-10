@@ -318,6 +318,15 @@ export default function NoteEditor() {
                 )}
               </Button>
               <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editorRef.current?.triggerUpload()}
+                className="text-muted-foreground hover:text-foreground"
+                title="Attach file"
+              >
+                <Paperclip className="w-4 h-4" />
+              </Button>
+              <Button
                 size="sm"
                 onClick={handleManualSave}
                 disabled={saveStatus === "saving"}
