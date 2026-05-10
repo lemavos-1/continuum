@@ -29,6 +29,11 @@ import type { Entity } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { MentionList, type MentionListRef, type MentionItem } from "./MentionList";
 import { SlashCommands } from "./SlashCommands";
+import { VaultImage } from "./VaultImage";
+
+const IMAGE_MIME_RE = /^image\//i;
+const IMAGE_EXT_RE = /\.(png|jpe?g|webp|gif|svg)$/i;
+const isImageFile = (file: File) => IMAGE_MIME_RE.test(file.type) || IMAGE_EXT_RE.test(file.name);
 
 const lowlight = createLowlight(common);
 
@@ -231,6 +236,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
           HTMLAttributes: { class: "text-primary underline underline-offset-4 cursor-pointer" },
         }),
         Image.configure({ HTMLAttributes: { class: "rounded-lg my-4 max-w-full" } }),
+        VaultImage,
         TaskList,
         TaskItem.configure({ nested: true }),
         Table.configure({ resizable: true }),
@@ -316,14 +322,24 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         const vaultFile = response.data;
         const vaultUrl = `/vault/download/${encodeURIComponent(vaultFile.id)}`;
 
-        editor.chain().focus().insertContent([
-          {
-            type: "text",
-            text: vaultFile.fileName,
-            marks: [{ type: "link", attrs: { href: vaultUrl } }],
-          },
-          { type: "text", text: " " },
-        ]).run();
+        if (isImageFile(file)) {
+          editor.chain().focus().insertContent([
+            {
+              type: "vaultImage",
+              attrs: { vaultId: vaultFile.id, alt: vaultFile.fileName },
+            },
+            { type: "paragraph" },
+          ]).run();
+        } else {
+          editor.chain().focus().insertContent([
+            {
+              type: "text",
+              text: vaultFile.fileName,
+              marks: [{ type: "link", attrs: { href: vaultUrl } }],
+            },
+            { type: "text", text: " " },
+          ]).run();
+        }
 
         toast({ title: "File uploaded", description: `${vaultFile.fileName} inserted into your note.` });
       } catch (error: any) {
