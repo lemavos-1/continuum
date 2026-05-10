@@ -191,6 +191,7 @@ export interface TiptapEditorHandle {
   getHTML: () => string;
   getText: () => string;
   getEditor: () => Editor | null;
+  triggerUpload: () => void;
 }
 
 interface Props {
