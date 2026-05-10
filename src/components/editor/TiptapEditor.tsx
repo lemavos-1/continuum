@@ -191,6 +191,7 @@ export interface TiptapEditorHandle {
   getHTML: () => string;
   getText: () => string;
   getEditor: () => Editor | null;
+  triggerUpload: () => void;
 }
 
 interface Props {
@@ -362,6 +363,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       getHTML: () => editor?.getHTML() || "",
       getText: () => editor?.getText() || "",
       getEditor: () => editor,
+      triggerUpload: () => fileInputRef.current?.click(),
     }));
 
     useEffect(() => {

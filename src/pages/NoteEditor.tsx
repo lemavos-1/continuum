@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Save, Loader2, Check, PanelRight, PanelRightClose, Settings } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Check, PanelRight, PanelRightClose, Settings, Paperclip } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TiptapEditor, type TiptapEditorHandle } from "@/components/TiptapEditor";
 import { BacklinksPanel } from "@/components/BacklinksPanel";
@@ -316,6 +316,15 @@ export default function NoteEditor() {
                 ) : (
                   <PanelRight className="w-4 h-4" />
                 )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editorRef.current?.triggerUpload()}
+                className="text-muted-foreground hover:text-foreground"
+                title="Attach file"
+              >
+                <Paperclip className="w-4 h-4" />
               </Button>
               <Button
                 size="sm"
