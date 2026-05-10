@@ -266,7 +266,10 @@ export const plansApi = {
 
 export const vaultApi = {
   list: () => api.get("/api/vault/files"),
-  upload: (form: FormData) => api.post("/api/vault/files", form),
+  upload: (form: FormData) => api.post("/api/vault/files", form, {
+    headers: { "Content-Type": "multipart/form-data" },
+    transformRequest: [(data) => data],
+  }),
   download: (fileId: string) => api.get(`/api/vault/files/${encodeURIComponent(fileId)}`, { responseType: "blob" }),
   entityIndex: () => api.get("/api/vault/entity-index"),
 };
