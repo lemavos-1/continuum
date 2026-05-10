@@ -29,6 +29,11 @@ import type { Entity } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { MentionList, type MentionListRef, type MentionItem } from "./MentionList";
 import { SlashCommands } from "./SlashCommands";
+import { VaultImage } from "./VaultImage";
+
+const IMAGE_MIME_RE = /^image\//i;
+const IMAGE_EXT_RE = /\.(png|jpe?g|webp|gif|svg)$/i;
+const isImageFile = (file: File) => IMAGE_MIME_RE.test(file.type) || IMAGE_EXT_RE.test(file.name);
 
 const lowlight = createLowlight(common);
 
