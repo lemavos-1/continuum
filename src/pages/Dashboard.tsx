@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import AppLayout from "@/components/AppLayout";
-import { dashboardApi, entitiesApi, graphApi, notesApi, trackingApi, timeTrackingApi } from "@/lib/api";
+import { dashboardApi, entitiesApi, graphApi, notesApi, trackingApi, timeTrackingApi, vaultApi } from "@/lib/api";
 import { usePlanGate } from "@/hooks/usePlanGate";
 import { getPlanLimits } from "@/lib/plan";
 import { Progress } from "@/components/ui/progress";
@@ -117,6 +117,11 @@ export default function Dashboard() {
     },
   });
 
+  const { data: vaultFiles } = useQuery({
+    queryKey: ["vault", "files"],
+    queryFn: () => vaultApi.list().then((r) => r.data),
+  });
+
   const { data: todayTracking } = useQuery({
     queryKey: ["tracking", "today"],
     queryFn: () => trackingApi.today().then((r) => r.data),
@@ -140,10 +145,10 @@ export default function Dashboard() {
   }, [selectedTimer, timerSummaries]);
 
   useEffect(() => {
-    if (!summary?.storageUsage || usage == null) return;
-    const storageMB = Number((summary.storageUsage.usedBytes / (1024 * 1024)).toFixed(2));
+    if (vaultFiles == null || usage == null) return;
+    const storageMB = Number(vaultUsedMB.toFixed(2));
     applyUsageDelta({ vaultSizeMB: storageMB - usage.vaultSizeMB });
-  }, [summary?.storageUsage, usage, applyUsageDelta]);
+  }, [vaultFiles, vaultUsedMB, usage, applyUsageDelta]);
 
   const noteTimeline = useMemo(() => {
     if (!Array.isArray(notes)) return [];
@@ -206,8 +211,12 @@ export default function Dashboard() {
   const graphNodeCount = graphData?.nodes?.length ?? 0;
   const totalNotes = summary?.stats?.totalNotes ?? 0;
   const totalEntities = summary?.stats?.totalEntities ?? 0;
-  const storageUsed = summary?.storageUsage?.formattedUsed ?? "0 MB";
-  const storageLimit = summary?.storageUsage?.formattedLimit ?? "∞";
+
+  // Calculate vault storage the same way as /vault page
+  const vaultUsedMB = vaultFiles?.reduce((t, f) => t + f.size / (1024 * 1024), 0) ?? 0;
+  const vaultMaxMB = limits.maxVaultSizeMB;
+  const storageUsed = vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`;
+  const storageLimit = vaultMaxMB === -1 ? "Unlimited" : `${vaultMaxMB} MB`;
 
   if (summaryLoading) return <DashboardSkeleton />;
 

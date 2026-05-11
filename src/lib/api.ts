@@ -270,8 +270,8 @@ export const vaultApi = {
     headers: { "Content-Type": "multipart/form-data" },
     transformRequest: [(data) => data],
   }),
-  download: (fileId: string) => api.get(`/api/vault/files/${encodeURIComponent(fileId)}`, { responseType: "blob" }),
-  delete: (fileId: string) => api.delete(`/api/vault/files/${encodeURIComponent(fileId)}`),
+  download: (fileId: string) => api.get(`/api/vault/files/${fileId}`, { responseType: "blob" }),
+  delete: (fileId: string) => api.delete(`/api/vault/files/${fileId}`),
   entityIndex: () => api.get("/api/vault/entity-index"),
 };
 

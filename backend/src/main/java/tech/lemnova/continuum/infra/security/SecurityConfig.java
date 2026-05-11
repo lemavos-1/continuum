@@ -90,8 +90,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         
-        // Em produção, substitua pelo domínio real do Lovable para maior segurança
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        // Allow multiple origins including Lovable domains
+        config.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:5173",
+            "https://continuumnodes.lovable.app",
+            "https://*.lovable.app",
+            "https://continuum-backend.onrender.com"
+        ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("*"));

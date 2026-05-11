@@ -61,12 +61,15 @@ public class VaultController {
         User user = userRepo.findById(userDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
+        // URL decode the fileId to handle encoded filenames
+        String decodedFileId = URLDecoder.decode(fileId, StandardCharsets.UTF_8);
+
         List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
-        boolean exists = files.stream().anyMatch(f -> f.fileId().equals(fileId));
+        boolean exists = files.stream().anyMatch(f -> f.fileId().equals(decodedFileId));
         if (!exists) {
             throw new NotFoundException("File not found");
         }
-        vaultStorageService.deleteFile(user.getVaultId(), fileId);
+        vaultStorageService.deleteFile(user.getVaultId(), decodedFileId);
         return ResponseEntity.noContent().build();
     }
 
@@ -77,13 +80,16 @@ public class VaultController {
         User user = userRepo.findById(userDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
+        // URL decode the fileId to handle encoded filenames
+        String decodedFileId = URLDecoder.decode(fileId, StandardCharsets.UTF_8);
+
         List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
         VaultStorageService.VaultFileDescriptor descriptor = files.stream()
-                .filter(f -> f.fileId().equals(fileId))
+                .filter(f -> f.fileId().equals(decodedFileId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
-        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), fileId)
+        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), decodedFileId)
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
         return ResponseEntity.ok()

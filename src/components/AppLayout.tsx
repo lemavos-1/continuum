@@ -474,7 +474,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const desktopSidebar = (
     <aside
       className={cn(
-        "hidden h-screen shrink-0 flex-col border-r border-white/5 bg-[#0a0a0d] lg:flex overflow-hidden transition-all duration-200 ease-out",
+        "fixed left-0 top-0 z-30 hidden h-screen flex-col border-r border-white/5 bg-[#0a0a0d] lg:flex overflow-hidden transition-all duration-200 ease-out",
         collapsed ? "w-20" : "w-64",
       )}
     >
@@ -539,7 +539,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       {desktopSidebar}
 
-      <main className="min-w-0 flex-1 overflow-auto bg-[#05060a]">
+      <main className={cn("min-w-0 flex-1 overflow-auto bg-[#05060a]", collapsed ? "lg:ml-20" : "lg:ml-64")}>
         <div className="h-16 lg:hidden" />
         {children}
       </main>
