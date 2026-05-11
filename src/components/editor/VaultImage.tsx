@@ -13,10 +13,6 @@ function VaultImageView({ node }: NodeViewProps) {
   useEffect(() => {
     let cancelled = false;
     if (!vaultId) return;
-    if (blobCache.has(vaultId)) {
-      setSrc(blobCache.get(vaultId)!);
-      return;
-    }
     setError(false);
     resolveVaultBlob(vaultId)
       .then((url) => { if (!cancelled) setSrc(url); })
