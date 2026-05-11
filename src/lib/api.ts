@@ -271,6 +271,7 @@ export const vaultApi = {
     transformRequest: [(data) => data],
   }),
   download: (fileId: string) => api.get(`/api/vault/files/${encodeURIComponent(fileId)}`, { responseType: "blob" }),
+  delete: (fileId: string) => api.delete(`/api/vault/files/${encodeURIComponent(fileId)}`),
   entityIndex: () => api.get("/api/vault/entity-index"),
 };
 
