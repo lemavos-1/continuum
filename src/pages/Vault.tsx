@@ -269,6 +269,8 @@ export default function Vault() {
 
   const pdfPreviewBlob = useBlobUrl(pdfPreview?.id ?? null);
 
+
+
   return (
     <AppLayout>
       <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
