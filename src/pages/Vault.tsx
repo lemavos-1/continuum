@@ -253,6 +253,9 @@ export default function Vault() {
     }
   };
 
+
+  const pdfPreviewBlob = useBlobUrl(pdfPreview?.id ?? null);
+
   if (authLoading) {
     return (
       <AppLayout>
@@ -266,10 +269,6 @@ export default function Vault() {
   const vaultUsedMB = files.reduce((t, f) => t + f.size / (1024 * 1024), 0);
   const vaultMaxMB = limits.maxVaultSizeMB;
   const vaultPct = vaultMaxMB === -1 ? 0 : Math.min((vaultUsedMB / vaultMaxMB) * 100, 100);
-
-  const pdfPreviewBlob = useBlobUrl(pdfPreview?.id ?? null);
-
-
 
   return (
     <AppLayout>
