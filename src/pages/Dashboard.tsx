@@ -8,7 +8,11 @@ import { usePlanGate } from "@/hooks/usePlanGate";
 import { getPlanLimits } from "@/lib/plan";
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer } from "@/components/ui/chart";
+import { Button } from "@/components/ui/button";
 import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
   LineChart,
   Line,
   XAxis,
@@ -23,15 +27,16 @@ import {
   FolderOpen,
   ArrowRight,
   HardDrive,
+  Network,
+  FileText,
+  Tag,
+  Timer,
 } from "lucide-react";
-import type { DashboardSummaryDTO, Entity } from "@/types";
+import type { Entity } from "@/types";
 
 const formatNoteDate = (timestamp?: number) => {
   if (!timestamp) return "";
-  return new Date(timestamp).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  return new Date(timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 const formatTime = (seconds: number) => {
@@ -43,20 +48,42 @@ const formatTime = (seconds: number) => {
 
 const DashboardSkeleton = () => (
   <AppLayout>
-    <div className="p-6 lg:p-8 max-w-[1400px] mx-auto space-y-6">
-      <div className="h-11 rounded-3xl bg-zinc-900 animate-pulse" />
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-12 xl:col-span-7 h-[420px] rounded-3xl bg-zinc-900 animate-pulse" />
-        <div className="col-span-12 xl:col-span-5 h-[420px] rounded-3xl bg-zinc-900 animate-pulse" />
-        <div className="col-span-12 xl:col-span-7 h-[320px] rounded-3xl bg-zinc-900 animate-pulse" />
-        <div className="col-span-12 xl:col-span-5 space-y-6">
-          <div className="h-[160px] rounded-3xl bg-zinc-900 animate-pulse" />
-          <div className="h-[260px] rounded-3xl bg-zinc-900 animate-pulse" />
-        </div>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto space-y-4 sm:space-y-6">
+      <div className="h-12 rounded-xl bg-muted/40 animate-pulse" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-24 rounded-xl bg-muted/40 animate-pulse" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+        <div className="lg:col-span-7 h-[340px] rounded-xl bg-muted/40 animate-pulse" />
+        <div className="lg:col-span-5 h-[340px] rounded-xl bg-muted/40 animate-pulse" />
+        <div className="lg:col-span-7 h-[280px] rounded-xl bg-muted/40 animate-pulse" />
+        <div className="lg:col-span-5 h-[280px] rounded-xl bg-muted/40 animate-pulse" />
       </div>
     </div>
   </AppLayout>
 );
+
+interface StatCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string | number;
+  hint?: string;
+}
+
+function StatCard({ icon: Icon, label, value, hint }: StatCardProps) {
+  return (
+    <div className="bento-card flex flex-col gap-2 min-w-0">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Icon className="h-3.5 w-3.5 shrink-0" />
+        <span className="text-[11px] uppercase tracking-wider truncate">{label}</span>
+      </div>
+      <p className="text-2xl sm:text-3xl font-semibold text-foreground tabular-nums leading-tight">{value}</p>
+      {hint && <p className="text-[11px] text-muted-foreground truncate">{hint}</p>}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -179,236 +206,322 @@ export default function Dashboard() {
   const graphNodeCount = graphData?.nodes?.length ?? 0;
   const totalNotes = summary?.stats?.totalNotes ?? 0;
   const totalEntities = summary?.stats?.totalEntities ?? 0;
+  const storageUsed = summary?.storageUsage?.formattedUsed ?? "0 MB";
+  const storageLimit = summary?.storageUsage?.formattedLimit ?? "∞";
 
   if (summaryLoading) return <DashboardSkeleton />;
 
+  const greeting = (() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  })();
+  const displayName = user?.username || user?.email?.split("@")[0] || "there";
+
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-display font-semibold text-white tracking-tight">Dashboard</h1>
-            <p className="text-sm text-zinc-500 mt-1">A fixed sidebar with quick insights and live summaries.</p>
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto space-y-5 sm:space-y-6">
+        {/* Header */}
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-foreground truncate">
+              {greeting}, {displayName}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Here's what's happening across your knowledge graph.
+            </p>
           </div>
-          <button
-            onClick={() => navigate("/notes")}
-            className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-zinc-200"
-          >
-            <Plus className="h-4 w-4" /> New Note
-          </button>
-        </div>
+          <Button onClick={() => navigate("/notes")} size="sm" className="gap-2 self-start sm:self-auto">
+            <Plus className="h-4 w-4" /> New note
+          </Button>
+        </header>
 
-        <div className="grid gap-6 xl:grid-cols-12">
-          <section className="xl:col-span-7 rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Share2 className="h-4 w-4 text-accent" /> Notes Over Time
-              </div>
-              <span className="text-xs text-zinc-500">Click the graph area to explore</span>
-            </div>
-            <div
-              onClick={() => navigate("/graph")}
-              className="h-[320px] rounded-3xl bg-slate-900/70 p-4 cursor-pointer transition hover:bg-slate-900"
-            >
-              <ChartContainer config={{}} className="h-full">
-                <LineChart data={noteTimeline} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                  <CartesianGrid stroke="#262626" strokeDasharray="3 3" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                  <YAxis tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: "#0a0a0a", borderColor: "#262626" }} />
-                  <Line type="monotone" dataKey="count" stroke="#e4e4e7" strokeWidth={3} dot={false} />
-                </LineChart>
-              </ChartContainer>
-            </div>
-          </section>
+        {/* KPI grid */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <StatCard icon={FileText} label="Notes" value={totalNotes} hint={limits.maxNotes === -1 ? "Unlimited" : `of ${limits.maxNotes}`} />
+          <StatCard icon={Tag} label="Entities" value={totalEntities} hint={limits.maxEntities === -1 ? "Unlimited" : `of ${limits.maxEntities}`} />
+          <StatCard icon={Network} label="Graph nodes" value={graphNodeCount} hint="In your network" />
+          <StatCard icon={HardDrive} label="Storage" value={storageUsed} hint={`of ${storageLimit}`} />
+        </section>
 
-          <aside className="xl:col-span-5 grid gap-6">
-            <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <Activity className="h-4 w-4 text-zinc-400" /> System Usage
+        {/* Main grid */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+          {/* Notes timeline */}
+          <div className="bento-card lg:col-span-7 flex flex-col">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="bento-icon-box !h-8 !w-8">
+                  <Share2 className="h-4 w-4" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-zinc-400">
-                  {user?.plan || "FREE"}
-                </span>
-              </div>
-
-              {usage ? (
-                <div className="space-y-5">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
-                      <span>Notes</span>
-                      <span className="text-zinc-200">{usage.notesCount} / {limits.maxNotes === -1 ? "∞" : limits.maxNotes}</span>
-                    </div>
-                    <Progress value={limits.maxNotes === -1 ? 0 : Math.min((usage.notesCount / limits.maxNotes) * 100, 100)} className="h-2 rounded-full bg-zinc-800" />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
-                      <span>Entities</span>
-                      <span className="text-zinc-200">{usage.entitiesCount} / {limits.maxEntities === -1 ? "∞" : limits.maxEntities}</span>
-                    </div>
-                    <Progress value={limits.maxEntities === -1 ? 0 : Math.min((usage.entitiesCount / limits.maxEntities) * 100, 100)} className="h-2 rounded-full bg-zinc-800" />
-                  </div>
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-foreground">Notes over time</h2>
+                  <p className="text-xs text-muted-foreground">Last 14 days</p>
                 </div>
-              ) : (
-                <div className="text-sm text-zinc-500">Loading usage...</div>
-              )}
-
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 mb-1">
-                      <HardDrive className="h-3 w-3" /> Storage Vault
-                    </div>
-                    <p className="text-2xl font-semibold text-white">{summary?.storageUsage?.formattedUsed ?? "0 MB"}</p>
-                  </div>
-                  <span className="text-xs text-zinc-500">/ {summary?.storageUsage?.formattedLimit ?? "∞"}</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <FolderOpen className="h-4 w-4 text-zinc-400" /> Recent Notes
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigate("/notes")}
-                  className="text-xs uppercase text-zinc-500 hover:text-white"
-                >
-                  View All
-                </button>
-              </div>
-              <div className="space-y-2">
-                {recentNotes.length > 0 ? (
-                  recentNotes.map((note, index) => (
-                    <button
-                      key={note.id}
-                      type="button"
-                      onClick={() => navigate(`/notes/${note.id}`)}
-                      className={`w-full rounded-3xl border px-4 py-4 text-left transition-colors ${index % 2 === 0 ? "bg-slate-950/70" : "bg-slate-950/60"} hover:border-white/10 hover:bg-white/5`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm font-medium text-white truncate">{note.title}</p>
-                        <ArrowRight className="h-4 w-4 text-zinc-500" />
-                      </div>
-                      <p className="mt-2 text-xs text-zinc-500">{formatNoteDate(note.createdAtTimestamp)}</p>
-                    </button>
-                  ))
-                ) : (
-                  <div className="rounded-3xl border border-dashed border-white/10 bg-slate-950/60 p-8 text-center text-sm text-zinc-500">
-                    No recent notes available.
-                  </div>
-                )}
-              </div>
-            </section>
-          </aside>
-
-          <section className="xl:col-span-7 rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4 mb-5">
-              <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Activity className="h-4 w-4 text-zinc-400" /> Today's Activities
               </div>
               <button
                 type="button"
-                onClick={() => navigate("/activities")}
-                className="text-xs uppercase text-zinc-500 hover:text-white"
+                onClick={() => navigate("/graph")}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Explore graph →
+              </button>
+            </div>
+            <div className="h-[220px] sm:h-[260px] -mx-2">
+              <ChartContainer config={{}} className="h-full w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={noteTimeline} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="notesFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} interval="preserveStartEnd" />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} width={28} allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "hsl(var(--popover))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: 8,
+                        fontSize: 12,
+                      }}
+                      labelStyle={{ color: "hsl(var(--muted-foreground))" }}
+                    />
+                    <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#notesFill)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
+          </div>
+
+          {/* Plan usage */}
+          <div className="bento-card lg:col-span-5 flex flex-col">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="bento-icon-box !h-8 !w-8">
+                  <Activity className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm font-semibold text-foreground">Plan usage</h2>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground bg-muted/40 px-2 py-1 rounded-md">
+                {user?.plan || "FREE"}
+              </span>
+            </div>
+
+            {usage ? (
+              <div className="space-y-4 flex-1">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Notes</span>
+                    <span className="text-foreground tabular-nums">
+                      {usage.notesCount} / {limits.maxNotes === -1 ? "∞" : limits.maxNotes}
+                    </span>
+                  </div>
+                  <Progress value={limits.maxNotes === -1 ? 0 : Math.min((usage.notesCount / limits.maxNotes) * 100, 100)} className="h-1.5" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Entities</span>
+                    <span className="text-foreground tabular-nums">
+                      {usage.entitiesCount} / {limits.maxEntities === -1 ? "∞" : limits.maxEntities}
+                    </span>
+                  </div>
+                  <Progress value={limits.maxEntities === -1 ? 0 : Math.min((usage.entitiesCount / limits.maxEntities) * 100, 100)} className="h-1.5" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Vault storage</span>
+                    <span className="text-foreground tabular-nums">{storageUsed} / {storageLimit}</span>
+                  </div>
+                  <Progress
+                    value={
+                      limits.maxVaultSizeMB === -1
+                        ? 0
+                        : Math.min((usage.vaultSizeMB / limits.maxVaultSizeMB) * 100, 100)
+                    }
+                    className="h-1.5"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">Loading usage…</div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => navigate("/subscription")}
+              className="mt-5 text-xs text-muted-foreground hover:text-foreground self-start"
+            >
+              Manage subscription →
+            </button>
+          </div>
+
+          {/* Recent notes */}
+          <div className="bento-card lg:col-span-5 flex flex-col">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="bento-icon-box !h-8 !w-8">
+                  <FolderOpen className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm font-semibold text-foreground">Recent notes</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate("/notes")}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                View all
+              </button>
+            </div>
+            <div className="space-y-1.5 flex-1">
+              {recentNotes.length > 0 ? (
+                recentNotes.map((note) => (
+                  <button
+                    key={note.id}
+                    type="button"
+                    onClick={() => navigate(`/notes/${note.id}`)}
+                    className="group w-full rounded-lg border border-transparent px-3 py-2.5 text-left transition-colors hover:bg-muted/40 hover:border-border"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-foreground truncate">{note.title || "Untitled"}</p>
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{formatNoteDate(note.createdAtTimestamp)}</p>
+                  </button>
+                ))
+              ) : (
+                <div className="rounded-lg border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                  No recent notes yet.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Today's activities */}
+          <div className="bento-card lg:col-span-7 flex flex-col">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="bento-icon-box !h-8 !w-8">
+                  <Activity className="h-4 w-4" />
+                </div>
+                <h2 className="text-sm font-semibold text-foreground">Today's activities</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate("/time-tracking")}
+                className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Open
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="grid gap-2 sm:grid-cols-2 flex-1">
               {todayActivities.length > 0 ? (
                 todayActivities.map((item) => (
-                  <div key={item.id} className="rounded-3xl border border-white/10 bg-slate-950/70 p-4">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-white truncate">{item.title}</p>
-                        <p className="text-xs text-zinc-500">Tracked today</p>
-                      </div>
-                      <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-zinc-300">{item.time}</span>
-                    </div>
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-border bg-muted/20 px-3 py-2.5 flex items-center justify-between gap-3 min-w-0"
+                  >
+                    <p className="text-sm font-medium text-foreground truncate">{item.title}</p>
+                    <span className="rounded-md bg-background/60 px-2 py-0.5 text-[11px] tabular-nums text-foreground shrink-0">
+                      {item.time}
+                    </span>
                   </div>
                 ))
               ) : (
-                <div className="rounded-3xl border border-dashed border-white/10 bg-slate-950/60 p-8 text-center text-sm text-zinc-500">
-                  No activities tracked for today.
+                <div className="sm:col-span-2 rounded-lg border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                  No activities tracked today.
                 </div>
               )}
             </div>
-          </section>
+          </div>
 
-          <aside className="xl:col-span-5 grid gap-6">
-            <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-              <h2 className="text-sm font-semibold text-white mb-4">Summary Counters</h2>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
-                  <p className="text-3xl font-semibold text-accent">{graphNodeCount}</p>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Nodes</p>
+          {/* Timers */}
+          <div className="bento-card lg:col-span-12 flex flex-col">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="bento-icon-box !h-8 !w-8">
+                  <Timer className="h-4 w-4" />
                 </div>
-                <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
-                  <p className="text-3xl font-semibold text-zinc-400">{totalNotes}</p>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Notes</p>
-                </div>
-                <div className="rounded-3xl bg-slate-950/70 p-4 text-center">
-                  <p className="text-3xl font-semibold text-zinc-400">{totalEntities}</p>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-zinc-500">Total Entidades</p>
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-foreground">Timers</h2>
+                  <p className="text-xs text-muted-foreground">Tap to inspect a timer's daily trend.</p>
                 </div>
               </div>
-            </section>
+              <button
+                type="button"
+                onClick={() => navigate("/time-tracking")}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Open
+              </button>
+            </div>
 
-            <section className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <div>
-                  <h2 className="text-sm font-semibold text-white">Timers</h2>
-                  <p className="text-xs text-zinc-500">Select a timer to inspect trends.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigate("/activities")}
-                  className="text-xs uppercase text-zinc-500 hover:text-white"
-                >
-                  Open
-                </button>
-              </div>
-              <div className="flex gap-3 overflow-x-auto pb-3 mb-4">
-                {Array.isArray(timerSummaries) && timerSummaries.length > 0 ? (
-                  timerSummaries.slice(0, 5).map((timer: any) => (
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 mb-4 snap-x">
+              {Array.isArray(timerSummaries) && timerSummaries.length > 0 ? (
+                timerSummaries.slice(0, 8).map((timer: any) => {
+                  const active = selectedTimer === timer.entityId;
+                  return (
                     <button
                       key={timer.entityId}
                       type="button"
                       onClick={() => setSelectedTimer(timer.entityId)}
-                      className={`min-w-[120px] rounded-3xl border px-4 py-3 text-left transition ${selectedTimer === timer.entityId ? "border-accent bg-accent/10 text-white" : "border-white/10 bg-slate-950/70 text-zinc-300 hover:border-white/20"}`}
+                      className={`shrink-0 snap-start min-w-[140px] max-w-[180px] rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                        active
+                          ? "border-primary/60 bg-primary/10"
+                          : "border-border bg-muted/20 hover:border-border/80 hover:bg-muted/40"
+                      }`}
                     >
-                      <p className="text-sm font-medium truncate">{timer.entityTitle}</p>
-                      <p className="mt-2 text-xs text-zinc-500">{timer.formattedTotal ?? formatTime(timer.totalSeconds ?? 0)}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{timer.entityTitle}</p>
+                      <p className="mt-1 text-[11px] tabular-nums text-muted-foreground">
+                        {timer.formattedTotal ?? formatTime(timer.totalSeconds ?? 0)}
+                      </p>
                     </button>
-                  ))
-                ) : (
-                  <div className="min-w-full rounded-3xl border border-dashed border-white/10 bg-slate-950/60 p-6 text-center text-sm text-zinc-500">
-                    No timers found.
-                  </div>
-                )}
-              </div>
-              <div className="h-[260px] rounded-3xl border border-white/10 bg-slate-950/70 p-4">
-                {selectedTimer && timerChartData.length > 0 ? (
-                  <ChartContainer config={{}} className="h-full">
-                    <LineChart data={timerChartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                      <CartesianGrid stroke="#262626" strokeDasharray="3 3" />
-                      <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                      <YAxis tickLine={false} axisLine={false} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-                      <Tooltip contentStyle={{ background: "#0a0a0a", borderColor: "#262626" }} />
-                      <Line type="monotone" dataKey="value" stroke="#a1a1aa" strokeWidth={3} dot={false} />
+                  );
+                })
+              ) : (
+                <div className="flex-1 rounded-lg border border-dashed border-border bg-muted/20 p-4 text-center text-sm text-muted-foreground">
+                  No timers yet.
+                </div>
+              )}
+            </div>
+
+            <div className="h-[200px] sm:h-[240px] rounded-lg border border-border bg-muted/10 p-2">
+              {selectedTimer && timerChartData.length > 0 ? (
+                <ChartContainer config={{}} className="h-full w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={timerChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                      <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                        width={32}
+                        tickFormatter={(v) => `${Math.round(Number(v) / 60)}m`}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          background: "hsl(var(--popover))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                        formatter={(v: any) => [formatTime(Number(v)), "Time"]}
+                      />
+                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
                     </LineChart>
-                  </ChartContainer>
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-zinc-500">Select a timer to view its 7-day activity.</div>
-                )}
-              </div>
-            </section>
-          </aside>
-        </div>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                  {selectedTimer ? "No data for this timer yet." : "Select a timer to view its trend."}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
     </AppLayout>
   );
