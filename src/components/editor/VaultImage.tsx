@@ -1,32 +1,8 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer, NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { useEffect, useState } from "react";
-import { vaultApi } from "@/lib/api";
+import { resolveVaultBlob } from "@/lib/vault-blob";
 import { Loader2, ImageOff } from "lucide-react";
-
-// Cache blob URLs per vault file id (per session)
-const blobCache = new Map<string, string>();
-const pending = new Map<string, Promise<string>>();
-
-async function resolveVaultBlob(fileId: string): Promise<string> {
-  const cached = blobCache.get(fileId);
-  if (cached) return cached;
-  const inFlight = pending.get(fileId);
-  if (inFlight) return inFlight;
-
-  const p = (async () => {
-    const res = await vaultApi.download(fileId);
-    const url = URL.createObjectURL(res.data as Blob);
-    blobCache.set(fileId, url);
-    return url;
-  })();
-  pending.set(fileId, p);
-  try {
-    return await p;
-  } finally {
-    pending.delete(fileId);
-  }
-}
 
 function VaultImageView({ node }: NodeViewProps) {
   const vaultId: string | null = node.attrs.vaultId ?? null;
@@ -37,10 +13,6 @@ function VaultImageView({ node }: NodeViewProps) {
   useEffect(() => {
     let cancelled = false;
     if (!vaultId) return;
-    if (blobCache.has(vaultId)) {
-      setSrc(blobCache.get(vaultId)!);
-      return;
-    }
     setError(false);
     resolveVaultBlob(vaultId)
       .then((url) => { if (!cancelled) setSrc(url); })

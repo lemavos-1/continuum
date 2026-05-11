@@ -54,6 +54,22 @@ public class VaultController {
         return ResponseEntity.ok(files.stream().map(this::toDto).toList());
     }
 
+    @DeleteMapping(value = "/files/{fileId}")
+    public ResponseEntity<Void> deleteFile(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String fileId) {
+        User user = userRepo.findById(userDetails.getUserId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
+        boolean exists = files.stream().anyMatch(f -> f.fileId().equals(fileId));
+        if (!exists) {
+            throw new NotFoundException("File not found");
+        }
+        vaultStorageService.deleteFile(user.getVaultId(), fileId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping(value = "/files/{fileId}")
     public ResponseEntity<byte[]> downloadFile(
             @AuthenticationPrincipal CustomUserDetails userDetails,

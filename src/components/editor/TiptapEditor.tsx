@@ -30,10 +30,17 @@ import { useToast } from "@/hooks/use-toast";
 import { MentionList, type MentionListRef, type MentionItem } from "./MentionList";
 import { SlashCommands } from "./SlashCommands";
 import { VaultImage } from "./VaultImage";
+import { VaultPdf } from "./VaultPdf";
+import { VaultAudio } from "./VaultAudio";
 
 const IMAGE_MIME_RE = /^image\//i;
 const IMAGE_EXT_RE = /\.(png|jpe?g|webp|gif|svg)$/i;
 const isImageFile = (file: File) => IMAGE_MIME_RE.test(file.type) || IMAGE_EXT_RE.test(file.name);
+const PDF_EXT_RE = /\.pdf$/i;
+const isPdfFile = (file: File) => file.type === "application/pdf" || PDF_EXT_RE.test(file.name);
+const AUDIO_MIME_RE = /^audio\//i;
+const AUDIO_EXT_RE = /\.(mp3|m4a|wav|ogg|aac)$/i;
+const isAudioFile = (file: File) => AUDIO_MIME_RE.test(file.type) || AUDIO_EXT_RE.test(file.name);
 
 const lowlight = createLowlight(common);
 
@@ -237,6 +244,8 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         }),
         Image.configure({ HTMLAttributes: { class: "rounded-lg my-4 max-w-full" } }),
         VaultImage,
+        VaultPdf,
+        VaultAudio,
         TaskList,
         TaskItem.configure({ nested: true }),
         Table.configure({ resizable: true }),
@@ -324,10 +333,17 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
 
         if (isImageFile(file)) {
           editor.chain().focus().insertContent([
-            {
-              type: "vaultImage",
-              attrs: { vaultId: vaultFile.id, alt: vaultFile.fileName },
-            },
+            { type: "vaultImage", attrs: { vaultId: vaultFile.id, alt: vaultFile.fileName } },
+            { type: "paragraph" },
+          ]).run();
+        } else if (isPdfFile(file)) {
+          editor.chain().focus().insertContent([
+            { type: "vaultPdf", attrs: { vaultId: vaultFile.id, fileName: vaultFile.fileName } },
+            { type: "paragraph" },
+          ]).run();
+        } else if (isAudioFile(file)) {
+          editor.chain().focus().insertContent([
+            { type: "vaultAudio", attrs: { vaultId: vaultFile.id, fileName: vaultFile.fileName } },
             { type: "paragraph" },
           ]).run();
         } else {
