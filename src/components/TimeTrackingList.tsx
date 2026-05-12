@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { entitiesApi } from '@/lib/api';
 import { useTimeTracking, type TimeEntitySummary } from '@/hooks/useTimeTracking';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Play, Pause, MoreVertical, FolderOpen, Briefcase, Activity } from 'lucide-react';
+import { Play, Pause, MoreVertical, FolderOpen, Briefcase, Activity, Plus } from 'lucide-react';
 import { Flame } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import { ActivityCompletionCalendar } from '@/components/ActivityCompletionCalendar';
+import { CreateEntityDialog } from '@/components/CreateEntityDialog';
 import type { Entity } from '@/types';
 
 /**
@@ -18,7 +17,9 @@ import type { Entity } from '@/types';
  */
 export function TimeTrackingList({ filterType }: { filterType?: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
   const { getAllSummaries, startTimer, stopTimer, formatSeconds, activeTimers, isTimerActive, getElapsedSeconds, isStarting, isStopping } = useTimeTracking();
 
   const { data: trackableEntities, isLoading: entitiesLoading } = useQuery({
@@ -65,9 +66,9 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        <Button onClick={() => navigate('/entities/new')} className="gap-2">
-          <FolderOpen className="w-4 h-4" />
-          New {filterType ? typeLabels[filterType] : 'Project'}
+        <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Plus className="w-4 h-4" />
+          New {filterType ? typeLabels[filterType] : 'Entity'}
         </Button>
       </div>
       <div className="flex flex-col lg:flex-row gap-4">
@@ -85,7 +86,7 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
               <p className="text-sm text-zinc-500 mb-4">
                 Create a {filterType ? typeLabels[filterType]?.toLowerCase() : 'project or activity'} to start tracking.
               </p>
-              <Button onClick={() => navigate('/entities/new')}>
+              <Button onClick={() => setCreateOpen(true)}>
                 Create {filterType ? typeLabels[filterType] : 'Entity'}
               </Button>
             </Card>
@@ -210,6 +211,17 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
           )}
         </div>
       </div>
+
+      <CreateEntityDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        defaultType={filterType || 'PROJECT'}
+        lockType={!!filterType}
+        onCreated={(entity) => {
+          queryClient.invalidateQueries({ queryKey: ['entities'] });
+          navigate(`/entities/${entity.id}`);
+        }}
+      />
     </div>
   );
 }
