@@ -81,16 +81,14 @@ public class VaultController {
         User user = userRepo.findById(userDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // URL decode the fileId to handle encoded filenames
-        String decodedFileId = URLDecoder.decode(fileId, StandardCharsets.UTF_8);
-
+        // Do not URLDecoder.decode — see deleteFile note above.
         List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
         VaultStorageService.VaultFileDescriptor descriptor = files.stream()
-                .filter(f -> f.fileId().equals(decodedFileId))
+                .filter(f -> f.fileId().equals(fileId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
-        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), decodedFileId)
+        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), fileId)
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
         return ResponseEntity.ok()
