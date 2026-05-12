@@ -55,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           maxNotes: typeof data.maxNotes === "number" ? data.maxNotes : Number(data.maxNotes ?? -1),
           historyDays: typeof data.historyDays === "number" ? data.historyDays : Number(data.historyDays ?? -1),
           maxVaultSizeMB: typeof data.maxVaultSizeMB === "number" ? data.maxVaultSizeMB : Number(data.maxVaultSizeMB ?? -1),
+          maxMetadataSizeKb: typeof data.maxMetadataSizeKb === "number" ? data.maxMetadataSizeKb : Number(data.maxMetadataSizeKb ?? -1),
           advancedMetrics: Boolean(data.advancedMetrics),
           dataExport: Boolean(data.dataExport),
           calendarSync: Boolean(data.calendarSync),

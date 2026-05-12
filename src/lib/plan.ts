@@ -5,6 +5,7 @@ export interface CurrentPlanLimits {
   maxNotes: number;
   historyDays: number;
   maxVaultSizeMB: number;
+  maxMetadataSizeKb: number;
 }
 
 export function getPlanLimits(user: User | null): CurrentPlanLimits {
@@ -13,6 +14,7 @@ export function getPlanLimits(user: User | null): CurrentPlanLimits {
     maxNotes: user?.maxNotes ?? -1,
     historyDays: user?.historyDays ?? -1,
     maxVaultSizeMB: user?.maxVaultSizeMB ?? -1,
+    maxMetadataSizeKb: user?.maxMetadataSizeKb ?? -1,
   };
 }
 

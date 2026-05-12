@@ -449,15 +449,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             >
               <UserIcon className="mr-2 h-4 w-4" /> Profile
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                navigate("/profile");
-                setSidebarOpen(false);
-              }}
-              className="cursor-pointer focus:bg-white/5"
-            >
-              <Settings className="mr-2 h-4 w-4" /> Settings
-            </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-white/10" />
             <DropdownMenuItem
               onClick={handleLogout}

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { BadgeCheck, CreditCard, Loader2, Moon, Sun, Mail, User, Calendar, Lock } from "lucide-react";
+import { BadgeCheck, Loader2, Moon, Sun, Mail, User, Calendar, Lock } from "lucide-react";
 
 const formatLimitValue = (value: number, suffix = "") => (value === -1 ? "Unlimited" : `${value}${suffix}`);
 
@@ -40,10 +40,26 @@ export default function Profile() {
   const currentPlan = getCurrentPlan(user);
   const limits = getPlanLimits(user);
 
-  const resources = useMemo(() => ([
-    { label: "Notes", current: usage?.notesCount ?? 0, max: limits.maxNotes, suffix: "" },
-    { label: "Entities", current: usage?.entitiesCount ?? 0, max: limits.maxEntities, suffix: "" },
-  ]), [usage, limits]);
+  const usageResources = useMemo(
+    () => [
+      { label: "Notes", current: usage?.notesCount ?? 0, max: limits.maxNotes, suffix: "" },
+      { label: "Entities", current: usage?.entitiesCount ?? 0, max: limits.maxEntities, suffix: "" },
+      { label: "Vault storage", current: usage?.vaultSizeMB ?? 0, max: limits.maxVaultSizeMB, suffix: " MB" },
+    ],
+    [usage, limits],
+  );
+
+  const planDetails = useMemo(
+    () => [
+      { label: "Vault limit", value: limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB` },
+      { label: "Upload metadata limit", value: limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB` },
+      { label: "History retention", value: limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days` },
+      { label: "Advanced metrics", value: user?.advancedMetrics ? "Enabled" : "Disabled" },
+      { label: "Data export", value: user?.dataExport ? "Enabled" : "Disabled" },
+      { label: "Calendar sync", value: user?.calendarSync ? "Enabled" : "Disabled" },
+    ],
+    [limits, user],
+  );
 
   const handleSave = async () => {
     setSaving(true);
@@ -215,7 +231,7 @@ export default function Profile() {
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {resources.map((resource) => {
+              {usageResources.map((resource) => {
                 const unlimited = resource.max === -1;
                 const percent = unlimited ? 100 : Math.min((resource.current / resource.max) * 100, 100);
                 const isCritical = percent >= 90;
@@ -257,6 +273,17 @@ export default function Profile() {
               })}
             </div>
           )}
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {planDetails.map((detail) => (
+              <div key={detail.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center justify-between gap-2 text-xs text-white/50">
+                  <span>{detail.label}</span>
+                  <span className="font-semibold text-white/90">{detail.value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     </AppLayout>

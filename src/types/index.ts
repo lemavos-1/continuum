@@ -13,6 +13,7 @@ export interface User {
   maxNotes?: number;
   historyDays?: number;
   maxVaultSizeMB?: number;
+  maxMetadataSizeKb?: number;
   advancedMetrics?: boolean;
   dataExport?: boolean;
   calendarSync?: boolean;
