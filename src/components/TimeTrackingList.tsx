@@ -17,7 +17,9 @@ import type { Entity } from '@/types';
  */
 export function TimeTrackingList({ filterType }: { filterType?: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
   const { getAllSummaries, startTimer, stopTimer, formatSeconds, activeTimers, isTimerActive, getElapsedSeconds, isStarting, isStopping } = useTimeTracking();
 
   const { data: trackableEntities, isLoading: entitiesLoading } = useQuery({
