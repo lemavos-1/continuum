@@ -144,6 +144,11 @@ export default function Dashboard() {
     }
   }, [selectedTimer, timerSummaries]);
 
+  const vaultUsedMB = vaultFiles?.reduce((t, f) => t + f.size / (1024 * 1024), 0) ?? 0;
+  const vaultMaxMB = limits.maxVaultSizeMB;
+  const storageUsed = vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`;
+  const storageLimit = vaultMaxMB === -1 ? "Unlimited" : `${vaultMaxMB} MB`;
+
   useEffect(() => {
     if (vaultFiles == null || usage == null) return;
     const storageMB = Number(vaultUsedMB.toFixed(2));
@@ -211,12 +216,6 @@ export default function Dashboard() {
   const graphNodeCount = graphData?.nodes?.length ?? 0;
   const totalNotes = summary?.stats?.totalNotes ?? 0;
   const totalEntities = summary?.stats?.totalEntities ?? 0;
-
-  // Calculate vault storage the same way as /vault page
-  const vaultUsedMB = vaultFiles?.reduce((t, f) => t + f.size / (1024 * 1024), 0) ?? 0;
-  const vaultMaxMB = limits.maxVaultSizeMB;
-  const storageUsed = vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`;
-  const storageLimit = vaultMaxMB === -1 ? "Unlimited" : `${vaultMaxMB} MB`;
 
   if (summaryLoading) return <DashboardSkeleton />;
 
