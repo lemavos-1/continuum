@@ -93,6 +93,30 @@ export default function Dashboard() {
   const limits = getPlanLimits(user);
 
   const [selectedTimer, setSelectedTimer] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportData = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const { authApi } = await import("@/lib/api");
+      const res = await authApi.exportData();
+      const json = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "continuum-backup.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Export failed", e);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const { data: summary, isLoading: summaryLoading } = useQuery({
     queryKey: ["dashboard", "summary"],
