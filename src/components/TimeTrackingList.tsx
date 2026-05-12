@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { entitiesApi } from '@/lib/api';
 import { useTimeTracking, type TimeEntitySummary } from '@/hooks/useTimeTracking';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Play, Pause, MoreVertical, FolderOpen, Briefcase, Activity } from 'lucide-react';
+import { Play, Pause, MoreVertical, FolderOpen, Briefcase, Activity, Plus } from 'lucide-react';
 import { Flame } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import { ActivityCompletionCalendar } from '@/components/ActivityCompletionCalendar';
+import { CreateEntityDialog } from '@/components/CreateEntityDialog';
 import type { Entity } from '@/types';
 
 /**
