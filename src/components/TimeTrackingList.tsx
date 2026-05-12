@@ -86,7 +86,7 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
               <p className="text-sm text-zinc-500 mb-4">
                 Create a {filterType ? typeLabels[filterType]?.toLowerCase() : 'project or activity'} to start tracking.
               </p>
-              <Button onClick={() => navigate('/entities/new')}>
+              <Button onClick={() => setCreateOpen(true)}>
                 Create {filterType ? typeLabels[filterType] : 'Entity'}
               </Button>
             </Card>
