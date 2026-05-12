@@ -78,11 +78,8 @@ export default function Profile() {
       { label: "Vault limit", value: limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB` },
       { label: "Upload metadata limit", value: limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB` },
       { label: "History retention", value: limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days` },
-      { label: "Advanced metrics", value: user?.advancedMetrics ? "Enabled" : "Disabled" },
-      { label: "Data export", value: user?.dataExport ? "Enabled" : "Disabled" },
-      { label: "Calendar sync", value: user?.calendarSync ? "Enabled" : "Disabled" },
     ],
-    [limits, user],
+    [limits],
   );
 
   const handleSave = async () => {
