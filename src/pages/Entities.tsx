@@ -42,10 +42,6 @@ export default function Entities() {
   const { canCreateEntity, getLimitMessage, refresh: refreshUsage, applyUsageDelta } = usePlanGate();
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [newType, setNewType] = useState<string>("TOPIC");
-  const [newDesc, setNewDesc] = useState("");
-  const [creating, setCreating] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   const { data: timeSummaries } = useTimeTracking().getAllSummaries();
