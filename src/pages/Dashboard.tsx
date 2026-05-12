@@ -146,7 +146,7 @@ export default function Dashboard() {
 
   const vaultUsedMB = vaultFiles?.reduce((t, f) => t + f.size / (1024 * 1024), 0) ?? 0;
   const vaultMaxMB = limits.maxVaultSizeMB;
-  const storageUsed = vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`;
+  const storageUsed = `${vaultUsedMB.toFixed(1)} MB`;
   const storageLimit = vaultMaxMB === -1 ? "Unlimited" : `${vaultMaxMB} MB`;
 
   useEffect(() => {
