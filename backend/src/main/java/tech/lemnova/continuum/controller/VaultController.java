@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tech.lemnova.continuum.application.exception.NotFoundException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Set;
 import tech.lemnova.continuum.application.service.EntityIndexService;
