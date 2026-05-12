@@ -67,22 +67,6 @@ export default function Entities() {
 
   useEffect(() => { fetchData(); }, []);
 
-  const handleCreate = async () => {
-    if (!canCreateEntity) { setCreateOpen(false); setUpgradeOpen(true); return; }
-    setCreating(true);
-    try {
-      const { data } = await entitiesApi.create(newTitle, newType, newDesc || undefined);
-      setEntities((prev) => [...prev, data]);
-      setCreateOpen(false); setNewTitle(""); setNewDesc("");
-      applyUsageDelta({ entitiesCount: 1, activitiesCount: newType === "ACTIVITY" ? 1 : 0 });
-      void refreshUsage();
-    } catch (err: any) {
-      if (err.response?.status === 403) { setCreateOpen(false); setUpgradeOpen(true); }
-      else toast({ title: "Error", description: err.response?.data?.message || "Limit reached?", variant: "destructive" });
-    } finally { setCreating(false); }
-  };
-
-
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
