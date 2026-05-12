@@ -211,6 +211,17 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
           )}
         </div>
       </div>
+
+      <CreateEntityDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        defaultType={filterType || 'PROJECT'}
+        lockType={!!filterType}
+        onCreated={(entity) => {
+          queryClient.invalidateQueries({ queryKey: ['entities'] });
+          navigate(`/entities/${entity.id}`);
+        }}
+      />
     </div>
   );
 }
