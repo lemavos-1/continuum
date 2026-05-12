@@ -39,7 +39,7 @@ export default function Entities() {
   const typeFilter = searchParams.get("type");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { canCreateEntity, getLimitMessage, refresh: refreshUsage, applyUsageDelta } = usePlanGate();
+  const { refresh: refreshUsage, applyUsageDelta } = usePlanGate();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
