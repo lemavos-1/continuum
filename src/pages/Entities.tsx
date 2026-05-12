@@ -112,39 +112,15 @@ export default function Entities() {
       <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="font-display text-3xl font-semibold tracking-tight text-white">Entities</h1>
-          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="bg-white text-black hover:bg-gray-100 shadow-lg"><Plus className="w-4 h-4 mr-1" /> New Entity</Button>
-            </DialogTrigger>
-            <DialogContent className="bg-card border-border">
-              <DialogHeader>
-                <DialogTitle className="text-foreground">Create Entity</DialogTitle>
-                <DialogDescription className="text-muted-foreground">Create a new entity to organize your knowledge and track activities.</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Title</Label>
-                  <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Entity name" className="bg-accent border-border/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Type</Label>
-                  <Select value={newType} onValueChange={setNewType}>
-                    <SelectTrigger className="bg-accent border-border/50"><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-popover border-border">
-                      {types.map((t) => <SelectItem key={t} value={t}>{typeLabels[t]}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Description (optional)</Label>
-                  <Input value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="Description" className="bg-accent border-border/50" />
-                </div>
-                <Button onClick={handleCreate} className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={creating || !newTitle}>
-                  {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null} Create
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1">
+            <Plus className="w-4 h-4" /> New Entity
+          </Button>
+          <CreateEntityDialog
+            open={createOpen}
+            onOpenChange={setCreateOpen}
+            defaultType={(typeFilter as string) || "TOPIC"}
+            onCreated={(entity) => setEntities((prev) => [...prev, entity as Entity])}
+          />
         </div>
 
         <div className="flex gap-2 flex-wrap">
