@@ -304,6 +304,23 @@ export default function Profile() {
                 </div>
               </div>
             ))}
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-center justify-between gap-2 text-xs text-white/50">
+                <span>Data export</span>
+                {user?.dataExport ? (
+                  <button
+                    type="button"
+                    onClick={handleExportData}
+                    disabled={exporting}
+                    className="font-semibold text-white/90 underline-offset-2 hover:underline disabled:opacity-50"
+                  >
+                    {exporting ? "Exporting…" : "Download backup"}
+                  </button>
+                ) : (
+                  <span className="font-semibold text-white/60">Upgrade to enable</span>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       </div>
