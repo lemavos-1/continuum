@@ -9,9 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, Network, User, Briefcase, Hash, Building, Flame, Loader2, Trash2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CreateEntityDialog } from "@/components/CreateEntityDialog";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
 import type { EntityType } from "@/types";
 
