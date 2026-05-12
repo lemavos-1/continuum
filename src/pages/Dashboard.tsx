@@ -93,6 +93,30 @@ export default function Dashboard() {
   const limits = getPlanLimits(user);
 
   const [selectedTimer, setSelectedTimer] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportData = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const { authApi } = await import("@/lib/api");
+      const res = await authApi.exportData();
+      const json = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "continuum-backup.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Export failed", e);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const { data: summary, isLoading: summaryLoading } = useQuery({
     queryKey: ["dashboard", "summary"],
@@ -146,7 +170,7 @@ export default function Dashboard() {
 
   const vaultUsedMB = vaultFiles?.reduce((t, f) => t + f.size / (1024 * 1024), 0) ?? 0;
   const vaultMaxMB = limits.maxVaultSizeMB;
-  const storageUsed = vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`;
+  const storageUsed = `${vaultUsedMB.toFixed(1)} MB`;
   const storageLimit = vaultMaxMB === -1 ? "Unlimited" : `${vaultMaxMB} MB`;
 
   useEffect(() => {
@@ -360,12 +384,6 @@ export default function Dashboard() {
             <div className="space-y-4 mt-5 rounded-xl border border-white/10 bg-white/5 p-4">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Vault limit</span>
-                  <span className="text-foreground tabular-nums">
-                    {limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB`}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>History retention</span>
                   <span className="text-foreground">
                     {limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days`}
@@ -377,17 +395,20 @@ export default function Dashboard() {
                     {limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB`}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Advanced metrics</span>
-                  <span className="text-foreground">{user?.advancedMetrics ? "Enabled" : "Disabled"}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center justify-between text-xs text-muted-foreground sm:col-span-2">
                   <span>Data export</span>
-                  <span className="text-foreground">{user?.dataExport ? "Enabled" : "Disabled"}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Calendar sync</span>
-                  <span className="text-foreground">{user?.calendarSync ? "Enabled" : "Disabled"}</span>
+                  {user?.dataExport ? (
+                    <button
+                      type="button"
+                      onClick={handleExportData}
+                      disabled={exporting}
+                      className="text-foreground underline-offset-2 hover:underline disabled:opacity-50"
+                    >
+                      {exporting ? "Exporting…" : "Download backup"}
+                    </button>
+                  ) : (
+                    <span className="text-muted-foreground">Upgrade to enable</span>
+                  )}
                 </div>
               </div>
             </div>

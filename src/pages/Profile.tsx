@@ -26,7 +26,31 @@ export default function Profile() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const handleExportData = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const res = await authApi.exportData();
+      const json = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "continuum-backup.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast({ title: "Backup downloaded" });
+    } catch (e: any) {
+      toast({ title: "Export failed", description: e?.message ?? "Try again", variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -54,11 +78,8 @@ export default function Profile() {
       { label: "Vault limit", value: limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB` },
       { label: "Upload metadata limit", value: limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB` },
       { label: "History retention", value: limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days` },
-      { label: "Advanced metrics", value: user?.advancedMetrics ? "Enabled" : "Disabled" },
-      { label: "Data export", value: user?.dataExport ? "Enabled" : "Disabled" },
-      { label: "Calendar sync", value: user?.calendarSync ? "Enabled" : "Disabled" },
     ],
-    [limits, user],
+    [limits],
   );
 
   const handleSave = async () => {
@@ -283,6 +304,23 @@ export default function Profile() {
                 </div>
               </div>
             ))}
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-center justify-between gap-2 text-xs text-white/50">
+                <span>Data export</span>
+                {user?.dataExport ? (
+                  <button
+                    type="button"
+                    onClick={handleExportData}
+                    disabled={exporting}
+                    className="font-semibold text-white/90 underline-offset-2 hover:underline disabled:opacity-50"
+                  >
+                    {exporting ? "Exporting…" : "Download backup"}
+                  </button>
+                ) : (
+                  <span className="font-semibold text-white/60">Upgrade to enable</span>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       </div>

@@ -62,15 +62,15 @@ public class VaultController {
         User user = userRepo.findById(userDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // URL decode the fileId to handle encoded filenames
-        String decodedFileId = URLDecoder.decode(fileId, StandardCharsets.UTF_8);
-
+        // Spring already percent-decodes the path segment. The stored fileId may contain '+',
+        // which is a valid path char (only form-encoding treats '+' as space), so do NOT
+        // run URLDecoder on it — that would corrupt fileIds containing '+'.
         List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
-        boolean exists = files.stream().anyMatch(f -> f.fileId().equals(decodedFileId));
+        boolean exists = files.stream().anyMatch(f -> f.fileId().equals(fileId));
         if (!exists) {
             throw new NotFoundException("File not found");
         }
-        vaultStorageService.deleteFile(user.getVaultId(), decodedFileId);
+        vaultStorageService.deleteFile(user.getVaultId(), fileId);
         return ResponseEntity.noContent().build();
     }
 
@@ -81,16 +81,14 @@ public class VaultController {
         User user = userRepo.findById(userDetails.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // URL decode the fileId to handle encoded filenames
-        String decodedFileId = URLDecoder.decode(fileId, StandardCharsets.UTF_8);
-
+        // Do not URLDecoder.decode — see deleteFile note above.
         List<VaultStorageService.VaultFileDescriptor> files = vaultStorageService.listFiles(user.getVaultId());
         VaultStorageService.VaultFileDescriptor descriptor = files.stream()
-                .filter(f -> f.fileId().equals(decodedFileId))
+                .filter(f -> f.fileId().equals(fileId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
-        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), decodedFileId)
+        byte[] fileData = vaultStorageService.loadFile(user.getVaultId(), fileId)
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
         return ResponseEntity.ok()
