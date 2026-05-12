@@ -66,9 +66,9 @@ export function TimeTrackingList({ filterType }: { filterType?: string }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        <Button onClick={() => navigate('/entities/new')} className="gap-2">
-          <FolderOpen className="w-4 h-4" />
-          New {filterType ? typeLabels[filterType] : 'Project'}
+        <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Plus className="w-4 h-4" />
+          New {filterType ? typeLabels[filterType] : 'Entity'}
         </Button>
       </div>
       <div className="flex flex-col lg:flex-row gap-4">
