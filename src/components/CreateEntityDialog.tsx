@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { entitiesApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { usePlanGate } from "@/hooks/usePlanGate";
@@ -74,14 +74,9 @@ export function CreateEntityDialog({ open, onOpenChange, defaultType = "TOPIC", 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 ring-1 ring-white/10">
-              <Sparkles className="h-4 w-4 text-foreground" />
-            </div>
-            <div className="flex-1">
-              <DialogTitle>New {selected.label}</DialogTitle>
-              <DialogDescription>{selected.hint}</DialogDescription>
-            </div>
+          <div className="flex flex-col">
+            <DialogTitle>New {selected.label}</DialogTitle>
+            <DialogDescription>{selected.hint}</DialogDescription>
           </div>
         </DialogHeader>
 
