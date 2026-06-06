@@ -51,7 +51,7 @@ public class InsightsService {
     // Thresholds
     private static final double HIGH_RELEVANCE_THRESHOLD = 40.0;
     private static final long FORGOTTEN_DAYS_THRESHOLD = 20;
-    private static final double FORGOTTEN_MIN_SCORE = 6.0;
+    private static final double FORGOTTEN_MIN_SCORE = 3.0;
     private static final int DEFAULT_LIMIT = 10;
 
     // Note weights (v2 — boosted for sparse early data)
