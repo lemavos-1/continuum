@@ -407,7 +407,7 @@ public class InsightsService {
         double historicalMentions = Math.max(0, n.mentionCount() - n.recentMentions());
         return (historicalMentions * 2.5)
                 + (n.hoursTracked() * 1.8)
-                + (n.entityConnections() * 3.5)
+                + (n.entityConnections() * FORGOTTEN_NOTE_CONN_WEIGHT)
                 + (n.uniqueDaysReferenced() * 1.4);
     }
 
@@ -415,7 +415,7 @@ public class InsightsService {
         double historicalMentions = Math.max(0, e.mentionCount() - e.recentMentions());
         return (historicalMentions * 2.5)
                 + (e.hoursTracked() * 1.8)
-                + (e.relationsCount() * 3.5)
+                + (e.relationsCount() * FORGOTTEN_ENT_REL_WEIGHT)
                 + (e.uniqueDaysMentioned() * 1.4);
     }
 
