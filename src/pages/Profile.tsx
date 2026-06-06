@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "next-themes";
 import AppLayout from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { authApi } from "@/lib/api";
@@ -10,9 +9,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { BadgeCheck, Loader2, Moon, Sun, Mail, User, Calendar, Lock } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  UserIcon,
+  EnvelopeIcon,
+  ShieldCheckIcon,
+  CalendarIcon,
+  LockClosedIcon,
+  ArrowPathIcon,
+  ArrowDownTrayIcon,
+  ArrowUpTrayIcon,
+  SunIcon,
+  MoonIcon,
+} from "@heroicons/react/24/outline";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import MarkdownImportDialog from "@/components/import/MarkdownImportDialog";
 
 const formatLimitValue = (value: number, suffix = "") => (value === -1 ? "Unlimited" : `${value}${suffix}`);
 
@@ -22,12 +35,14 @@ export default function Profile() {
   const { toast } = useToast();
   const { usage, loading: usageLoading } = usePlanGate();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const handleExportData = async () => {
     if (exporting) return;
@@ -44,17 +59,13 @@ export default function Profile() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast({ title: "Backup downloaded" });
+      toast({ title: "Backup downloaded successfully" });
     } catch (e: any) {
-      toast({ title: "Export failed", description: e?.message ?? "Try again", variant: "destructive" });
+      toast({ title: "Export failed", description: e?.message ?? "Please try again", variant: "destructive" });
     } finally {
       setExporting(false);
     }
   };
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     setUsername(user?.username ?? "");
@@ -68,16 +79,16 @@ export default function Profile() {
     () => [
       { label: "Notes", current: usage?.notesCount ?? 0, max: limits.maxNotes, suffix: "" },
       { label: "Entities", current: usage?.entitiesCount ?? 0, max: limits.maxEntities, suffix: "" },
-      { label: "Vault storage", current: usage?.vaultSizeMB ?? 0, max: limits.maxVaultSizeMB, suffix: " MB" },
+      { label: "Vault Storage", current: usage?.vaultSizeMB ?? 0, max: limits.maxVaultSizeMB, suffix: " MB" },
     ],
     [usage, limits],
   );
 
   const planDetails = useMemo(
     () => [
-      { label: "Vault limit", value: limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB` },
-      { label: "Upload metadata limit", value: limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB` },
-      { label: "History retention", value: limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days` },
+      { label: "Vault Limit", value: limits.maxVaultSizeMB === -1 ? "Unlimited" : `${limits.maxVaultSizeMB} MB` },
+      { label: "Upload Metadata", value: limits.maxMetadataSizeKb === -1 ? "Unlimited" : `${limits.maxMetadataSizeKb} KB` },
+      { label: "Version History", value: limits.historyDays === -1 ? "Unlimited" : `${limits.historyDays} days` },
     ],
     [limits],
   );
@@ -85,16 +96,13 @@ export default function Profile() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await authApi.updateMe({
-        username,
-        name: username,
-      });
+      await authApi.updateMe({ username, name: username });
       await refreshUser();
       toast({ title: "Profile updated" });
     } catch (err: any) {
       toast({
         title: "Error saving profile",
-        description: err.response?.data?.message || "Try again",
+        description: err.response?.data?.message || "Please try again",
         variant: "destructive",
       });
     } finally {
@@ -104,226 +112,225 @@ export default function Profile() {
 
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-slate-50">Profile</h1>
-            <p className="text-sm text-slate-400 mt-1">Manage your account information.</p>
-          </div>
-        </div>
+      <div className="mx-auto max-w-5xl px-6 py-10 lg:px-12 lg:py-16 space-y-12">
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Account Section */}
-          <section className="space-y-4">
-            <div className="space-y-2">
-              <h2 className="font-display text-xl font-semibold text-white/90">Account</h2>
-              <p className="text-sm text-white/50">Manage your information and preferences.</p>
+        {/* HEADER */}
+        <header>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/30">Settings</p>
+          <h1 className="mt-2 font-serif text-5xl tracking-tight text-white">Profile</h1>
+          <p className="mt-2 text-sm text-white/50">Manage your account credentials and application preferences.</p>
+        </header>
+
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+
+          {/* ACCOUNT SECTION */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-sm font-semibold text-white/80">Account Details</h2>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 space-y-4">
+            <div className="space-y-5 border border-white/5 bg-white/[0.01] p-6 rounded-sm">
               <div className="space-y-2">
-                <Label htmlFor="profile-username" className="text-xs text-white/70 uppercase tracking-wider">Username</Label>
+                <Label htmlFor="profile-username" className="text-xs text-white/40">Username</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <UserIcon className="absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/30" />
                   <Input
                     id="profile-username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Your username"
-                    className="pl-10 bg-white/5 border border-white/10 text-white/90 placeholder:text-white/30 focus:border-white/30 focus:bg-white/10 transition-colors"
+                    className="w-full border-0 border-b border-white/10 bg-transparent pl-6 rounded-none text-sm text-white placeholder:text-white/20 focus:border-white/40 focus:outline-none focus:ring-0 focus-visible:ring-0"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="profile-email" className="text-xs text-white/70 uppercase tracking-wider">Email</Label>
+                <Label htmlFor="profile-email" className="text-xs text-white/40">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <EnvelopeIcon className="absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/20" />
                   <Input
                     id="profile-email"
                     type="email"
                     value={email}
                     readOnly
-                    className="pl-10 pr-16 bg-white/5 border border-white/10 text-white/50 cursor-not-allowed"
+                    className="w-full border-0 border-b border-white/5 bg-transparent pl-6 pr-16 rounded-none text-sm text-white/45 cursor-not-allowed focus:outline-none focus:ring-0"
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-white/50 bg-white/10 px-2 py-1 rounded">
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-white/40 bg-white/[0.04] border border-white/5 px-1.5 py-0.5 rounded-sm">
                     Google
                   </span>
                 </div>
-                <p className="text-xs text-white/40">Connected via Google Sign-In</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3 space-y-1">
-                  <p className="text-xs text-white/50 uppercase tracking-wider font-semibold">Plan</p>
-                  <p className="text-base font-semibold text-white/90">{currentPlan}</p>
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/[0.04]">
+                <div className="hidden">
+                  <p className="text-xs text-white/30">Current Plan</p>
+                  <p className="mt-1 text-sm font-medium text-white/70">{currentPlan}</p>
                 </div>
-                <div className="rounded-lg border border-white/10 bg-white/5 p-3 space-y-1">
-                  <p className="text-xs text-white/50 uppercase tracking-wider font-semibold">Member Since</p>
-                  <p className="text-base font-semibold text-white/90">
-                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US") : "—"}
+                <div>
+                  <p className="text-xs text-white/30">Member Since</p>
+                  <p className="mt-1 text-sm font-medium text-white/70">
+                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
                   </p>
                 </div>
               </div>
 
-              <Button
-                onClick={handleSave}
+              <button
+                onClick={() => setSaveConfirmOpen(true)}
                 disabled={saving || !username.trim()}
-                className="w-full bg-white text-black hover:bg-gray-100 font-semibold shadow-lg transition-all"
+                className="flex items-center justify-center gap-2 w-full h-9 border border-white/15 bg-transparent hover:border-white/40 text-white/80 hover:text-white rounded-sm text-sm font-medium transition-colors disabled:opacity-40 mt-4"
               >
-                {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Save Changes
-              </Button>
+                {saving && <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" />}
+                Save changes
+              </button>
+
+              <ConfirmDialog
+                open={saveConfirmOpen}
+                onOpenChange={setSaveConfirmOpen}
+                title="Save profile changes?"
+                description="Your username will be updated across your account network."
+                confirmText="Save"
+                onConfirm={async () => {
+                  setSaveConfirmOpen(false);
+                  await handleSave();
+                }}
+              />
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
-                <BadgeCheck className="w-5 h-5 text-zinc-400" />
+            <div className="flex items-center gap-3 border border-white/5 bg-white/[0.01] p-4 rounded-sm">
+              <ShieldCheckIcon className="h-4 w-4 text-white/40 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-white/70">Secure Authentication</p>
+                <p className="text-xs text-white/30 truncate">Verified and connected via Google Sign-In.</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-white/90">Account Status</p>
-                <p className="text-xs text-white/50">Email {user?.emailVerified ? "verified" : "pending verification"}</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Preferences & Security Section */}
-          <section className="space-y-4">
-            <div className="space-y-2">
-              <h2 className="font-display text-xl font-semibold text-white/90">Preferences</h2>
-              <p className="text-sm text-white/50">Customize your experience.</p>
             </div>
 
-            {/* Theme Toggle */}
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 space-y-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-white/90">Dark Mode</p>
-                  <p className="text-xs text-white/50">Toggle interface theme</p>
-                </div>
-                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg p-2">
-                  <Sun className="w-4 h-4 text-white/40" />
-                  <Switch
-                    checked={mounted ? theme !== "light" : true}
-                    onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-                    disabled={!mounted}
-                  />
-                  <Moon className="w-4 h-4 text-white/40" />
+            <div className="border border-white/5 bg-white/[0.01] p-5 rounded-sm space-y-3">
+              <div className="flex items-start gap-3">
+                <ArrowUpTrayIcon className="h-4 w-4 text-white/40 shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-white/70">Import Markdown</p>
+                  <p className="text-xs text-white/30 mt-0.5">
+                    Bring notes from Obsidian, Logseq, or any folder of .md files. Entities are detected automatically — you confirm.
+                  </p>
                 </div>
               </div>
-            </div>
-
-            {/* History Info */}
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-zinc-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-white/90">History Retention</p>
-                <p className="text-xs text-white/50">{formatLimitValue(limits.historyDays, " days")}</p>
-              </div>
-            </div>
-
-            {/* Security Info */}
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-500/20 border border-zinc-500/30 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-zinc-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-white/90">Security</p>
-                <p className="text-xs text-white/50">Managed by Google Sign-In</p>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Plan Limits Section */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="font-display text-xl font-semibold text-white/90">Plan Limits</h2>
-              <p className="text-sm text-white/50">Current usage synchronized with your account.</p>
+              <button
+                onClick={() => setImportOpen(true)}
+                className="w-full h-9 border border-white/15 bg-transparent hover:border-white/40 text-white/80 hover:text-white rounded-sm text-sm font-medium transition-colors"
+              >
+                Import Markdown Files
+              </button>
             </div>
           </div>
 
-          {usageLoading && !usage ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-5 h-5 animate-spin text-white/30" />
+          {/* PREFERENCES SECTION */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-sm font-semibold text-white/80">Preferences & Appearance</h2>
             </div>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {usageResources.map((resource) => {
-                const unlimited = resource.max === -1;
-                const percent = unlimited ? 100 : Math.min((resource.current / resource.max) * 100, 100);
-                const isCritical = percent >= 90;
-                const isWarning = percent >= 70;
 
-                return (
-                  <div
-                    key={resource.label}
-                    className={`rounded-xl border backdrop-blur-sm p-4 space-y-3 transition-all ${
-                      isCritical
-                        ? "border-zinc-500/50 bg-zinc-500/10"
-                        : isWarning
-                        ? "border-zinc-500/50 bg-zinc-500/10"
-                        : "border-white/10 bg-white/5"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-white/90">{resource.label}</span>
-                      <span className={`text-xs font-mono font-medium ${
-                        isCritical ? "text-zinc-300" : isWarning ? "text-zinc-300" : "text-white/60"
-                      }`}>
-                        {unlimited ? "∞" : `${resource.current.toFixed(resource.suffix ? 1 : 0)}/${resource.max}${resource.suffix ?? ""}`}
-                      </span>
-                    </div>
-                    <div className="relative h-2 bg-white/5 rounded-full overflow-hidden border border-white/10">
-                      <div
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          isCritical
-                            ? "bg-gradient-to-r from-zinc-500 to-zinc-400"
-                            : isWarning
-                            ? "bg-gradient-to-r from-zinc-500 to-zinc-400"
-                            : "bg-gradient-to-r from-zinc-500 to-zinc-400"
-                        }`}
-                        style={{ width: `${unlimited ? 0 : percent}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {planDetails.map((detail) => (
-              <div key={detail.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center justify-between gap-2 text-xs text-white/50">
-                  <span>{detail.label}</span>
-                  <span className="font-semibold text-white/90">{detail.value}</span>
+            <div className="border-t border-b border-white/5 divide-y divide-white/[0.04] dark:border-white/5 light:border-black/5">
+              <div className="flex items-center gap-4 py-4">
+                <CalendarIcon className="h-4 w-4 text-foreground/30 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-foreground/70">History Retention</p>
+                  <p className="text-xs text-foreground/30">{formatLimitValue(limits.historyDays, " days")}</p>
                 </div>
               </div>
-            ))}
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center justify-between gap-2 text-xs text-white/50">
-                <span>Data export</span>
+
+              <div className="flex items-center gap-4 py-4">
+                <LockClosedIcon className="h-4 w-4 text-foreground/30 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium text-foreground/70">Security Layer</p>
+                  <p className="text-xs text-foreground/30">Active session tokens are isolated and protected.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 py-4">
+                <CalendarIcon className="h-4 w-4 text-foreground/30 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-foreground/70">{t("common_language")}</p>
+                  <p className="text-xs text-foreground/30">{t("common_chooseLanguage")}</p>
+                </div>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as "en" | "es" | "pt" | "fr")}
+                  className="bg-transparent border border-white/10 text-xs text-foreground/80 rounded-sm px-2 py-1 focus:outline-none focus:border-white/30"
+                >
+                  <option value="en">English</option>
+                  <option value="pt">Português</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* LIMITS SECTION */}
+          <section className="hidden space-y-6 pt-4 border-t border-white/5 lg:col-span-2">
+            <div>
+              <h2 className="text-sm font-semibold text-white/80">Plan Usage & Limits</h2>
+            </div>
+
+            {usageLoading && !usage ? (
+              <div className="flex justify-center py-12">
+                <ArrowPathIcon className="w-5 h-5 animate-spin text-white/20" />
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-3">
+                {usageResources.map((resource) => {
+                  const unlimited = resource.max === -1;
+                  const percent = unlimited ? 100 : Math.min((resource.current / resource.max) * 100, 100);
+
+                  return (
+                    <div key={resource.label} className="border border-white/5 bg-white/[0.01] p-5 rounded-sm space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-white/80">{resource.label}</span>
+                        <span className="text-xs text-white/40 tabular-nums">
+                          {unlimited ? "∞" : `${resource.current.toFixed(resource.suffix ? 1 : 0)} / ${resource.max}${resource.suffix}`}
+                        </span>
+                      </div>
+                      <Progress value={unlimited ? 0 : percent} className="h-[2px] bg-white/5 rounded-none" />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* PLAN DETAILS */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {planDetails.map((detail) => (
+                <div key={detail.label} className="border border-white/5 bg-white/[0.01] p-4 flex items-center justify-between gap-3 text-xs rounded-sm">
+                  <span className="text-white/40 text-xs">{detail.label}</span>
+                  <span className="text-xs text-white/70 tabular-nums">{detail.value}</span>
+                </div>
+              ))}
+
+              <div className="border border-white/5 bg-white/[0.01] p-4 flex items-center justify-between gap-3 text-xs rounded-sm">
+                <span className="text-white/40 text-xs">Export Data</span>
                 {user?.dataExport ? (
                   <button
                     type="button"
                     onClick={handleExportData}
                     disabled={exporting}
-                    className="font-semibold text-white/90 underline-offset-2 hover:underline disabled:opacity-50"
+                    className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white underline underline-offset-4 disabled:opacity-40 transition-colors"
                   >
-                    {exporting ? "Exporting…" : "Download backup"}
+                    <ArrowDownTrayIcon className="w-3 h-3" />
+                    {exporting ? "Exporting…" : "Download Backup"}
                   </button>
                 ) : (
-                  <span className="font-semibold text-white/60">Upgrade to enable</span>
+                  <span className="text-white/20 text-xs">Locked</span>
                 )}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
+      <MarkdownImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImported={() => { refreshUser(); }}
+      />
     </AppLayout>
   );
 }

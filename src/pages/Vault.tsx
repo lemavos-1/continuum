@@ -1,4 +1,4 @@
-import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AppLayout from "@/components/AppLayout";
 import { vaultApi } from "@/lib/api";
 import { usePlanGate } from "@/hooks/usePlanGate";
@@ -10,10 +10,11 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   FileText, Image as ImageIcon, File as FileGeneric,
-  Loader2, HardDrive, Upload, Trash2, Music, ExternalLink,
-} from "lucide-react";
+  Loader2, HardDrive, Trash2, Music, ExternalLink,
+} from "@/lib/heroicons";
 import type { VaultFile } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { getPlanLimits } from "@/lib/plan";
@@ -52,28 +53,30 @@ function useBlobUrl(fileId: string | null) {
   return { url, error };
 }
 
+/* ── Componentes de Itens Modificados pro Novo Design ────────────────── */
+
 function ImageThumb({ file, onDelete }: { file: VaultFile; onDelete: (f: VaultFile) => void }) {
   const { url, error } = useBlobUrl(file.id);
   return (
-    <div className="group relative rounded-xl overflow-hidden border border-border/60 bg-muted/30 aspect-square">
+    <div className="group relative rounded-sm overflow-hidden border border-white/5 bg-black/10 aspect-square transition-colors hover:border-white/20">
       {error ? (
-        <div className="flex items-center justify-center h-full text-xs text-destructive">Failed</div>
+        <div className="flex items-center justify-center h-full text-[11px] text-red-400/70 font-mono">ERROR</div>
       ) : url ? (
-        <img src={url} alt={file.fileName} className="w-full h-full object-cover" />
+        <img src={url} alt={file.fileName} className="w-full h-full object-cover transition-opacity duration-300 opacity-80 group-hover:opacity-100" />
       ) : (
-        <div className="flex items-center justify-center h-full text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="h-3 w-3 animate-spin text-white/20" />
         </div>
       )}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <p className="text-[11px] text-white truncate">{file.fileName}</p>
-        <p className="text-[10px] text-white/70">{formatSize(file.size)}</p>
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <p className="text-xs text-white/90 truncate">{file.fileName}</p>
+        <p className="text-[10px] font-mono text-white/40 mt-0.5">{formatSize(file.size)}</p>
       </div>
       <Button
         type="button"
         size="icon"
-        variant="destructive"
-        className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+        variant="ghost"
+        className="absolute top-2 right-2 h-7 w-7 rounded-sm bg-black/40 text-white/40 hover:text-red-400 hover:bg-black/60 opacity-0 group-hover:opacity-100 transition-all"
         onClick={() => onDelete(file)}
       >
         <Trash2 className="h-3.5 w-3.5" />
@@ -85,28 +88,33 @@ function ImageThumb({ file, onDelete }: { file: VaultFile; onDelete: (f: VaultFi
 function AudioPlayer({ file, onDelete }: { file: VaultFile; onDelete: (f: VaultFile) => void }) {
   const { url, error } = useBlobUrl(file.id);
   return (
-    <div className="rounded-xl border border-border/60 bg-muted/30 p-4 space-y-3">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-          <Music className="h-5 w-5 text-primary" />
-        </div>
+    <div className="group relative flex flex-col justify-between rounded-sm border border-white/5 bg-black/10 p-4 transition-colors hover:border-white/10">
+      <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium truncate">{file.fileName}</p>
-          <p className="text-xs text-muted-foreground">{formatSize(file.size)}</p>
+          <p className="text-sm font-serif text-white/80 truncate group-hover:text-white transition-colors">{file.fileName}</p>
+          <p className="text-[10px] font-mono text-white/30 mt-0.5">{formatSize(file.size)}</p>
         </div>
-        <Button type="button" size="icon" variant="ghost" onClick={() => onDelete(file)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-          <Trash2 className="h-4 w-4" />
+        <Button 
+          type="button" 
+          size="icon" 
+          variant="ghost" 
+          onClick={() => onDelete(file)} 
+          className="h-7 w-7 rounded-sm text-white/20 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-white/5 transition-all"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
-      {error ? (
-        <p className="text-xs text-destructive">Failed to load audio</p>
-      ) : url ? (
-        <audio src={url} controls className="w-full" />
-      ) : (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Loader2 className="h-3 w-3 animate-spin" /> Loading…
-        </div>
-      )}
+      <div className="mt-4">
+        {error ? (
+          <p className="text-[11px] font-mono text-red-400/60">Failed to load audio source</p>
+        ) : url ? (
+          <audio src={url} controls className="w-full h-8 accent-white filter invert opacity-40 hover:opacity-70 transition-opacity" />
+        ) : (
+          <div className="flex items-center gap-2 text-[11px] font-mono text-white/30">
+            <Loader2 className="h-3 w-3 animate-spin" /> Fetching payload...
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -114,30 +122,32 @@ function AudioPlayer({ file, onDelete }: { file: VaultFile; onDelete: (f: VaultF
 function PdfCard({ file, onDelete, onOpen }: { file: VaultFile; onDelete: (f: VaultFile) => void; onOpen: (f: VaultFile) => void }) {
   const { url, error } = useBlobUrl(file.id);
   return (
-    <div className="rounded-xl border border-border/60 bg-muted/30 overflow-hidden flex flex-col">
-      <button type="button" onClick={() => onOpen(file)} className="aspect-[3/4] bg-white relative overflow-hidden">
+    <div className="rounded-sm border border-white/5 bg-black/10 overflow-hidden flex flex-col transition-colors hover:border-white/10 group">
+      <button type="button" onClick={() => onOpen(file)} className="aspect-[4/3] bg-black/40 relative overflow-hidden border-b border-white/5 flex items-center justify-center">
         {error ? (
-          <div className="flex items-center justify-center h-full text-xs text-destructive">Failed</div>
+          <div className="text-[11px] font-mono text-red-400/60">ERROR</div>
         ) : url ? (
-          <iframe src={`${url}#toolbar=0&navpanes=0`} title={file.fileName} className="w-full h-full pointer-events-none" />
+          <iframe src={`${url}#toolbar=0&navpanes=0`} title={file.fileName} className="w-full h-full pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity" />
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-          </div>
+          <Loader2 className="h-3 w-3 animate-spin text-white/20" />
         )}
-      </button>
-      <div className="p-3 flex items-center gap-2 border-t border-border/60">
-        <FileText className="h-4 w-4 text-primary shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium truncate">{file.fileName}</p>
-          <p className="text-[11px] text-muted-foreground">{formatSize(file.size)}</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-[11px] bg-black border border-white/10 px-2.5 py-1 text-white/80 rounded-sm">View Document</span>
         </div>
-        <Button type="button" size="icon" variant="ghost" className="h-7 w-7" onClick={() => onOpen(file)}>
-          <ExternalLink className="h-3.5 w-3.5" />
-        </Button>
-        <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => onDelete(file)}>
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
+      </button>
+      <div className="p-3 flex items-center justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-serif text-white/80 truncate group-hover:text-white">{file.fileName}</p>
+          <p className="text-[10px] font-mono text-white/30 mt-0.5">{formatSize(file.size)}</p>
+        </div>
+        <div className="flex items-center shrink-0">
+          <Button type="button" size="icon" variant="ghost" className="h-7 w-7 rounded-sm text-white/30 hover:text-white hover:bg-white/5" onClick={() => onOpen(file)}>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Button>
+          <Button type="button" size="icon" variant="ghost" className="h-7 w-7 rounded-sm text-white/30 hover:text-red-400 hover:bg-white/5" onClick={() => onDelete(file)}>
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -145,35 +155,41 @@ function PdfCard({ file, onDelete, onOpen }: { file: VaultFile; onDelete: (f: Va
 
 function OtherFileRow({ file, onDelete }: { file: VaultFile; onDelete: (f: VaultFile) => void }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
-      <div className="bento-icon-box shrink-0">
-        <FileGeneric className="w-4 h-4 text-gray-400" />
+    <div className="group relative flex items-center justify-between py-4 border-b border-white/[0.06] hover:bg-white/[0.01] transition-colors">
+      <div className="flex items-center gap-3 min-w-0">
+        <FileGeneric className="w-3.5 h-3.5 text-white/30 shrink-0" />
+        <div className="min-w-0">
+          <p className="text-sm font-serif text-white/80 truncate group-hover:text-white transition-colors">{file.fileName}</p>
+          <p className="text-[10px] font-mono text-white/30 mt-0.5">
+            {formatSize(file.size)} &middot; {new Date(file.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          </p>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium truncate">{file.fileName}</p>
-        <p className="text-xs text-muted-foreground">
-          {formatSize(file.size)} · {new Date(file.createdAt).toLocaleDateString()}
-        </p>
-      </div>
-      <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => onDelete(file)}>
-        <Trash2 className="h-4 w-4" />
+      <Button 
+        type="button" 
+        size="icon" 
+        variant="ghost" 
+        className="h-7 w-7 rounded-sm text-white/20 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-white/5 transition-all" 
+        onClick={() => onDelete(file)}
+      >
+        <Trash2 className="h-3.5 w-3.5" />
       </Button>
     </div>
   );
 }
 
+/* ── Main Vault Page Component ────────────────────────────────────────── */
+
 export default function Vault() {
+  const { t } = useLanguage();
   const [files, setFiles] = useState<VaultFile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<VaultFile | null>(null);
   const [pdfPreview, setPdfPreview] = useState<VaultFile | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { loading: authLoading } = useRequireAuth();
-  const { canUploadVault, applyUsageDelta } = usePlanGate();
+  const { applyUsageDelta } = usePlanGate();
   const limits = getPlanLimits(user);
 
   const fetchFiles = async () => {
@@ -196,48 +212,6 @@ export default function Vault() {
     return g;
   }, [files]);
 
-  const uploadFile = async (file: File) => {
-    const fileSizeMB = file.size / (1024 * 1024);
-    if (!canUploadVault(fileSizeMB)) {
-      toast({ title: "Upload blocked", description: "You have reached your vault storage limit.", variant: "destructive" });
-      return;
-    }
-    setUploading(true);
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      const response = await vaultApi.upload(form);
-      setFiles((current) => [...current, response.data]);
-      applyUsageDelta({ vaultSizeMB: Number(fileSizeMB.toFixed(2)) });
-      toast({ title: "Upload complete", description: `${file.name} added to your vault.` });
-    } catch (error: any) {
-      let msg = "Upload failed";
-      if (error?.response?.status === 415) msg = "File type not supported. Allowed: JPG, PNG, WEBP, PDF, MP3, M4A.";
-      else if (error?.response?.status === 400) msg = "File exceeds limit or vault is full.";
-      toast({ title: "Upload failed", description: msg, variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleFileSelected = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    event.target.value = "";
-    await uploadFile(file);
-  };
-
-  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-    else if (e.type === "dragleave") setDragActive(false);
-  };
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); e.stopPropagation(); setDragActive(false);
-    const dropped = e.dataTransfer.files;
-    if (dropped && dropped.length > 0) await uploadFile(dropped[0]);
-  };
-
   const confirmDelete = async () => {
     const file = pendingDelete;
     if (!file) return;
@@ -247,20 +221,19 @@ export default function Vault() {
       invalidateVaultBlob(file.id);
       setFiles((cur) => cur.filter((f) => f.id !== file.id));
       applyUsageDelta({ vaultSizeMB: -Number((file.size / (1024 * 1024)).toFixed(2)) });
-      toast({ title: "File deleted", description: file.fileName });
+      toast({ title: "File removed from vault" });
     } catch {
       toast({ title: "Delete failed", variant: "destructive" });
     }
   };
-
 
   const pdfPreviewBlob = useBlobUrl(pdfPreview?.id ?? null);
 
   if (authLoading) {
     return (
       <AppLayout>
-        <div className="flex justify-center items-center h-full">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        <div className="flex h-full items-center justify-center">
+          <Loader2 className="h-5 w-5 animate-spin text-white/40" />
         </div>
       </AppLayout>
     );
@@ -272,146 +245,149 @@ export default function Vault() {
 
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-semibold tracking-tight">Vault</h1>
-            <p className="text-sm text-muted-foreground mt-1">Secure storage for images, PDFs, and audio.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept="image/jpeg,image/png,image/webp,application/pdf,audio/mpeg,audio/mp4,audio/x-m4a,audio/m4a"
-              onChange={handleFileSelected}
-            />
-            <Button type="button" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading || !canUploadVault(0)} className="inline-flex items-center gap-2">
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              {canUploadVault(0) ? "Upload file" : "Storage full"}
-            </Button>
-          </div>
-        </div>
-
-        <div className="bento-card p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-gray-400" />
-              <span className="text-sm font-medium">Storage</span>
+      <div className="mx-auto max-w-4xl px-6 py-10 lg:px-12 lg:py-16">
+        <main className="min-w-0 flex-1">
+          
+          {/* Cabeçalho idêntico ao do Notes e do TimeTracking */}
+          <header className="mb-8">
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.32em] text-white/30">
+                Storage
+              </p>
+              <h1 className="mt-2 font-serif text-5xl tracking-tight text-white">
+                {t("vault_title")}
+              </h1>
             </div>
-            <span className="text-xs text-muted-foreground">
-              {vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB used` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`}
-            </span>
+            <p className="mt-3 text-sm text-white/40">
+              Browse and manage your stored assets. Uploads happen natively by dragging items into your notes.
+            </p>
+          </header>
+
+          {/* Indicador de Espaço Sutil (Removido o bloco chamativo) */}
+          <div className="mb-6 border-b border-white/5 pb-5 pt-2">
+            <div className="flex items-center justify-between text-[11px] font-mono text-white/40 mb-2">
+              <div className="flex items-center gap-1.5">
+                <HardDrive className="w-3 h-3 text-white/30" />
+                <span>VOLUME CAPACITY</span>
+              </div>
+              <span>
+                {vaultMaxMB === -1 ? `${vaultUsedMB.toFixed(1)} MB` : `${vaultUsedMB.toFixed(1)} / ${vaultMaxMB} MB`}
+              </span>
+            </div>
+            <Progress value={vaultMaxMB === -1 ? 0 : vaultPct} className="h-[2px] bg-white/5 text-white" />
           </div>
-          <Progress value={vaultMaxMB === -1 ? 0 : vaultPct} className="h-1" />
-        </div>
 
-        <div
-          onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
-          className={`rounded-xl border-2 border-dashed transition-all ${
-            dragActive ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/50"
-          } p-6 text-center`}
-        >
-          <Upload className={`w-6 h-6 mx-auto ${dragActive ? "text-primary" : "text-muted-foreground/50"}`} />
-          <p className="text-sm mt-2">{dragActive ? "Drop your file here" : "Drag a file here or use the upload button"}</p>
-        </div>
+          {loading ? (
+            <div className="flex justify-center py-24">
+              <Loader2 className="h-5 w-5 animate-spin text-white/30" />
+            </div>
+          ) : files.length === 0 ? (
+            /* Empty State poético e limpo igual ao do seu Notes */
+            <div className="py-24 text-center">
+              <p className="font-serif text-2xl italic text-white/40">
+                {t("vault_empty")}
+              </p>
+            </div>
+          ) : (
+            
+            /* Tabs minimalistas estilo Notion/Axiom UI */
+            <Tabs defaultValue="images" className="w-full">
+              <TabsList className="flex items-center gap-4 bg-transparent border-b border-white/5 p-0 rounded-none h-10 w-full justify-start">
+                <TabsTrigger value="images" className="bg-transparent border-b-2 border-transparent px-1 py-2 text-xs text-white/45 data-[state=active]:border-white data-[state=active]:text-white rounded-none shadow-none transition-all">
+                  Photos <span className="font-mono text-[10px] text-white/30 ml-1">({grouped.images.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="audio" className="bg-transparent border-b-2 border-transparent px-1 py-2 text-xs text-white/45 data-[state=active]:border-white data-[state=active]:text-white rounded-none shadow-none transition-all">
+                  Audio <span className="font-mono text-[10px] text-white/30 ml-1">({grouped.audio.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="pdf" className="bg-transparent border-b-2 border-transparent px-1 py-2 text-xs text-white/45 data-[state=active]:border-white data-[state=active]:text-white rounded-none shadow-none transition-all">
+                  PDFs <span className="font-mono text-[10px] text-white/30 ml-1">({grouped.pdf.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="other" className="bg-transparent border-b-2 border-transparent px-1 py-2 text-xs text-white/45 data-[state=active]:border-white data-[state=active]:text-white rounded-none shadow-none transition-all">
+                  Other <span className="font-mono text-[10px] text-white/30 ml-1">({grouped.other.length})</span>
+                </TabsTrigger>
+              </TabsList>
 
-        {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : files.length === 0 ? (
-          <div className="text-center py-12 space-y-2">
-            <HardDrive className="w-8 h-8 text-muted-foreground/30 mx-auto" />
-            <p className="text-muted-foreground text-sm">No files in Vault yet.</p>
-          </div>
-        ) : (
-          <Tabs defaultValue="images" className="w-full">
-            <TabsList className="grid grid-cols-4 w-full max-w-xl">
-              <TabsTrigger value="images"><ImageIcon className="h-3.5 w-3.5 mr-1.5" />Photos ({grouped.images.length})</TabsTrigger>
-              <TabsTrigger value="audio"><Music className="h-3.5 w-3.5 mr-1.5" />Audio ({grouped.audio.length})</TabsTrigger>
-              <TabsTrigger value="pdf"><FileText className="h-3.5 w-3.5 mr-1.5" />PDFs ({grouped.pdf.length})</TabsTrigger>
-              <TabsTrigger value="other"><FileGeneric className="h-3.5 w-3.5 mr-1.5" />Other ({grouped.other.length})</TabsTrigger>
-            </TabsList>
+              <TabsContent value="images" className="mt-8 outline-none">
+                {grouped.images.length === 0 ? (
+                  <p className="text-sm font-serif italic text-white/30 py-12">No images preserved.</p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {grouped.images.map((f) => (
+                      <ImageThumb key={f.id} file={f} onDelete={setPendingDelete} />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
-            <TabsContent value="images" className="mt-4">
-              {grouped.images.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No images.</p>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {grouped.images.map((f) => (
-                    <ImageThumb key={f.id} file={f} onDelete={setPendingDelete} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+              <TabsContent value="audio" className="mt-8 outline-none">
+                {grouped.audio.length === 0 ? (
+                  <p className="text-sm font-serif italic text-white/30 py-12">No audio tracks recorded.</p>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {grouped.audio.map((f) => (
+                      <AudioPlayer key={f.id} file={f} onDelete={setPendingDelete} />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
-            <TabsContent value="audio" className="mt-4">
-              {grouped.audio.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No audio files.</p>
-              ) : (
-                <div className="grid gap-3 md:grid-cols-2">
-                  {grouped.audio.map((f) => (
-                    <AudioPlayer key={f.id} file={f} onDelete={setPendingDelete} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+              <TabsContent value="pdf" className="mt-8 outline-none">
+                {grouped.pdf.length === 0 ? (
+                  <p className="text-sm font-serif italic text-white/30 py-12">No document sheets mapped.</p>
+                ) : (
+                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                    {grouped.pdf.map((f) => (
+                      <PdfCard key={f.id} file={f} onDelete={setPendingDelete} onOpen={setPdfPreview} />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
-            <TabsContent value="pdf" className="mt-4">
-              {grouped.pdf.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No PDFs.</p>
-              ) : (
-                <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
-                  {grouped.pdf.map((f) => (
-                    <PdfCard key={f.id} file={f} onDelete={setPendingDelete} onOpen={setPdfPreview} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="other" className="mt-4">
-              {grouped.other.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No other files.</p>
-              ) : (
-                <div className="space-y-1">
-                  {grouped.other.map((f) => (
-                    <OtherFileRow key={f.id} file={f} onDelete={setPendingDelete} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        )}
+              <TabsContent value="other" className="mt-8 outline-none">
+                {grouped.other.length === 0 ? (
+                  <p className="text-sm font-serif italic text-white/30 py-12">No additional files categorized.</p>
+                ) : (
+                  <div className="divide-y divide-white/[0.06]">
+                    {grouped.other.map((f) => (
+                      <OtherFileRow key={f.id} file={f} onDelete={setPendingDelete} />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          )}
+        </main>
       </div>
 
+      {/* CONFIRM DIALOG — Adaptado para seguir o design limpo do app */}
       <AlertDialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-black border border-white/10 rounded-sm max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pendingDelete?.fileName} will be permanently removed from your vault. This cannot be undone.
+            <AlertDialogTitle className="font-serif text-xl font-normal text-white">Remove file?</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/40 text-xs mt-2">
+              "${pendingDelete?.fileName || "This asset"}" will be permanently expunged from storage.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+          <AlertDialogFooter className="mt-4 gap-2">
+            <AlertDialogCancel className="bg-transparent hover:bg-white/5 text-white/60 border-white/10 rounded-sm text-xs">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-white text-black hover:bg-white/90 rounded-sm text-xs font-medium">Remove</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* MODAL EXPANDIDO DE PREVIEW PDF */}
       {pdfPreview && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col" onClick={() => setPdfPreview(null)}>
-          <div className="flex items-center justify-between px-4 py-3 text-white">
-            <p className="text-sm font-medium truncate">{pdfPreview.fileName}</p>
-            <Button size="sm" variant="ghost" onClick={() => setPdfPreview(null)} className="text-white hover:text-white">Close</Button>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col transition-all" onClick={() => setPdfPreview(null)}>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-black/40 backdrop-blur-xl text-white">
+            <p className="font-serif text-sm truncate max-w-xl">{pdfPreview.fileName}</p>
+            <Button size="sm" variant="ghost" onClick={() => setPdfPreview(null)} className="text-white/40 hover:text-white rounded-sm hover:bg-white/5 text-xs">Close</Button>
           </div>
-          <div className="flex-1 px-4 pb-4" onClick={(e) => e.stopPropagation()}>
+          <div className="flex-1 p-6" onClick={(e) => e.stopPropagation()}>
             {pdfPreviewBlob.url ? (
-              <iframe src={pdfPreviewBlob.url} title={pdfPreview.fileName} className="w-full h-full bg-white rounded-lg" />
+              <iframe src={pdfPreviewBlob.url} title={pdfPreview.fileName} className="w-full h-full bg-transparent border border-white/10 rounded-sm shadow-2xl" />
             ) : (
-              <div className="flex items-center justify-center h-full text-white">
-                <Loader2 className="h-5 w-5 animate-spin" />
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-5 w-5 animate-spin text-white/30" />
               </div>
             )}
           </div>

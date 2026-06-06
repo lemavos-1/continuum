@@ -6,7 +6,7 @@ import {
   eachDayOfInterval,
   isSameDay,
 } from 'date-fns';
-import { Check } from 'lucide-react';
+import { Check } from "@/lib/heroicons";
 import { Button } from '@/components/ui/button';
 import { entitiesApi } from '@/lib/api';
 import { useQueryClient } from '@tanstack/react-query';
@@ -64,17 +64,14 @@ export function ActivityCompletionCalendar({
   };
 
   return (
-    <div className="space-y-3">
-      {/* Mini Calendar Grid - 4 weeks */}
-      <div className="grid grid-cols-7 gap-1">
-        {/* Day headers */}
+    <div className="w-full max-w-[240px] mx-auto rounded-2xl border border-white/10 bg-zinc-950/50 p-3">
+      <div className="grid grid-cols-7 gap-0.5 text-[10px]">
         {['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'].map(day => (
-          <div key={day} className="text-center text-xs font-medium text-zinc-500">
+          <div key={day} className="text-center font-medium text-zinc-500">
             {day}
           </div>
         ))}
 
-        {/* Days */}
         {lastFourWeeks.map((date, index) => {
           const dateStr = format(date, 'yyyy-MM-dd');
           const isCompleted = completionDates.has(dateStr);
@@ -83,39 +80,37 @@ export function ActivityCompletionCalendar({
           return (
             <div
               key={index}
-              className={`
-                aspect-square rounded-md overflow-hidden relative text-xs font-medium
-                transition-all border
-                ${isCompleted
+              className={
+                `aspect-square rounded-sm overflow-hidden relative transition-all border ${
+                isCompleted
                   ? 'border-zinc-500/50 text-zinc-400'
                   : isToday
                   ? 'bg-zinc-500/10 border-zinc-500/50 text-zinc-400'
                   : 'bg-zinc-900/50 border-zinc-700 text-zinc-600'
-                }
-              `}
+              }`
+              }
               title={format(date, 'MMM d')}
             >
               {isCompleted ? (
                 <div className="absolute inset-0 bg-zinc-500/20 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-zinc-400" />
+                  <Check className="w-3 h-3 text-zinc-400" />
                 </div>
               ) : isToday ? (
-                <span>•</span>
+                <span className="block text-center leading-[1.1rem]">•</span>
               ) : null}
             </div>
           );
         })}
       </div>
 
-      {/* Sequence & Action */}
       <div className="flex items-center justify-between pt-2">
-        <div className="text-xs text-zinc-400">
+        <div className="text-[11px] text-zinc-400">
           <span className="font-semibold text-zinc-400">{trackingDates.length}</span> sequence
         </div>
         <Button
           size="sm"
           variant={isTrackedToday ? 'default' : 'outline'}
-          className="gap-2 h-7 px-3 text-xs"
+          className="gap-2 h-7 px-3 text-[11px]"
           onClick={handleMarkComplete}
           disabled={isTrackedToday}
         >
