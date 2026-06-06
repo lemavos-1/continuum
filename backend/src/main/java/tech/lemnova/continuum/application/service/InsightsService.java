@@ -349,25 +349,26 @@ public class InsightsService {
         return Math.round(v * 100.0) / 100.0;
     }
 
-    /** Recompute the raw base (without decay) — used to rank forgotten items by their true past importance. */
-    private static double baseScoreOf(NoteInsightDTO n) {
-        // Forgotten = high *historical* value, not recent activity.
-        // We strip recentMentions out of the count and keep only the "old" mentions,
-        // otherwise the dominant W_NOTE_RECENT weight (which is ~0 for forgotten items)
-        // makes almost everything fall under FORGOTTEN_MIN_SCORE.
-        long historicalMentions = Math.max(0, n.mentionCount() - n.recentMentions());
-        return (historicalMentions * W_NOTE_MENTIONS)
-                + (n.hoursTracked() * W_NOTE_HOURS)
-                + (n.entityConnections() * W_NOTE_ENTITIES)
-                + (n.uniqueDaysReferenced() * W_NOTE_DAYS);
+    /**
+     * Base score dedicated to Forgotten Gems — rewards *historical* value (old mentions,
+     * tracked hours, connections, continuity) and intentionally ignores recent activity.
+     * Weights are tuned higher than the generic Hot weights so genuinely valuable but
+     * stale notes clear the (low) FORGOTTEN_MIN_SCORE threshold.
+     */
+    private static double baseScoreForForgotten(NoteInsightDTO n) {
+        double historicalMentions = Math.max(0, n.mentionCount() - n.recentMentions());
+        return (historicalMentions * 2.5)
+                + (n.hoursTracked() * 1.8)
+                + (n.entityConnections() * 3.5)
+                + (n.uniqueDaysReferenced() * 1.4);
     }
 
-    private static double baseScoreOf(EntityInsightDTO e) {
-        long historicalMentions = Math.max(0, e.mentionCount() - e.recentMentions());
-        return (historicalMentions * W_ENT_MENTIONS)
-                + (e.hoursTracked() * W_ENT_HOURS)
-                + (e.relationsCount() * W_ENT_RELATIONS)
-                + (e.uniqueDaysMentioned() * W_ENT_DAYS);
+    private static double baseScoreForForgotten(EntityInsightDTO e) {
+        double historicalMentions = Math.max(0, e.mentionCount() - e.recentMentions());
+        return (historicalMentions * 2.5)
+                + (e.hoursTracked() * 1.8)
+                + (e.relationsCount() * 3.5)
+                + (e.uniqueDaysMentioned() * 1.4);
     }
 
     public String cacheKey() {
