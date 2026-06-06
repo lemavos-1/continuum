@@ -54,6 +54,18 @@ public class InsightsService {
     private static final double FORGOTTEN_MIN_SCORE = 3.0;
     private static final int DEFAULT_LIMIT = 10;
 
+    // Forgotten Gems tuning ------------------------------------------------
+    // Boost applied to entity connections — well-connected notes are the most
+    // valuable to resurface even when their raw mention count is low.
+    private static final double FORGOTTEN_NOTE_CONN_WEIGHT = 4.5;
+    private static final double FORGOTTEN_ENT_REL_WEIGHT = 4.5;
+    // Minimum viability: an old note/entity with enough structural value should
+    // qualify even if it falls just under FORGOTTEN_MIN_SCORE.
+    private static final double FORGOTTEN_VIABILITY_SCORE = 2.0;
+    // Guaranteed-inclusion rule: clearly-connected but stale items.
+    private static final long FORGOTTEN_STRONG_DAYS = 30;
+    private static final int FORGOTTEN_STRONG_CONNECTIONS = 4;
+
     // Note weights (v2 — boosted for sparse early data)
     private static final double W_NOTE_MENTIONS = 2.5;
     private static final double W_NOTE_RECENT = 5.5;
@@ -101,8 +113,9 @@ public class InsightsService {
 
     public List<NoteInsightDTO> forgottenNotes(int limit) {
         return computeAllNoteInsights().stream()
+                // Only consider stale notes (no recent real interaction).
                 .filter(n -> n.daysSinceLastInteraction() >= FORGOTTEN_DAYS_THRESHOLD)
-                .filter(n -> baseScoreForForgotten(n) >= FORGOTTEN_MIN_SCORE)
+                .filter(InsightsService::qualifiesAsForgotten)
                 .sorted(Comparator.comparingDouble((NoteInsightDTO n) -> baseScoreForForgotten(n)).reversed())
                 .limit(limit > 0 ? limit : DEFAULT_LIMIT)
                 .map(n -> new NoteInsightDTO(
@@ -122,7 +135,7 @@ public class InsightsService {
     public List<EntityInsightDTO> forgottenEntities(int limit) {
         return computeAllEntityInsights().stream()
                 .filter(e -> e.daysSinceLastMention() >= FORGOTTEN_DAYS_THRESHOLD)
-                .filter(e -> baseScoreForForgotten(e) >= FORGOTTEN_MIN_SCORE)
+                .filter(InsightsService::qualifiesAsForgotten)
                 .sorted(Comparator.comparingDouble((EntityInsightDTO e) -> baseScoreForForgotten(e)).reversed())
                 .limit(limit > 0 ? limit : DEFAULT_LIMIT)
                 .map(e -> new EntityInsightDTO(
@@ -130,6 +143,32 @@ public class InsightsService {
                         e.mentionCount(), e.recentMentions(), e.hoursTracked(),
                         e.relationsCount(), e.uniqueDaysMentioned(), e.daysSinceLastMention()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * A stale note qualifies as a Forgotten Gem if EITHER:
+     *  • it clears the normal forgotten score, OR
+     *  • it is strongly connected (>= FORGOTTEN_STRONG_CONNECTIONS) and very old
+     *    (>= FORGOTTEN_STRONG_DAYS) — guaranteed inclusion, OR
+     *  • it has minimum structural viability (some connections/mentions) and clears
+     *    the lower viability score — so small/medium vaults surface gems early.
+     */
+    private static boolean qualifiesAsForgotten(NoteInsightDTO n) {
+        double score = baseScoreForForgotten(n);
+        if (score >= FORGOTTEN_MIN_SCORE) return true;
+        if (n.daysSinceLastInteraction() >= FORGOTTEN_STRONG_DAYS
+                && n.entityConnections() >= FORGOTTEN_STRONG_CONNECTIONS) return true;
+        boolean hasStructure = n.entityConnections() >= 2 || n.mentionCount() >= 2;
+        return hasStructure && score >= FORGOTTEN_VIABILITY_SCORE;
+    }
+
+    private static boolean qualifiesAsForgotten(EntityInsightDTO e) {
+        double score = baseScoreForForgotten(e);
+        if (score >= FORGOTTEN_MIN_SCORE) return true;
+        if (e.daysSinceLastMention() >= FORGOTTEN_STRONG_DAYS
+                && e.relationsCount() >= FORGOTTEN_STRONG_CONNECTIONS) return true;
+        boolean hasStructure = e.relationsCount() >= 2 || e.mentionCount() >= 2;
+        return hasStructure && score >= FORGOTTEN_VIABILITY_SCORE;
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -368,7 +407,7 @@ public class InsightsService {
         double historicalMentions = Math.max(0, n.mentionCount() - n.recentMentions());
         return (historicalMentions * 2.5)
                 + (n.hoursTracked() * 1.8)
-                + (n.entityConnections() * 3.5)
+                + (n.entityConnections() * FORGOTTEN_NOTE_CONN_WEIGHT)
                 + (n.uniqueDaysReferenced() * 1.4);
     }
 
@@ -376,7 +415,7 @@ public class InsightsService {
         double historicalMentions = Math.max(0, e.mentionCount() - e.recentMentions());
         return (historicalMentions * 2.5)
                 + (e.hoursTracked() * 1.8)
-                + (e.relationsCount() * 3.5)
+                + (e.relationsCount() * FORGOTTEN_ENT_REL_WEIGHT)
                 + (e.uniqueDaysMentioned() * 1.4);
     }
 
