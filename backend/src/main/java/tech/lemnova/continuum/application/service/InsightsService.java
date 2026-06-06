@@ -54,6 +54,18 @@ public class InsightsService {
     private static final double FORGOTTEN_MIN_SCORE = 3.0;
     private static final int DEFAULT_LIMIT = 10;
 
+    // Forgotten Gems tuning ------------------------------------------------
+    // Boost applied to entity connections — well-connected notes are the most
+    // valuable to resurface even when their raw mention count is low.
+    private static final double FORGOTTEN_NOTE_CONN_WEIGHT = 4.5;
+    private static final double FORGOTTEN_ENT_REL_WEIGHT = 4.5;
+    // Minimum viability: an old note/entity with enough structural value should
+    // qualify even if it falls just under FORGOTTEN_MIN_SCORE.
+    private static final double FORGOTTEN_VIABILITY_SCORE = 2.0;
+    // Guaranteed-inclusion rule: clearly-connected but stale items.
+    private static final long FORGOTTEN_STRONG_DAYS = 30;
+    private static final int FORGOTTEN_STRONG_CONNECTIONS = 4;
+
     // Note weights (v2 — boosted for sparse early data)
     private static final double W_NOTE_MENTIONS = 2.5;
     private static final double W_NOTE_RECENT = 5.5;
