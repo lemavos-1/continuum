@@ -102,8 +102,8 @@ public class InsightsService {
     public List<NoteInsightDTO> forgottenNotes(int limit) {
         return computeAllNoteInsights().stream()
                 .filter(n -> n.daysSinceLastInteraction() >= FORGOTTEN_DAYS_THRESHOLD)
-                .filter(n -> baseScoreOf(n) >= FORGOTTEN_MIN_SCORE)
-                .sorted(Comparator.comparingDouble((NoteInsightDTO n) -> baseScoreOf(n)).reversed())
+                .filter(n -> baseScoreForForgotten(n) >= FORGOTTEN_MIN_SCORE)
+                .sorted(Comparator.comparingDouble((NoteInsightDTO n) -> baseScoreForForgotten(n)).reversed())
                 .limit(limit > 0 ? limit : DEFAULT_LIMIT)
                 .map(n -> new NoteInsightDTO(
                         n.note(), n.score(), "Forgotten Gem",
@@ -122,8 +122,8 @@ public class InsightsService {
     public List<EntityInsightDTO> forgottenEntities(int limit) {
         return computeAllEntityInsights().stream()
                 .filter(e -> e.daysSinceLastMention() >= FORGOTTEN_DAYS_THRESHOLD)
-                .filter(e -> baseScoreOf(e) >= FORGOTTEN_MIN_SCORE)
-                .sorted(Comparator.comparingDouble((EntityInsightDTO e) -> baseScoreOf(e)).reversed())
+                .filter(e -> baseScoreForForgotten(e) >= FORGOTTEN_MIN_SCORE)
+                .sorted(Comparator.comparingDouble((EntityInsightDTO e) -> baseScoreForForgotten(e)).reversed())
                 .limit(limit > 0 ? limit : DEFAULT_LIMIT)
                 .map(e -> new EntityInsightDTO(
                         e.entity(), e.score(), "Forgotten Gem",
