@@ -247,17 +247,26 @@ public class InsightsService {
                 .distinct()
                 .count();
 
-        // Prefer the most recent *real* interaction signal: latest backlink to the note.
-        // Fall back to updatedAt/createdAt only when there are no backlinks at all,
-        // since updatedAt is bumped by trivial autosaves and would hide "forgotten" notes.
+        // Prefer the most recent *real* interaction signal. We combine the latest backlink
+        // with the note's own creation date and take the most recent of the two — this avoids
+        // relying on updatedAt (bumped by trivial autosaves, which would hide "forgotten" notes)
+        // while still not flagging a freshly-created note as forgotten.
         Instant latestBacklinkAt = backlinks.stream()
                 .map(NoteLink::getCreatedAt)
                 .filter(Objects::nonNull)
                 .max(Instant::compareTo)
                 .orElse(null);
-        Instant lastInteraction = latestBacklinkAt != null
-                ? latestBacklinkAt
-                : (note.getCreatedAt() != null ? note.getCreatedAt() : note.getUpdatedAt());
+        Instant createdAt = note.getCreatedAt();
+        Instant lastInteraction = null;
+        if (latestBacklinkAt != null && createdAt != null) {
+            lastInteraction = latestBacklinkAt.isAfter(createdAt) ? latestBacklinkAt : createdAt;
+        } else if (latestBacklinkAt != null) {
+            lastInteraction = latestBacklinkAt;
+        } else if (createdAt != null) {
+            lastInteraction = createdAt;
+        } else {
+            lastInteraction = note.getUpdatedAt();
+        }
         if (lastInteraction == null) lastInteraction = Instant.now();
         long daysSinceLastInteraction = ChronoUnit.DAYS.between(
                 lastInteraction.atZone(ZoneId.systemDefault()).toLocalDate(), today);
