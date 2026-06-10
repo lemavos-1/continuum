@@ -53,7 +53,7 @@ export const AutoPair = Extension.create({
               }
               const tr = state.tr.insertText(text + close, from, to);
               const newPos = from + 1;
-              tr.setSelection(state.selection.constructor.near(tr.doc.resolve(newPos)));
+              tr.setSelection(TextSelection.near(tr.doc.resolve(newPos)));
               view.dispatch(tr);
               return true;
             }
