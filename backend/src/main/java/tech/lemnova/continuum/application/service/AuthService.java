@@ -124,15 +124,18 @@ public class AuthService {
 
     @Transactional
     public AuthResponse googleAuth(String googleId, String email, String name, Boolean emailVerified, String avatarUrl) {
+        boolean isNew = users.findByEmail(email).isEmpty();
         User user = upsertGoogleUser(googleId, email, name, emailVerified, avatarUrl);
-        return buildAuthResponseWithTokenPair(user);
+        return buildAuthResponseWithTokenPair(user).withNewUserFlag(isNew);
     }
 
     @Transactional
     public AuthResponse googleAuth(tech.lemnova.continuum.infra.google.GoogleOAuthService.GoogleUserInfo googleUser) {
+        boolean isNew = users.findByEmail(googleUser.email()).isEmpty();
         User user = upsertGoogleUser(googleUser.googleId(), googleUser.email(), googleUser.name(), googleUser.emailVerified(), googleUser.picture());
-        return buildAuthResponseWithTokenPair(user);
+        return buildAuthResponseWithTokenPair(user).withNewUserFlag(isNew);
     }
+
 
     @Transactional
     public AuthResponse register(String username, String email, String password) {
