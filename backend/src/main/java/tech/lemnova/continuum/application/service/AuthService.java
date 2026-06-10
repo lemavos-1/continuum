@@ -160,7 +160,7 @@ public class AuthService {
         user = users.save(user);
         createFreeSubscription(user.getId());
         initVaultAsync(vaultId);
-        return buildAuthResponseWithTokenPair(user);
+        return buildAuthResponseWithTokenPair(user).withNewUserFlag(true);
     }
 
     @Transactional
