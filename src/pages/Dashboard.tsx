@@ -377,19 +377,20 @@ export default function Dashboard() {
     setExporting(true);
     try {
       const { authApi } = await import("@/lib/api");
-      const res = await authApi.exportData();
-      const json = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
-      const blob = new Blob([json], { type: "application/json" });
+      const res = await authApi.exportVaultZip();
+      const blob = res.data instanceof Blob ? res.data : new Blob([res.data], { type: "application/zip" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "continuum-backup.json";
+      a.download = "continuum-vault.zip";
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      toast({ title: "Export ready", description: "Your full vault was downloaded as a .zip." });
     } catch (e) {
       console.error("Export failed", e);
+      toast({ title: "Export failed", description: "Please try again.", variant: "destructive" });
     } finally {
       setExporting(false);
     }
