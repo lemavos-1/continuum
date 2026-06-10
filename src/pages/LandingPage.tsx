@@ -39,7 +39,8 @@ export default function LandingPage() {
         "Free to start, private by design. Bring your notes, your people, and your work into one connected space.",
       align: "left" as const,
       actions: [
-        { label: "Sign in with Google", variant: "primary" as const, onClick: () => openAuth() },
+        { label: "Sign in", variant: "primary" as const, onClick: () => openAuth() },
+        { label: "Register", variant: "secondary" as const, onClick: () => openAuthOld("register") },
       ],
     },
     {
@@ -100,12 +101,12 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <Navbar onAuthOpen={() => openAuth()} />
+      <Navbar onAuthOpen={() => openAuth()} onRegisterOpen={() => openAuthOld("register")} />
       <main>
         <ScrollGlobe sections={sections} className="bg-black" />
       </main>
       <Footer />
-      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} initialTab="login" />
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} initialTab={authTab} />
     </div>
   );
 }
