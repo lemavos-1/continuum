@@ -37,12 +37,12 @@ export default function AuthDialog({ open, onOpenChange, initialTab = "login" }:
                 Welcome back
               </DialogTitle>
               <DialogDescription className="text-sm text-[hsl(var(--popup-muted))]">
-                Sign in to continue.
+                Sign in with your Google account to continue.
               </DialogDescription>
             </DialogHeader>
 
-            {/* Tabs for email/password auth */}
-            {activeTab !== "forgot" && (
+            {/* Tabs - Hidden for Google-only auth */}
+            {false && activeTab !== "forgot" && (
               <div className="grid grid-cols-2 rounded-xl border border-[hsl(var(--popup-border))] bg-white/[0.03] p-1">
                 {(["login", "register"] as AuthTab[]).map((tab) => (
                   <button
@@ -62,10 +62,10 @@ export default function AuthDialog({ open, onOpenChange, initialTab = "login" }:
               </div>
             )}
 
-            {/* Email/Password forms */}
-            {activeTab === "login" && <LoginForm onSuccess={() => onOpenChange(false)} onForgot={() => setActiveTab("forgot")} />}
-            {activeTab === "register" && <RegisterForm onSwitchToLogin={() => setActiveTab("login")} />}
-            {activeTab === "forgot" && <ForgotForm onSwitchToLogin={() => setActiveTab("login")} />}
+            {/* Email/Password forms - Hidden for Google-only auth */}
+            {false && activeTab === "login" && <LoginForm onSuccess={() => onOpenChange(false)} onForgot={() => setActiveTab("forgot")} />}
+            {false && activeTab === "register" && <RegisterForm onSwitchToLogin={() => setActiveTab("login")} />}
+            {false && activeTab === "forgot" && <ForgotForm onSwitchToLogin={() => setActiveTab("login")} />}
 
             {/* Google Login - Always visible */}
             <GoogleOnlyForm onSuccess={() => onOpenChange(false)} />
@@ -130,7 +130,7 @@ function GoogleOnlyForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-// Email/Password Login Form
+// Hidden: Email/Password Login - kept for future use
 function LoginForm({ onSuccess, onForgot }: { onSuccess: () => void; onForgot: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

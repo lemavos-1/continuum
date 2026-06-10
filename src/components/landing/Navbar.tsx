@@ -10,10 +10,9 @@ import AppLogo from "./AppLogo";
 
 interface NavbarProps {
   onAuthOpen?: () => void;
-  onRegisterOpen?: () => void;
 }
 
-export default function Navbar({ onAuthOpen, onRegisterOpen }: NavbarProps) {
+export default function Navbar({ onAuthOpen }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
@@ -48,24 +47,16 @@ export default function Navbar({ onAuthOpen, onRegisterOpen }: NavbarProps) {
           </span>
         </a>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              if (onRegisterOpen) onRegisterOpen();
-              else navigate("/register");
-            }}
-            className="rounded-full border border-white/10 px-3 py-2 text-xs font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
-          >
-            Register
-          </button>
+        {/* Botão de Login via Google */}
+        <div className="flex items-center">
           <button
             onClick={() => {
               if (onAuthOpen) onAuthOpen();
               else navigate("/login");
             }}
-            className="rounded-full bg-white/10 px-3 py-2 text-xs font-medium text-white transition hover:bg-white/20"
+            className="text-white/60 hover:text-white/100 text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-3"
           >
-            Sign in
+            Sign in with Google
           </button>
         </div>
       </div>

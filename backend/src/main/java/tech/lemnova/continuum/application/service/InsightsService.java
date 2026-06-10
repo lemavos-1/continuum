@@ -50,7 +50,7 @@ public class InsightsService {
 
     // Thresholds
     private static final double HIGH_RELEVANCE_THRESHOLD = 40.0;
-    private static final long FORGOTTEN_DAYS_THRESHOLD = 20;
+    private static final long FORGOTTEN_DAYS_THRESHOLD = 6;
     private static final double FORGOTTEN_MIN_SCORE = 3.0;
     private static final int DEFAULT_LIMIT = 10;
 
@@ -63,7 +63,7 @@ public class InsightsService {
     // qualify even if it falls just under FORGOTTEN_MIN_SCORE.
     private static final double FORGOTTEN_VIABILITY_SCORE = 2.0;
     // Guaranteed-inclusion rule: clearly-connected but stale items.
-    private static final long FORGOTTEN_STRONG_DAYS = 30;
+    private static final long FORGOTTEN_STRONG_DAYS = 7;
     private static final int FORGOTTEN_STRONG_CONNECTIONS = 4;
 
     // Note weights (v2 — boosted for sparse early data)
