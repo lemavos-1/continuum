@@ -345,6 +345,7 @@ export const authApi = {
   resendVerification: (email: string) =>
     api.post("/api/auth/resend-verification", { email }),
   exportData: () => api.get("/api/account/export"),
+  exportVaultZip: () => api.get("/api/account/export/zip", { responseType: "blob" }),
 };
 
 // --- RESTANTE DOS ENDPOINTS (Notes, Folders, etc) ---
