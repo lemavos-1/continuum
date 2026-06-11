@@ -265,13 +265,18 @@ public class AuthService {
      * Constrói AuthResponse com TokenPair (Access + Refresh).
      */
     private AuthResponse buildAuthResponseWithTokenPair(User user) {
-        JwtService.TokenPair tokens = jwtService.generateTokenPairFromUser(user);
+        // Access token (curta duração) gerado diretamente.
+        String accessToken = jwtService.generateFromUser(user);
+        // Refresh token (longa duração) gerado E persistido no banco para que
+        // o endpoint /api/auth/refresh consiga validá-lo depois. Sem isso o
+        // refresh falha com TOKEN_NOT_FOUND.
+        String refreshToken = refreshTokenService.generateRefreshToken(user.getId(), "login");
         return AuthResponse.withTokenPair(
-            tokens.accessToken(), 
-            tokens.refreshToken(), 
-            user.getId(), 
-            user.getUsername(), 
-            user.getEmail(), 
+            accessToken,
+            refreshToken,
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
             user.getPlan()
         );
     }
