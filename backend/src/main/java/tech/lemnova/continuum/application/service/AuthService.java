@@ -20,6 +20,7 @@ import tech.lemnova.continuum.domain.token.TokenBlacklistRepository;
 import tech.lemnova.continuum.domain.user.User;
 import tech.lemnova.continuum.domain.user.UserRepository;
 import tech.lemnova.continuum.infra.security.JwtService;
+import tech.lemnova.continuum.infra.security.RefreshTokenService;
 import tech.lemnova.continuum.infra.vault.VaultStorageService;
 
 import java.time.Instant;
@@ -40,6 +41,7 @@ public class AuthService {
     private final TokenBlacklistRepository tokenBlacklistRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final VaultStorageService vaultStorage;
     private final PlanConfiguration planConfig;
 
@@ -48,6 +50,7 @@ public class AuthService {
                        TokenBlacklistRepository tokenBlacklistRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
+                       RefreshTokenService refreshTokenService,
                        VaultStorageService vaultStorage,
                        PlanConfiguration planConfig) {
         this.users = users;
@@ -55,6 +58,7 @@ public class AuthService {
         this.tokenBlacklistRepository = tokenBlacklistRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
         this.vaultStorage = vaultStorage;
         this.planConfig = planConfig;
     }
