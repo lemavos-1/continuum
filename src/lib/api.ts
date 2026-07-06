@@ -1,5 +1,6 @@
 import axios from "axios";
 import { parseTiptapContent } from "@/lib/tiptap-content";
+import { installOfflineLayer } from "@/lib/offline/axios-offline";
 
 // Lê em tempo de execução, não de build
 const getAPIBaseURL = () => {
@@ -29,13 +30,15 @@ const getStoredToken = (key: string) => {
 
 export const setAuthTokens = (accessToken: string, _refreshToken?: string) => {
   if (typeof window === "undefined") return;
+  // Store access token in sessionStorage (for this session only)
   sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+  // Also store in localStorage for persistence across reloads/tabs
+  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   // Persist refresh token across reloads so the client can renew sessions
   // even when the backend doesn't issue an HttpOnly cookie.
   if (_refreshToken) {
     localStorage.setItem(REFRESH_TOKEN_KEY, _refreshToken);
   }
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
 };
 
 export const clearAuthTokens = () => {
@@ -120,6 +123,9 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Install offline-first layer AFTER auth interceptor so auth headers are attached
+installOfflineLayer(api);
 
 /**
  * Gerenciador de Refresh Token com fila de requisições
@@ -456,10 +462,16 @@ export const trackingApi = {
 
 export const subscriptionApi = {
   me: () => api.get("/api/subscriptions/me"),
-  // Accepts either a Lemon Squeezy variant id (var_xxx) or a plan code ("VISION").
+  // Accepts either a Stripe price id (price_xxx) or a plan code ("VISION").
   checkout: (priceOrPlan: string) =>
     api.post("/api/subscriptions/checkout", { priceId: priceOrPlan, planId: priceOrPlan }),
-  cancel: () => api.post("/api/subscriptions/cancel"),
+  cancel: (immediately = false) =>
+    api.post("/api/subscriptions/cancel", { immediately }),
+  changePlan: (priceOrPlan: string) =>
+    api.post("/api/subscriptions/change-plan", { priceId: priceOrPlan, planId: priceOrPlan }),
+  portal: () => api.post("/api/subscriptions/portal"),
+  refund: (chargeId: string, amountCents?: number) =>
+    api.post("/api/subscriptions/refund", { chargeId, amountCents }),
 };
 
 export const plansApi = {
@@ -489,18 +501,24 @@ export const preferencesApi = {
 export const timeTrackingApi = {
   startTimer: (entityId: string) => api.post("/api/time-tracking/start", { entityId }),
   stopTimer: (sessionId: string, note?: string) => api.post("/api/time-tracking/stop", { sessionId, note: note || null }),
-  addTime: (entityId: string, date: string, durationSeconds: number, note?: string) => 
+  pauseTimer: (sessionId: string) => api.post(`/api/time-tracking/${sessionId}/pause`),
+  resumeTimer: (sessionId: string) => api.post(`/api/time-tracking/${sessionId}/resume`),
+  addTime: (entityId: string, date: string, durationSeconds: number, note?: string) =>
     api.post("/api/time-tracking/add", { entityId, date, durationSeconds, note }),
   getTotalTime: (entityId: string) => api.get(`/api/time-tracking/${entityId}/total`),
   getDailyBreakdown: (entityId: string) => api.get(`/api/time-tracking/${entityId}/daily`),
-  getTimeInRange: (entityId: string, from: string, to: string) => 
+  getTimeInRange: (entityId: string, from: string, to: string) =>
     api.get(`/api/time-tracking/${entityId}/range`, { params: { from, to } }),
   getAllSummaries: () => api.get("/api/time-tracking/summary/all"),
   getActiveTimer: (entityId: string) => api.get(`/api/time-tracking/${entityId}/active`),
   getAllActiveTimers: () => api.get("/api/time-tracking/active/all"),
+  getToday: () => api.get("/api/time-tracking/today"),
+  getAllInRange: (from: string, to: string) =>
+    api.get("/api/time-tracking/all/range", { params: { from, to } }),
   deleteEntry: (entryId: string) => api.delete(`/api/time-tracking/${entryId}`),
   recoverSession: (entityId: string) => api.post(`/api/time-tracking/${entityId}/recover`),
 };
+
 
 export const insightsApi = {
   hotNotes: (limit = 10) => api.get("/api/insights/notes/hot", { params: { limit } }),
