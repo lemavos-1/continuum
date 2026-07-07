@@ -300,16 +300,18 @@
      classes onto the design tokens in BOTH light and dark themes,
      so the palette drives every screen (popup-black opted out).
      ------------------------------------------------------------ */
-  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-black"],
-  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-950"],
-  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-900"],
-  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-zinc-900"],
-  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-slate-900"] {
+  /* Solid black surfaces -> card token (opacity overlays like bg-black/50 stay translucent) */
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-black"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-neutral-950"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-neutral-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-zinc-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-slate-900"] {
     background-color: hsl(var(--card)) !important;
   }
 
+  /* Translucent white surfaces -> token-tinted surface (keeps soft layering) */
   :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-white/"] {
-    background-color: hsl(var(--secondary)) !important;
+    background-color: hsl(var(--foreground) / 0.06) !important;
   }
 
   :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="text-white/"] {
