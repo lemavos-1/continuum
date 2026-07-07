@@ -181,35 +181,35 @@
 
   .bento-card {
     @apply relative p-5 rounded-lg overflow-hidden transition-all duration-200 backdrop-blur-xl;
-    background: hsl(0 0% 100% / 0.025);
-    border: 1px solid hsl(0 0% 100% / 0.08);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
-  .bento-card:hover { border-color: hsl(0 0% 100% / 0.18); background: hsl(0 0% 100% / 0.04); }
+  .bento-card:hover { border-color: hsl(var(--ring)); background: hsl(var(--secondary)); }
 
   .glass-panel {
     @apply backdrop-blur-xl rounded-lg;
-    background: hsl(0 0% 100% / 0.025);
-    border: 1px solid hsl(0 0% 100% / 0.08);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
 
   .bento-tag {
     @apply px-2.5 py-1 rounded-md text-xs transition-colors duration-150;
-    background: hsl(0 0% 8%);
+    background: hsl(var(--secondary));
     color: hsl(var(--muted-foreground));
     border: 1px solid hsl(var(--border));
   }
-  .bento-tag:hover { background: hsl(0 0% 12%); color: #fff; }
+  .bento-tag:hover { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
 
   .bento-icon-box {
     @apply w-9 h-9 rounded-md flex items-center justify-center transition-colors duration-200;
-    background: hsl(0 0% 8%);
-    color: #fff;
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
     border: 1px solid hsl(var(--border));
   }
 
   .bento-status {
     @apply text-xs font-medium px-2 py-1 rounded-md;
-    background: hsl(0 0% 8%);
+    background: hsl(var(--secondary));
     color: hsl(var(--muted-foreground));
   }
 
@@ -225,19 +225,19 @@
   .btn-primary {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-sm font-medium text-[11px] uppercase tracking-[0.22em] transition-colors duration-150;
     background-color: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.15);
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
   }
-  .btn-primary:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+  .btn-primary:hover { border-color: hsl(var(--ring)); color: hsl(var(--foreground)); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-secondary {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-sm font-medium text-[11px] uppercase tracking-[0.22em] transition-colors duration-150;
     background-color: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.16);
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
   }
-  .btn-secondary:hover { background: hsl(0 0% 100% / 0.06); border-color: hsl(0 0% 100% / 0.32); }
+  .btn-secondary:hover { background: hsl(var(--secondary)); border-color: hsl(var(--ring)); }
 
   .container {
     width: 100%; margin-left: auto; margin-right: auto;
@@ -295,26 +295,38 @@
   ::-webkit-scrollbar-thumb { background: hsl(0 0% 100% / 0.10); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 100% / 0.22); }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-black"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-900"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-zinc-900"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-slate-900"] {
-    background-color: hsl(var(--background) / 0.92) !important;
+  /* ------------------------------------------------------------
+     Universal token remap: force hardcoded black/white utility
+     classes onto the design tokens in BOTH light and dark themes,
+     so the palette drives every screen (popup-black opted out).
+     ------------------------------------------------------------ */
+  /* Solid black surfaces -> card token (opacity overlays like bg-black/50 stay translucent) */
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-black"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-neutral-950"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-neutral-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-zinc-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="bg-slate-900"] {
+    background-color: hsl(var(--card)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-white/"] {
-    background-color: hsl(var(--foreground) / 0.05) !important;
+  /* Translucent white surfaces -> token-tinted surface (keeps soft layering) */
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-white/"] {
+    background-color: hsl(var(--foreground) / 0.06) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="text-white/"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="text-white/"] {
     color: hsl(var(--muted-foreground)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-white"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-white"] {
     color: hsl(var(--foreground)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="border-white/"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-black"] {
+    color: hsl(var(--background)) !important;
+  }
+
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="border-white/"] {
     border-color: hsl(var(--border)) !important;
   }
 }
@@ -377,4 +389,165 @@
   .hljs-title, .hljs-section, .hljs-name { color: hsl(0 0% 100%); }
   .hljs-variable, .hljs-template-variable { color: hsl(0 0% 80%); }
   .hljs-attr, .hljs-attribute { color: hsl(0 0% 70%); }
+}
+
+@layer utilities {
+  /* Neutral/zinc/gray/slate scales -> tokens (palette-driven everywhere) */
+
+  [class*="text-neutral-50"],
+  [class*="text-neutral-100"],
+  [class*="text-neutral-200"],
+  [class*="text-neutral-300"],
+  [class*="text-zinc-50"],
+  [class*="text-zinc-100"],
+  [class*="text-zinc-200"],
+  [class*="text-zinc-300"],
+  [class*="text-gray-50"],
+  [class*="text-gray-100"],
+  [class*="text-gray-200"],
+  [class*="text-gray-300"],
+  [class*="text-slate-50"],
+  [class*="text-slate-100"],
+  [class*="text-slate-200"],
+  [class*="text-slate-300"] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [class*="text-neutral-400"],
+  [class*="text-neutral-500"],
+  [class*="text-neutral-600"],
+  [class*="text-neutral-700"],
+  [class*="text-neutral-800"],
+  [class*="text-neutral-900"],
+  [class*="text-zinc-400"],
+  [class*="text-zinc-500"],
+  [class*="text-zinc-600"],
+  [class*="text-zinc-700"],
+  [class*="text-zinc-800"],
+  [class*="text-zinc-900"],
+  [class*="text-gray-400"],
+  [class*="text-gray-500"],
+  [class*="text-gray-600"],
+  [class*="text-gray-700"],
+  [class*="text-gray-800"],
+  [class*="text-gray-900"],
+  [class*="text-slate-400"],
+  [class*="text-slate-500"],
+  [class*="text-slate-600"],
+  [class*="text-slate-700"],
+  [class*="text-slate-800"],
+  [class*="text-slate-900"] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  [class*="bg-neutral-50"],
+  [class*="bg-neutral-100"],
+  [class*="bg-neutral-200"],
+  [class*="bg-neutral-300"],
+  [class*="bg-zinc-50"],
+  [class*="bg-zinc-100"],
+  [class*="bg-zinc-200"],
+  [class*="bg-zinc-300"],
+  [class*="bg-gray-50"],
+  [class*="bg-gray-100"],
+  [class*="bg-gray-200"],
+  [class*="bg-gray-300"],
+  [class*="bg-slate-50"],
+  [class*="bg-slate-100"],
+  [class*="bg-slate-200"],
+  [class*="bg-slate-300"] {
+    background-color: hsl(var(--secondary)) !important;
+  }
+
+  [class*="bg-neutral-400"],
+  [class*="bg-neutral-500"],
+  [class*="bg-neutral-600"],
+  [class*="bg-neutral-700"],
+  [class*="bg-zinc-400"],
+  [class*="bg-zinc-500"],
+  [class*="bg-zinc-600"],
+  [class*="bg-zinc-700"],
+  [class*="bg-gray-400"],
+  [class*="bg-gray-500"],
+  [class*="bg-gray-600"],
+  [class*="bg-gray-700"],
+  [class*="bg-slate-400"],
+  [class*="bg-slate-500"],
+  [class*="bg-slate-600"],
+  [class*="bg-slate-700"] {
+    background-color: hsl(var(--accent)) !important;
+  }
+
+  [class*="bg-neutral-800"],
+  [class*="bg-neutral-900"],
+  [class*="bg-neutral-950"],
+  [class*="bg-zinc-800"],
+  [class*="bg-zinc-900"],
+  [class*="bg-zinc-950"],
+  [class*="bg-gray-800"],
+  [class*="bg-gray-900"],
+  [class*="bg-gray-950"],
+  [class*="bg-slate-800"],
+  [class*="bg-slate-900"],
+  [class*="bg-slate-950"] {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  [class*="border-neutral-100"],
+  [class*="border-neutral-200"],
+  [class*="border-neutral-300"],
+  [class*="border-neutral-400"],
+  [class*="border-neutral-500"],
+  [class*="border-neutral-600"],
+  [class*="border-neutral-700"],
+  [class*="border-neutral-800"],
+  [class*="border-neutral-900"],
+  [class*="border-zinc-100"],
+  [class*="border-zinc-200"],
+  [class*="border-zinc-300"],
+  [class*="border-zinc-400"],
+  [class*="border-zinc-500"],
+  [class*="border-zinc-600"],
+  [class*="border-zinc-700"],
+  [class*="border-zinc-800"],
+  [class*="border-zinc-900"],
+  [class*="border-gray-100"],
+  [class*="border-gray-200"],
+  [class*="border-gray-300"],
+  [class*="border-gray-400"],
+  [class*="border-gray-500"],
+  [class*="border-gray-600"],
+  [class*="border-gray-700"],
+  [class*="border-gray-800"],
+  [class*="border-gray-900"],
+  [class*="border-slate-100"],
+  [class*="border-slate-200"],
+  [class*="border-slate-300"],
+  [class*="border-slate-400"],
+  [class*="border-slate-500"],
+  [class*="border-slate-600"],
+  [class*="border-slate-700"],
+  [class*="border-slate-800"],
+  [class*="border-slate-900"] {
+    border-color: hsl(var(--border)) !important;
+  }
+
+  [class*="ring-neutral-300"],
+  [class*="ring-neutral-400"],
+  [class*="ring-neutral-500"],
+  [class*="ring-neutral-600"],
+  [class*="ring-zinc-300"],
+  [class*="ring-zinc-400"],
+  [class*="ring-zinc-500"],
+  [class*="ring-zinc-600"],
+  [class*="ring-gray-300"],
+  [class*="ring-gray-400"],
+  [class*="ring-gray-500"],
+  [class*="ring-gray-600"],
+  [class*="ring-slate-300"],
+  [class*="ring-slate-400"],
+  [class*="ring-slate-500"],
+  [class*="ring-slate-600"] {
+    --tw-ring-color: hsl(var(--ring)) !important;
+  }
 }
