@@ -390,3 +390,164 @@
   .hljs-variable, .hljs-template-variable { color: hsl(0 0% 80%); }
   .hljs-attr, .hljs-attribute { color: hsl(0 0% 70%); }
 }
+
+@layer utilities {
+  /* Neutral/zinc/gray/slate scales -> tokens (palette-driven everywhere) */
+
+  [class*="text-neutral-50"],
+  [class*="text-neutral-100"],
+  [class*="text-neutral-200"],
+  [class*="text-neutral-300"],
+  [class*="text-zinc-50"],
+  [class*="text-zinc-100"],
+  [class*="text-zinc-200"],
+  [class*="text-zinc-300"],
+  [class*="text-gray-50"],
+  [class*="text-gray-100"],
+  [class*="text-gray-200"],
+  [class*="text-gray-300"],
+  [class*="text-slate-50"],
+  [class*="text-slate-100"],
+  [class*="text-slate-200"],
+  [class*="text-slate-300"] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [class*="text-neutral-400"],
+  [class*="text-neutral-500"],
+  [class*="text-neutral-600"],
+  [class*="text-neutral-700"],
+  [class*="text-neutral-800"],
+  [class*="text-neutral-900"],
+  [class*="text-zinc-400"],
+  [class*="text-zinc-500"],
+  [class*="text-zinc-600"],
+  [class*="text-zinc-700"],
+  [class*="text-zinc-800"],
+  [class*="text-zinc-900"],
+  [class*="text-gray-400"],
+  [class*="text-gray-500"],
+  [class*="text-gray-600"],
+  [class*="text-gray-700"],
+  [class*="text-gray-800"],
+  [class*="text-gray-900"],
+  [class*="text-slate-400"],
+  [class*="text-slate-500"],
+  [class*="text-slate-600"],
+  [class*="text-slate-700"],
+  [class*="text-slate-800"],
+  [class*="text-slate-900"] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  [class*="bg-neutral-50"],
+  [class*="bg-neutral-100"],
+  [class*="bg-neutral-200"],
+  [class*="bg-neutral-300"],
+  [class*="bg-zinc-50"],
+  [class*="bg-zinc-100"],
+  [class*="bg-zinc-200"],
+  [class*="bg-zinc-300"],
+  [class*="bg-gray-50"],
+  [class*="bg-gray-100"],
+  [class*="bg-gray-200"],
+  [class*="bg-gray-300"],
+  [class*="bg-slate-50"],
+  [class*="bg-slate-100"],
+  [class*="bg-slate-200"],
+  [class*="bg-slate-300"] {
+    background-color: hsl(var(--secondary)) !important;
+  }
+
+  [class*="bg-neutral-400"],
+  [class*="bg-neutral-500"],
+  [class*="bg-neutral-600"],
+  [class*="bg-neutral-700"],
+  [class*="bg-zinc-400"],
+  [class*="bg-zinc-500"],
+  [class*="bg-zinc-600"],
+  [class*="bg-zinc-700"],
+  [class*="bg-gray-400"],
+  [class*="bg-gray-500"],
+  [class*="bg-gray-600"],
+  [class*="bg-gray-700"],
+  [class*="bg-slate-400"],
+  [class*="bg-slate-500"],
+  [class*="bg-slate-600"],
+  [class*="bg-slate-700"] {
+    background-color: hsl(var(--accent)) !important;
+  }
+
+  [class*="bg-neutral-800"],
+  [class*="bg-neutral-900"],
+  [class*="bg-neutral-950"],
+  [class*="bg-zinc-800"],
+  [class*="bg-zinc-900"],
+  [class*="bg-zinc-950"],
+  [class*="bg-gray-800"],
+  [class*="bg-gray-900"],
+  [class*="bg-gray-950"],
+  [class*="bg-slate-800"],
+  [class*="bg-slate-900"],
+  [class*="bg-slate-950"] {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  [class*="border-neutral-100"],
+  [class*="border-neutral-200"],
+  [class*="border-neutral-300"],
+  [class*="border-neutral-400"],
+  [class*="border-neutral-500"],
+  [class*="border-neutral-600"],
+  [class*="border-neutral-700"],
+  [class*="border-neutral-800"],
+  [class*="border-neutral-900"],
+  [class*="border-zinc-100"],
+  [class*="border-zinc-200"],
+  [class*="border-zinc-300"],
+  [class*="border-zinc-400"],
+  [class*="border-zinc-500"],
+  [class*="border-zinc-600"],
+  [class*="border-zinc-700"],
+  [class*="border-zinc-800"],
+  [class*="border-zinc-900"],
+  [class*="border-gray-100"],
+  [class*="border-gray-200"],
+  [class*="border-gray-300"],
+  [class*="border-gray-400"],
+  [class*="border-gray-500"],
+  [class*="border-gray-600"],
+  [class*="border-gray-700"],
+  [class*="border-gray-800"],
+  [class*="border-gray-900"],
+  [class*="border-slate-100"],
+  [class*="border-slate-200"],
+  [class*="border-slate-300"],
+  [class*="border-slate-400"],
+  [class*="border-slate-500"],
+  [class*="border-slate-600"],
+  [class*="border-slate-700"],
+  [class*="border-slate-800"],
+  [class*="border-slate-900"] {
+    border-color: hsl(var(--border)) !important;
+  }
+
+  [class*="ring-neutral-300"],
+  [class*="ring-neutral-400"],
+  [class*="ring-neutral-500"],
+  [class*="ring-neutral-600"],
+  [class*="ring-zinc-300"],
+  [class*="ring-zinc-400"],
+  [class*="ring-zinc-500"],
+  [class*="ring-zinc-600"],
+  [class*="ring-gray-300"],
+  [class*="ring-gray-400"],
+  [class*="ring-gray-500"],
+  [class*="ring-gray-600"],
+  [class*="ring-slate-300"],
+  [class*="ring-slate-400"],
+  [class*="ring-slate-500"],
+  [class*="ring-slate-600"] {
+    --tw-ring-color: hsl(var(--ring)) !important;
+  }
+}
