@@ -295,26 +295,36 @@
   ::-webkit-scrollbar-thumb { background: hsl(0 0% 100% / 0.10); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 100% / 0.22); }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-black"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-900"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-zinc-900"],
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-slate-900"] {
-    background-color: hsl(var(--background) / 0.92) !important;
+  /* ------------------------------------------------------------
+     Universal token remap: force hardcoded black/white utility
+     classes onto the design tokens in BOTH light and dark themes,
+     so the palette drives every screen (popup-black opted out).
+     ------------------------------------------------------------ */
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-black"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-950"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-neutral-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-zinc-900"],
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-slate-900"] {
+    background-color: hsl(var(--card)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-white/"] {
-    background-color: hsl(var(--foreground) / 0.05) !important;
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="bg-white/"] {
+    background-color: hsl(var(--secondary)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="text-white/"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="text-white/"] {
     color: hsl(var(--muted-foreground)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-white"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-white"] {
     color: hsl(var(--foreground)) !important;
   }
 
-  .light :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="border-white/"] {
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class~="text-black"] {
+    color: hsl(var(--background)) !important;
+  }
+
+  :where(:not(.continuum-popup-black):not(.continuum-popup-black *))[class*="border-white/"] {
     border-color: hsl(var(--border)) !important;
   }
 }
