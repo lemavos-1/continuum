@@ -181,35 +181,35 @@
 
   .bento-card {
     @apply relative p-5 rounded-lg overflow-hidden transition-all duration-200 backdrop-blur-xl;
-    background: hsl(0 0% 100% / 0.025);
-    border: 1px solid hsl(0 0% 100% / 0.08);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
-  .bento-card:hover { border-color: hsl(0 0% 100% / 0.18); background: hsl(0 0% 100% / 0.04); }
+  .bento-card:hover { border-color: hsl(var(--ring)); background: hsl(var(--secondary)); }
 
   .glass-panel {
     @apply backdrop-blur-xl rounded-lg;
-    background: hsl(0 0% 100% / 0.025);
-    border: 1px solid hsl(0 0% 100% / 0.08);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
 
   .bento-tag {
     @apply px-2.5 py-1 rounded-md text-xs transition-colors duration-150;
-    background: hsl(0 0% 8%);
+    background: hsl(var(--secondary));
     color: hsl(var(--muted-foreground));
     border: 1px solid hsl(var(--border));
   }
-  .bento-tag:hover { background: hsl(0 0% 12%); color: #fff; }
+  .bento-tag:hover { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
 
   .bento-icon-box {
     @apply w-9 h-9 rounded-md flex items-center justify-center transition-colors duration-200;
-    background: hsl(0 0% 8%);
-    color: #fff;
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
     border: 1px solid hsl(var(--border));
   }
 
   .bento-status {
     @apply text-xs font-medium px-2 py-1 rounded-md;
-    background: hsl(0 0% 8%);
+    background: hsl(var(--secondary));
     color: hsl(var(--muted-foreground));
   }
 
@@ -225,19 +225,19 @@
   .btn-primary {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-sm font-medium text-[11px] uppercase tracking-[0.22em] transition-colors duration-150;
     background-color: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.15);
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
   }
-  .btn-primary:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+  .btn-primary:hover { border-color: hsl(var(--ring)); color: hsl(var(--foreground)); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-secondary {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-sm font-medium text-[11px] uppercase tracking-[0.22em] transition-colors duration-150;
     background-color: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.16);
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
   }
-  .btn-secondary:hover { background: hsl(0 0% 100% / 0.06); border-color: hsl(0 0% 100% / 0.32); }
+  .btn-secondary:hover { background: hsl(var(--secondary)); border-color: hsl(var(--ring)); }
 
   .container {
     width: 100%; margin-left: auto; margin-right: auto;
