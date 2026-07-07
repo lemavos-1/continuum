@@ -162,7 +162,7 @@
   }
   body {
     @apply antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
     font-feature-settings: "ss01", "cv11";
   }
 }
@@ -174,7 +174,7 @@
     font-weight: 600;
     letter-spacing: -0.01em;
   }
-  .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
 
   /* Hairline divider */
   .hairline { border-color: hsl(var(--border)); }
@@ -214,7 +214,7 @@
   }
 
   .label-caps {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Geist', system-ui, sans-serif;
     font-size: 0.6875rem;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -321,7 +321,7 @@
 
 /* Continuum editor */
 @layer components {
-  .continuum-editor { @apply text-foreground leading-relaxed; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; }
+  .continuum-editor { @apply text-foreground leading-relaxed; font-family: 'Geist', system-ui, sans-serif; font-size: 16px; }
   .continuum-editor p { @apply my-2; }
   .continuum-editor h1 { @apply text-3xl font-serif mt-8 mb-3 tracking-tight; }
   .continuum-editor h2 { @apply text-2xl font-serif mt-7 mb-2 tracking-tight; }
