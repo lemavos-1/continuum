@@ -21,6 +21,7 @@ import {
   FolderOpen,
   Squares2x2,
   ArrowLeft,
+  LifeBuoy,
 } from "@/lib/heroicons";
 import {
   Squares2X2Icon as Squares2x2Solid,
@@ -199,6 +200,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/subscription")}>
                   <Settings className="mr-2 h-4 w-4" /> {t("nav_subscription")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/support")}>
+                  <LifeBuoy className="mr-2 h-4 w-4" /> {t("nav_support")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-xs text-zinc-500">{user?.email}</DropdownMenuLabel>
