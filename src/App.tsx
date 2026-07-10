@@ -98,6 +98,8 @@ const AppRoutes = () => (
     <Route path="/login-token" element={<LoginSuccess />} />
     <Route path="/terms" element={<Terms />} />
     <Route path="/privacy" element={<Privacy />} />
+    <Route path="/support" element={<Support />} />
+    <Route path="/about" element={<About />} />
     <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
     <Route path="/notes/:id" element={<ProtectedRoute><NoteEditor /></ProtectedRoute>} />
     <Route path="/entities" element={<ProtectedRoute><Entities /></ProtectedRoute>} />
