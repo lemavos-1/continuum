@@ -99,17 +99,41 @@ export default defineConfig(({ mode }) => ({
               cacheName: "continuum-html",
               networkTimeoutSeconds: 4,
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
-            // Fonts.
-            urlPattern: ({ url }) =>
-              url.origin === "https://fonts.gstatic.com" ||
-              url.origin === "https://fonts.googleapis.com",
+            // Google Fonts stylesheet — may change, keep it fresh in background.
+            urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "continuum-font-css",
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // Google Fonts files — immutable, cache aggressively.
+            urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
             handler: "CacheFirst",
             options: {
               cacheName: "continuum-fonts",
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // App icons — always available offline for the installed app.
+            urlPattern: ({ url, request }) =>
+              request.destination === "image" &&
+              (url.pathname.endsWith("apple-touch-icon.png") ||
+                url.pathname.includes("/pwa-") ||
+                url.pathname.includes("/maskable-")),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "continuum-icons",
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
