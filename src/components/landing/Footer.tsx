@@ -34,11 +34,13 @@ export default function Footer() {
           </p>
 
           <div className="pt-8 mt-8 border-t border-white/[0.05] space-y-4">
-            <div className="flex gap-6 text-xs text-[#888888]">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[#888888]">
+              <a href="#/about" className="hover:text-white transition-colors">About</a>
+              <a href="#/support" className="hover:text-white transition-colors">Support</a>
               <a href="#/terms" className="hover:text-white transition-colors">Terms and Conditions</a>
               <a href="#/privacy" className="hover:text-white transition-colors">Privacy</a>
-              <a href="mailto:continuumnodes@gmail.com" className="hover:text-white transition-colors">Contact</a>
-              {/* <a href="https://www.instagram.com/continuumnodes" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a> */}
+              <a href="mailto:contact@continuum.onl" className="hover:text-white transition-colors">Contact</a>
+              <a href="mailto:feedback@continuum.onl" className="hover:text-white transition-colors">Feedback</a>
             </div>
             <p className="font-body text-xs text-[#888888]">
               © {new Date().getFullYear()} Continuum. All rights reserved.
