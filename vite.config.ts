@@ -30,20 +30,11 @@ export default defineConfig(({ mode }) => ({
       devOptions: { enabled: false },
       filename: "sw.js",
       manifestFilename: "manifest.webmanifest",
-      includeAssets: [
-        "favicon.ico",
-        "manifest.json",
-        "apple-touch-icon.png",
-        "pwa-192x192.png",
-        "pwa-512x512.png",
-        "maskable-192x192.png",
-        "maskable-512x512.png",
-      ],
+      includeAssets: ["favicon.ico", "manifest.json"],
       manifest: {
         name: "Continuum",
         short_name: "Continuum",
-        description:
-          "A private, connected workspace for your notes, projects and people. Build your personal knowledge graph.",
+        description: "Personal Knowledge Management Platform",
         start_url: "/",
         scope: "/",
         display: "standalone",
@@ -53,33 +44,9 @@ export default defineConfig(({ mode }) => ({
         categories: ["productivity"],
         icons: [
           {
-            src: "/pwa-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "/pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "/maskable-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "maskable",
-          },
-          {
-            src: "/maskable-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
-          },
-          {
-            src: "/apple-touch-icon.png",
-            sizes: "180x180",
-            type: "image/png",
+            src: "/favicon.ico",
+            sizes: "any",
+            type: "image/x-icon",
             purpose: "any",
           },
         ],
@@ -99,41 +66,17 @@ export default defineConfig(({ mode }) => ({
               cacheName: "continuum-html",
               networkTimeoutSeconds: 4,
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 },
-              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
-            // Google Fonts stylesheet — may change, keep it fresh in background.
-            urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com",
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "continuum-font-css",
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            // Google Fonts files — immutable, cache aggressively.
-            urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
+            // Fonts.
+            urlPattern: ({ url }) =>
+              url.origin === "https://fonts.gstatic.com" ||
+              url.origin === "https://fonts.googleapis.com",
             handler: "CacheFirst",
             options: {
               cacheName: "continuum-fonts",
               expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            // App icons — always available offline for the installed app.
-            urlPattern: ({ url, request }) =>
-              request.destination === "image" &&
-              (url.pathname.endsWith("apple-touch-icon.png") ||
-                url.pathname.includes("/pwa-") ||
-                url.pathname.includes("/maskable-")),
-            handler: "CacheFirst",
-            options: {
-              cacheName: "continuum-icons",
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
