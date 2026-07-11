@@ -28,6 +28,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Support from "./pages/Support";
 import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 import Subscription from "./pages/Subscription";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -100,6 +101,7 @@ const AppRoutes = () => (
     <Route path="/privacy" element={<Privacy />} />
     <Route path="/support" element={<Support />} />
     <Route path="/about" element={<About />} />
+    <Route path="/pricing" element={<Pricing />} />
     <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
     <Route path="/notes/:id" element={<ProtectedRoute><NoteEditor /></ProtectedRoute>} />
     <Route path="/entities" element={<ProtectedRoute><Entities /></ProtectedRoute>} />

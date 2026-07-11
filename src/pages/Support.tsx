@@ -4,7 +4,6 @@ import {
   MessageSquare,
   Bug,
   ChevronDown,
-  LifeBuoy,
 } from "@/lib/heroicons";
 
 const FEEDBACK_EMAIL = "feedback@continuum.onl";
@@ -81,19 +80,19 @@ const faqs = [
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-border bg-card/40">
+    <div className="border border-white/10 bg-white/[0.02] rounded-sm">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
       >
-        <span className="text-sm font-medium text-foreground">{q}</span>
+        <span className="text-sm font-medium text-white/85">{q}</span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-white/40 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
       {open && (
-        <p className="px-5 pb-5 text-sm leading-7 text-muted-foreground">{a}</p>
+        <p className="px-5 pb-5 text-sm leading-7 text-white/50">{a}</p>
       )}
     </div>
   );
@@ -101,20 +100,18 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 export default function Support() {
   return (
-    <div className="min-h-screen bg-background text-foreground px-4 py-16 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-black text-white px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <a
           href="#/"
-          className="mb-8 inline-flex text-sm font-semibold uppercase tracking-[0.28em] text-muted-foreground transition hover:text-foreground"
+          className="mb-8 inline-flex text-sm font-semibold uppercase tracking-[0.28em] text-zinc-400 transition hover:text-white"
         >
           ← Back to home
         </a>
 
-        <div className="flex items-center gap-3">
-          <LifeBuoy className="h-8 w-8 text-foreground" />
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Support center</h1>
-        </div>
-        <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
+        <p className="text-[10px] uppercase tracking-[0.32em] text-white/30">Help & Contact</p>
+        <h1 className="mt-3 font-serif text-4xl tracking-tight text-white sm:text-5xl">Support center</h1>
+        <p className="mt-4 max-w-xl text-sm leading-7 text-white/50">
           Need a hand? Send us feedback, get in touch, report a bug, or browse the most common questions.
         </p>
 
@@ -126,12 +123,12 @@ export default function Support() {
               <a
                 key={c.title}
                 href={c.href}
-                className="group flex flex-col rounded-2xl border border-border bg-card/40 p-5 transition hover:border-foreground/30 hover:bg-card"
+                className="group flex flex-col border border-white/10 bg-white/[0.02] p-5 rounded-sm transition hover:border-white/30 hover:bg-white/[0.04]"
               >
-                <Icon className="h-6 w-6 text-foreground" />
-                <h2 className="mt-4 text-base font-semibold">{c.title}</h2>
-                <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{c.description}</p>
-                <span className="mt-4 text-sm font-medium text-foreground group-hover:underline">
+                <Icon className="h-6 w-6 text-white/70" />
+                <h2 className="mt-4 text-base font-medium text-white/90">{c.title}</h2>
+                <p className="mt-2 flex-1 text-sm leading-6 text-white/50">{c.description}</p>
+                <span className="mt-4 text-xs uppercase tracking-[0.22em] text-white/60 group-hover:text-white transition-colors">
                   {c.action} →
                 </span>
               </a>
@@ -141,7 +138,7 @@ export default function Support() {
 
         {/* FAQ */}
         <div className="mt-16">
-          <h2 className="text-2xl font-semibold">Frequently asked questions</h2>
+          <h2 className="font-serif text-2xl tracking-tight text-white">Frequently asked questions</h2>
           <div className="mt-6 space-y-3">
             {faqs.map((f) => (
               <FaqItem key={f.q} q={f.q} a={f.a} />
@@ -149,9 +146,9 @@ export default function Support() {
           </div>
         </div>
 
-        <p className="mt-16 text-sm text-muted-foreground">
+        <p className="mt-16 text-sm text-white/40">
           Still stuck? Email us directly at{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-foreground hover:underline">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-white hover:underline">
             {CONTACT_EMAIL}
           </a>
           .
