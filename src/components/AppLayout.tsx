@@ -21,7 +21,7 @@ import {
   FolderOpen,
   Squares2x2,
   ArrowLeft,
-  LifeBuoy,
+  
 } from "@/lib/heroicons";
 import {
   Squares2X2Icon as Squares2x2Solid,
