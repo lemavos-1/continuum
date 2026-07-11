@@ -307,7 +307,45 @@ export default function Profile() {
 
               <OfflineSyncRow />
             </div>
+
+            {/* HELP & SUPPORT */}
+            <div className="border border-white/5 bg-white/[0.01] rounded-sm divide-y divide-white/[0.04]">
+              <a
+                href="#/support"
+                className="flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.02]"
+              >
+                <LifebuoyIcon className="h-4 w-4 text-foreground/40 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground/70">Support center</p>
+                  <p className="text-xs text-foreground/30 truncate">FAQ, contact, feedback and bug reports.</p>
+                </div>
+                <ChevronRightIcon className="h-4 w-4 text-foreground/20 shrink-0" />
+              </a>
+              <a
+                href="mailto:feedback@continuum.onl?subject=Continuum%20%E2%80%94%20Feedback"
+                className="flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.02]"
+              >
+                <ChatBubbleLeftEllipsisIcon className="h-4 w-4 text-foreground/40 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground/70">Send feedback</p>
+                  <p className="text-xs text-foreground/30 truncate">feedback@continuum.onl</p>
+                </div>
+                <ChevronRightIcon className="h-4 w-4 text-foreground/20 shrink-0" />
+              </a>
+              <a
+                href="mailto:bugs@continuum.onl?subject=Continuum%20%E2%80%94%20Bug%20report"
+                className="flex items-center gap-4 p-4 transition-colors hover:bg-white/[0.02]"
+              >
+                <BugAntIcon className="h-4 w-4 text-foreground/40 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground/70">Report a bug</p>
+                  <p className="text-xs text-foreground/30 truncate">bugs@continuum.onl</p>
+                </div>
+                <ChevronRightIcon className="h-4 w-4 text-foreground/20 shrink-0" />
+              </a>
+            </div>
           </div>
+
 
           {/* LIMITS SECTION */}
           <section className="space-y-6 pt-4 border-t border-white/5 lg:col-span-2">
