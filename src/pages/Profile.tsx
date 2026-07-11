@@ -22,6 +22,11 @@ import {
   ArrowUpTrayIcon,
   SunIcon,
   MoonIcon,
+  LifebuoyIcon,
+  ChatBubbleLeftEllipsisIcon,
+  BugAntIcon,
+  ChevronRightIcon,
+
 } from "@heroicons/react/24/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 import MarkdownImportDialog from "@/components/import/MarkdownImportDialog";
