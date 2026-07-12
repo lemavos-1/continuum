@@ -89,7 +89,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <CommandPalette />
 
       {/* Mobile top bar */}
-      <div className="fixed left-0 right-0 top-0 z-40 flex items-center gap-3 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <div className="fixed left-0 right-0 top-0 z-40 flex items-center gap-3 border-b border-white/5 bg-background/80 px-4 py-3 backdrop-blur-xl lg:hidden">
         <div className="flex items-center gap-2">
           <img src="/favicon.ico" alt="Continuum" className="h-7 w-7 rounded-lg object-contain" />
           <span className="text-base font-serif tracking-tight">Continuum</span>
@@ -103,7 +103,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/5 bg-white/5 px-3 py-2 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("common_back") || "Back"}
