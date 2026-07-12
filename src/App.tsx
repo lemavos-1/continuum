@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,35 +9,42 @@ import { UsageProvider } from "@/contexts/UsageContext";
 import { EntityProvider } from "@/contexts/EntityContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import GoogleCallback from "./pages/GoogleCallback";
-import LoginSuccess from "./pages/LoginSuccess";
-import Dashboard from "./pages/Dashboard";
-import LandingPage from "./pages/LandingPage";
-import Notes from "./pages/Notes";
-import NoteEditor from "./pages/NoteEditor";
-import Entities from "./pages/Entities";
-import EntityDetail from "./pages/EntityDetail";
-import KnowledgeGraph from "./pages/KnowledgeGraph";
-import Vault from "./pages/Vault";
-import VaultDownload from "./pages/VaultDownload";
-import Activities from "./pages/Activities";
-import Projects from "./pages/Projects";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
-import Support from "./pages/Support";
-import About from "./pages/About";
-import Pricing from "./pages/Pricing";
-import Subscription from "./pages/Subscription";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import Insights from "./pages/Insights";
 import { Loader2 } from "@/lib/heroicons";
 import { extractAuthTokensFromLocation, sanitizeAuthRedirectUrl } from "@/lib/auth-redirect";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const GoogleCallback = lazy(() => import("./pages/GoogleCallback"));
+const LoginSuccess = lazy(() => import("./pages/LoginSuccess"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const Notes = lazy(() => import("./pages/Notes"));
+const NoteEditor = lazy(() => import("./pages/NoteEditor"));
+const Entities = lazy(() => import("./pages/Entities"));
+const EntityDetail = lazy(() => import("./pages/EntityDetail"));
+const KnowledgeGraph = lazy(() => import("./pages/KnowledgeGraph"));
+const Vault = lazy(() => import("./pages/Vault"));
+const VaultDownload = lazy(() => import("./pages/VaultDownload"));
+const Activities = lazy(() => import("./pages/Activities"));
+const Projects = lazy(() => import("./pages/Projects"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Support = lazy(() => import("./pages/Support"));
+const About = lazy(() => import("./pages/About"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Subscription = lazy(() => import("./pages/Subscription"));
+const Profile = lazy(() => import("./pages/Profile"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Insights = lazy(() => import("./pages/Insights"));
+
+const PageFallback = () => (
+  <div className="flex min-h-screen items-center justify-center bg-background">
+    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
