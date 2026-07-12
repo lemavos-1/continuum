@@ -95,6 +95,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 const AppRoutes = () => (
+  <Suspense fallback={<PageFallback />}>
   <Routes>
     <Route path="/" element={<HomeRoute />} />
     <Route path="/index" element={<HomeRoute />} />
