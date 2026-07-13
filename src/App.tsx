@@ -39,6 +39,7 @@ const Subscription = lazy(() => import("./pages/Subscription"));
 const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Insights = lazy(() => import("./pages/Insights"));
+const EditorTest = lazy(() => import("./pages/EditorTest"));
 
 const PageFallback = () => (
   <div className="flex min-h-screen items-center justify-center bg-background">
@@ -129,6 +130,7 @@ const AppRoutes = () => (
     <Route path="/vault/download/:fileId" element={<ProtectedRoute><VaultDownload /></ProtectedRoute>} />
     <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+    <Route path="/editor-test" element={<EditorTest />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
   </Suspense>
