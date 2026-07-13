@@ -124,7 +124,6 @@ const AppRoutes = () => (
     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
-  </Suspense>
 );
 
 const App = () => (
