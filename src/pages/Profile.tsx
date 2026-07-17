@@ -33,8 +33,8 @@ import MarkdownImportDialog from "@/components/import/MarkdownImportDialog";
 import { useOfflineStatus } from "@/hooks/use-offline-status";
 import { flushQueue, getLastSyncAt } from "@/lib/offline/sync";
 import { toast as sonnerToast } from "sonner";
-
-const formatLimitValue = (value: number, suffix = "") => (value === -1 ? "Unlimited" : `${value}${suffix}`);
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 function OfflineSyncRow() {
   const { status, pending, syncing } = useOfflineStatus();
