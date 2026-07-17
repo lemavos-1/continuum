@@ -393,7 +393,7 @@ export default function Profile() {
               ))}
 
               <div className="border border-white/5 bg-white/[0.01] p-4 flex items-center justify-between gap-3 text-xs rounded-sm">
-                <span className="text-white/40 text-xs">Export Data</span>
+                <span className="text-white/40 text-xs">{t("profile_exportData")}</span>
                 {user?.dataExport ? (
                   <button
                     type="button"
@@ -402,10 +402,10 @@ export default function Profile() {
                     className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white underline underline-offset-4 disabled:opacity-40 transition-colors"
                   >
                     <ArrowDownTrayIcon className="w-3 h-3" />
-                    {exporting ? "Exporting…" : "Download Backup"}
+                    {exporting ? t("profile_exporting") : t("profile_downloadBackup")}
                   </button>
                 ) : (
-                  <span className="text-white/20 text-xs">Locked</span>
+                  <span className="text-white/20 text-xs">{t("profile_locked")}</span>
                 )}
               </div>
             </div>
