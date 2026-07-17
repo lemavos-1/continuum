@@ -36,6 +36,8 @@ import { toast as sonnerToast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
+const formatLimitValue = (value: number, suffix = "") => (value === -1 ? "Unlimited" : `${value}${suffix}`);
+
 function OfflineSyncRow() {
   const { status, pending, syncing } = useOfflineStatus();
   const [busy, setBusy] = useState(false);
