@@ -1,3 +1,4 @@
+import * as React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,6 +11,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Loader2 } from "@/lib/heroicons";
 import { extractAuthTokensFromLocation, sanitizeAuthRedirectUrl } from "@/lib/auth-redirect";
+import { EMAIL_AUTH_ENABLED } from "@/lib/dev-mode";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
@@ -44,12 +47,17 @@ const queryClient = new QueryClient();
 
 function HomeRoute() {
   const { user, loading } = useAuth();
-  sanitizeAuthRedirectUrl();
-  const authTokens = extractAuthTokensFromLocation();
+  // Read tokens once per mount so we don't recompute on every render.
+  const [hasIncomingToken] = React.useState(() => {
+    const t = extractAuthTokensFromLocation();
+    return !!t?.accessToken;
+  });
 
-  if (authTokens?.accessToken) {
-    return <LoginSuccess />;
-  }
+  React.useEffect(() => {
+    if (!hasIncomingToken) sanitizeAuthRedirectUrl();
+  }, [hasIncomingToken]);
+
+  if (hasIncomingToken) return <LoginSuccess />;
 
   if (loading) {
     return (
@@ -95,7 +103,11 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
     <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-    <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+    <Route
+      path="/forgot-password"
+      element={EMAIL_AUTH_ENABLED ? <PublicRoute><ForgotPassword /></PublicRoute> : <Navigate to="/login" replace />}
+    />
+
     <Route path="/google-callback" element={<GoogleCallback />} />
     <Route path="/login-successful" element={<LoginSuccess />} />
     <Route path="/login-token" element={<LoginSuccess />} />

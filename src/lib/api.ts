@@ -1,6 +1,5 @@
 import axios from "axios";
 import { parseTiptapContent } from "@/lib/tiptap-content";
-import { installOfflineLayer } from "@/lib/offline/axios-offline";
 
 // Lê em tempo de execução, não de build
 const getAPIBaseURL = () => {
@@ -110,6 +109,13 @@ const normalizeSearchResults = (payload: unknown) => {
 // Interceptor: attach JWT (skip only login and registration endpoints)
 api.interceptors.request.use((config) => {
   const url = config.url ?? "";
+  // Always tell the backend which timezone the user is in, so "today"
+  // (activities, tracking, heatmaps) is computed in the user's local day.
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz) config.headers["X-Timezone"] = tz;
+    config.headers["X-TZ-Offset"] = String(-new Date().getTimezoneOffset());
+  } catch { /* ignore */ }
   const skipAuth =
     url === "/api/auth/login" ||
     url === "/api/auth/register" ||
@@ -123,9 +129,6 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
-// Install offline-first layer AFTER auth interceptor so auth headers are attached
-installOfflineLayer(api);
 
 /**
  * Gerenciador de Refresh Token com fila de requisições
@@ -389,6 +392,8 @@ export const notesApi = {
     }
     return api.put(`/api/notes/${id}`, payload);
   },
+  bulkUpdateType: (ids: string[], type: string) =>
+    api.patch("/api/notes/bulk-type", { ids, type }),
   delete: (id: string) => api.delete(`/api/notes/${id}`),
   toggleFavorite: (id: string) => api.patch(`/api/notes/${id}/favorite`),
   getBacklinks: (id: string) => api.get(`/api/notes/${id}/backlinks`),
@@ -406,7 +411,9 @@ export const foldersApi = {
 
 export const entitiesApi = {
   list: (params?: { page?: number; size?: number }) =>
-    api.get("/api/entities", { params }).then((response) => {
+    // The backend pages at 20 by default, which silently hid most entities in
+    // the list pages — ask for a large page unless the caller says otherwise.
+    api.get("/api/entities", { params: { page: 0, size: 500, ...(params || {}) } }).then((response) => {
       if (Array.isArray(response.data)) return response;
       const pageData = response.data as Record<string, unknown> | null;
       if (pageData && Array.isArray(pageData.content)) {
@@ -462,6 +469,8 @@ export const trackingApi = {
 
 export const subscriptionApi = {
   me: () => api.get("/api/subscriptions/me"),
+  // Pulls truth from Stripe (used right after returning from Checkout).
+  sync: () => api.post("/api/subscriptions/sync"),
   // Accepts either a Stripe price id (price_xxx) or a plan code ("VISION").
   checkout: (priceOrPlan: string) =>
     api.post("/api/subscriptions/checkout", { priceId: priceOrPlan, planId: priceOrPlan }),

@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { mergeModules } from "@/i18n";
+
 
 export type Language = "en" | "es" | "pt" | "fr";
 
@@ -98,15 +100,96 @@ const en = {
   // Notes
   notes_title: "Notes",
   notes_new: "New note",
+  notes_creating: "Creating…",
   notes_empty: "No notes yet. Create your first one.",
   notes_searchPlaceholder: "Search notes…",
   notes_subtitle: "Your thinking space.",
+  notes_index: "Index",
+  notes_archive: "Archive",
+  notes_recent: "Recent",
+  notes_favorites: "Favorites",
+  notes_dormant: "Dormant",
+  notes_types: "Types",
+  notes_allTypes: "All types",
+  notes_filters: "Filters",
+  notes_untitled: "Untitled",
+  notes_dropToVault: "Release to save in Vault",
+  notes_uploading: "Uploading…",
+  notes_view_archive: "Archive",
+  notes_view_favorites: "Favorites",
+  notes_view_recent: "Recent",
+  notes_view_dormant: "Dormant",
+  notes_empty_search: "Nothing matches that search.",
+  notes_empty_favorites: "You haven't pinned anything yet.",
+  notes_empty_recent: "Nothing written in the last few days.",
+  notes_empty_archived: "No dormant entries — your archive is alive.",
+  notes_empty_all: "Your archive is still empty.",
+  notes_limit: "You've reached the notes limit for your plan.",
+  notes_remove_one_title: "Remove this entry?",
+  notes_remove_one_desc: "\"{title}\" will be permanently removed from your archive.",
+  notes_remove_many_title: "Remove {n} entries?",
+  notes_remove_many_title_one: "Remove {n} entry?",
+  notes_remove_many_desc: "The selected entries will be permanently removed from your archive.",
+  notes_remove: "Remove",
+  notes_removing: "Removing…",
+  notes_favorite: "Favorite",
+  notes_unfavorite: "Unfavorite",
+  notes_longPressHint: "Tip: press and hold an entry to select.",
 
   // Entities
   entities_title: "Entities",
   entities_new: "New entity",
   entities_empty: "No entities yet.",
+  entities_empty_search: "Nothing matches that search.",
+  entities_empty_all: "No entities yet. Create your first one.",
   entities_subtitle: "People, places and concepts.",
+  entities_tagline: "The atoms of your knowledge graph.",
+  entities_all: "All entities",
+  entities_allAtoms: "All Atoms",
+  entities_limit: "You've reached the entities limit for your plan.",
+  entities_delete_one_title: "Delete entity?",
+  entities_delete_one_desc: "{title} will be permanently removed.",
+  entities_delete_many_title: "Delete {n} entities?",
+  entities_delete_many_title_one: "Delete {n} entity?",
+  entities_delete_many_desc: "The selected entities will be permanently removed.",
+  entities_deleting: "Deleting…",
+  entities_atom: "atom",
+  entities_atoms: "atoms",
+  entities_countRemoved: "{n} entities removed",
+  entities_countRemoved_one: "{n} entity removed",
+  entities_type_PERSON: "Person",
+  entities_type_PROJECT: "Project",
+  entities_type_TOPIC: "Topic",
+  entities_type_ORGANIZATION: "Organization",
+  entities_type_ACTIVITY: "Activity",
+
+  // Selection / list shared
+  select_done: "Done",
+  select_selected: "{n} selected",
+  select_all: "Select all",
+  select_clearAll: "Clear all",
+  notes_bulk_removed: "{n} entries removed",
+  notes_bulk_removed_one: "{n} entry removed",
+  notes_set_type: "Set type",
+  notes_new_type: "New type…",
+  notes_new_type_prompt: "New type name",
+  notes_bulk_type_applied: "Type applied to {n} notes",
+  editor_commands: "Editor commands",
+  list_showing_entries: "Showing {n} entries",
+  list_showing_entries_one: "Showing {n} entry",
+  list_showing_atoms: "Showing {n} atoms",
+  list_showing_atoms_one: "Showing {n} atom",
+  list_sortBy: "Sort by:",
+  list_sort_creation: "Creation",
+  list_sort_modification: "Modification",
+  list_sort_recent: "Recent",
+  list_sort_oldest: "Oldest",
+  list_count_entries: "{n} entries",
+  list_count_entries_one: "{n} entry",
+  rel_today: "today",
+  rel_yesterday: "yesterday",
+  rel_dAgo: "{n}d ago",
+  rel_wAgo: "{n}w ago",
 
   // Activities
   activities_title: "Activities",
@@ -139,7 +222,7 @@ const en = {
   profile_settings: "Settings",
   profile_subtitle: "Manage your account credentials and application preferences.",
   profile_accountDetails: "Account Details",
-  profile_prefsAppearance: "Preferences & Appearance",
+  profile_prefsAppearance: "Preferences",
   profile_username: "Username",
   profile_usernamePlaceholder: "Your username",
   profile_emailAddress: "Email Address",
@@ -201,7 +284,7 @@ const en = {
   profile_privacy: "Privacy",
 };
 
-type Dict = typeof en;
+type Dict = Partial<typeof en>;
 
 const es: Dict = {
   nav_dashboard: "Panel",
@@ -302,7 +385,7 @@ const es: Dict = {
   profile_settings: "Ajustes",
   profile_subtitle: "Gestiona las credenciales de tu cuenta y las preferencias de la aplicación.",
   profile_accountDetails: "Datos de la cuenta",
-  profile_prefsAppearance: "Preferencias y apariencia",
+  profile_prefsAppearance: "Preferencias",
   profile_username: "Nombre de usuario",
   profile_usernamePlaceholder: "Tu nombre de usuario",
   profile_emailAddress: "Correo electrónico",
@@ -427,14 +510,95 @@ const pt: Dict = {
 
   notes_title: "Notas",
   notes_new: "Nova nota",
+  notes_creating: "Criando…",
   notes_empty: "Sem notas ainda. Crie a primeira.",
   notes_searchPlaceholder: "Buscar notas…",
   notes_subtitle: "Seu espaço de pensamento.",
+  notes_index: "Índice",
+  notes_archive: "Arquivo",
+  notes_recent: "Recentes",
+  notes_favorites: "Favoritas",
+  notes_dormant: "Dormentes",
+  notes_types: "Tipos",
+  notes_allTypes: "Todos os tipos",
+  notes_filters: "Filtros",
+  notes_untitled: "Sem título",
+  notes_dropToVault: "Solte para salvar no Vault",
+  notes_uploading: "Enviando…",
+  notes_view_archive: "Arquivo",
+  notes_view_favorites: "Favoritas",
+  notes_view_recent: "Recentes",
+  notes_view_dormant: "Dormentes",
+  notes_empty_search: "Nada corresponde a essa busca.",
+  notes_empty_favorites: "Você ainda não fixou nada.",
+  notes_empty_recent: "Nada escrito nos últimos dias.",
+  notes_empty_archived: "Sem entradas dormentes — seu arquivo está vivo.",
+  notes_empty_all: "Seu arquivo ainda está vazio.",
+  notes_limit: "Você atingiu o limite de notas do seu plano.",
+  notes_remove_one_title: "Remover esta entrada?",
+  notes_remove_one_desc: "\"{title}\" será removida permanentemente do seu arquivo.",
+  notes_remove_many_title: "Remover {n} entradas?",
+  notes_remove_many_title_one: "Remover {n} entrada?",
+  notes_remove_many_desc: "As entradas selecionadas serão removidas permanentemente do seu arquivo.",
+  notes_remove: "Remover",
+  notes_removing: "Removendo…",
+  notes_favorite: "Favoritar",
+  notes_unfavorite: "Desfavoritar",
+  notes_longPressHint: "Dica: pressione e segure uma entrada para selecionar.",
 
   entities_title: "Entidades",
   entities_new: "Nova entidade",
   entities_empty: "Sem entidades ainda.",
+  entities_empty_search: "Nada corresponde a essa busca.",
+  entities_empty_all: "Sem entidades. Crie a primeira.",
   entities_subtitle: "Pessoas, lugares e conceitos.",
+  entities_tagline: "Os átomos do seu grafo de conhecimento.",
+  entities_all: "Todas as entidades",
+  entities_allAtoms: "Todos os átomos",
+  entities_limit: "Você atingiu o limite de entidades do seu plano.",
+  entities_delete_one_title: "Excluir entidade?",
+  entities_delete_one_desc: "{title} será removida permanentemente.",
+  entities_delete_many_title: "Excluir {n} entidades?",
+  entities_delete_many_title_one: "Excluir {n} entidade?",
+  entities_delete_many_desc: "As entidades selecionadas serão removidas permanentemente.",
+  entities_deleting: "Excluindo…",
+  entities_atom: "átomo",
+  entities_atoms: "átomos",
+  entities_countRemoved: "{n} entidades removidas",
+  entities_countRemoved_one: "{n} entidade removida",
+  entities_type_PERSON: "Pessoa",
+  entities_type_PROJECT: "Projeto",
+  entities_type_TOPIC: "Tópico",
+  entities_type_ORGANIZATION: "Organização",
+  entities_type_ACTIVITY: "Atividade",
+
+  select_done: "Concluir",
+  select_selected: "{n} selecionadas",
+  select_all: "Selecionar tudo",
+  select_clearAll: "Limpar seleção",
+  notes_bulk_removed: "{n} entradas removidas",
+  notes_bulk_removed_one: "{n} entrada removida",
+  notes_set_type: "Definir tipo",
+  notes_new_type: "Novo tipo…",
+  notes_new_type_prompt: "Nome do novo tipo",
+  notes_bulk_type_applied: "Tipo aplicado a {n} notas",
+  editor_commands: "Comandos do editor",
+  list_showing_entries: "Mostrando {n} entradas",
+  list_showing_entries_one: "Mostrando {n} entrada",
+  list_showing_atoms: "Mostrando {n} átomos",
+  list_showing_atoms_one: "Mostrando {n} átomo",
+  list_sortBy: "Ordenar por:",
+  list_sort_creation: "Criação",
+  list_sort_modification: "Modificação",
+  list_sort_recent: "Recentes",
+  list_sort_oldest: "Antigos",
+  list_count_entries: "{n} entradas",
+  list_count_entries_one: "{n} entrada",
+  rel_today: "hoje",
+  rel_yesterday: "ontem",
+  rel_dAgo: "há {n}d",
+  rel_wAgo: "há {n}sem",
+
 
   activities_title: "Atividades",
   activities_new: "Nova atividade",
@@ -461,7 +625,7 @@ const pt: Dict = {
   profile_settings: "Ajustes",
   profile_subtitle: "Gerencie as credenciais da sua conta e as preferências do aplicativo.",
   profile_accountDetails: "Dados da conta",
-  profile_prefsAppearance: "Preferências e aparência",
+  profile_prefsAppearance: "Preferências",
   profile_username: "Nome de usuário",
   profile_usernamePlaceholder: "Seu nome de usuário",
   profile_emailAddress: "Email",
@@ -620,7 +784,7 @@ const fr: Dict = {
   profile_settings: "Paramètres",
   profile_subtitle: "Gérez les identifiants de votre compte et les préférences de l'application.",
   profile_accountDetails: "Détails du compte",
-  profile_prefsAppearance: "Préférences et apparence",
+  profile_prefsAppearance: "Préférences",
   profile_username: "Nom d'utilisateur",
   profile_usernamePlaceholder: "Votre nom d'utilisateur",
   profile_emailAddress: "Adresse e-mail",
@@ -682,6 +846,15 @@ const fr: Dict = {
 
 const translations: Record<Language, Dict> = { en, es, pt, fr };
 
+// Merge modular dictionaries (src/i18n/*) on top of the base ones.
+const mergedTranslations: Record<Language, Record<string, string>> = {
+  en: { ...(en as Record<string, string>), ...mergeModules("en") },
+  es: { ...(es as Record<string, string>), ...mergeModules("es") },
+  pt: { ...(pt as Record<string, string>), ...mergeModules("pt") },
+  fr: { ...(fr as Record<string, string>), ...mergeModules("fr") },
+};
+
+
 const missingWarned = new Set<string>();
 
 function interpolate(str: string, vars?: Record<string, string | number>): string {
@@ -711,8 +884,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const t = (key: string, vars?: Record<string, string | number>): string => {
-    const dict = translations[language] as Record<string, string>;
-    const fallback = translations.en as Record<string, string>;
+    const dict = mergedTranslations[language];
+    const fallback = mergedTranslations.en;
+
     const value = dict[key] ?? fallback[key];
     if (value === undefined) {
       if (import.meta.env.DEV && !missingWarned.has(key)) {
