@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AppLogo from "./AppLogo";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavbarProps {
@@ -50,8 +51,11 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
           </span>
         </a>
 
-        {/* Botão de Login via Google */}
-        <div className="flex items-center">
+        {/* Botão de Login via Google e seletor discreto de idioma */}
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:block">
+            <LanguageSelector compact />
+          </div>
           <button
             onClick={() => {
               if (onAuthOpen) onAuthOpen();

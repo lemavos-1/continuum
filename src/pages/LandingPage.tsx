@@ -138,23 +138,34 @@ export default function LandingPage() {
 
         {/* FAQ — keyword-rich, crawlable content */}
         <section id="faq" className="relative border-t border-white/[0.06] py-20 lg:py-28">
-          <div className="container relative z-10 max-w-3xl">
-            <p className="label-caps mb-4 text-[#888888]">{t("lp_faq_label")}</p>
-            <h2
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight mb-10"
-            >
-              {t("lp_faq_title")}
-            </h2>
-            <dl className="space-y-8">
-              {faqs.map((f) => (
-                <div key={f.q} className="border-t border-white/[0.06] pt-6">
-                  <dt className="font-body text-base sm:text-lg text-white mb-2">{f.q}</dt>
-                  <dd className="font-body text-sm sm:text-base leading-[1.75] text-[#888888]">
-                    {f.a}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+          <div className="absolute inset-0 pointer-events-none opacity-60">
+            <div className="absolute left-1/2 top-0 h-full w-[42rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_72%)] blur-3xl" />
+          </div>
+          <div className="container relative z-10 max-w-4xl">
+            <div className="rounded-[2rem] border border-white/[0.08] bg-white/[0.03] px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-16 backdrop-blur-sm">
+              <div className="mb-10 max-w-3xl">
+                <p className="label-caps mb-4 text-[#888888]">{t("lp_faq_label")}</p>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white">
+                  {t("lp_faq_title")}
+                </h2>
+              </div>
+              <dl className="grid gap-4">
+                {faqs.map((f, index) => (
+                  <div
+                    key={f.q}
+                    className="rounded-2xl border border-white/[0.06] bg-black/30 px-5 py-5 transition-colors hover:border-white/20 hover:bg-white/[0.04] sm:px-6"
+                  >
+                    <dt className="font-body text-base sm:text-lg text-white mb-2 before:content-['0'attr(data-index)] hidden">
+                      <span className="mr-2 text-[#898989]">{String(index + 1).padStart(2, "0")}</span>
+                      <span>{f.q}</span>
+                    </dt>
+                    <dd className="font-body text-sm sm:text-base leading-[1.75] text-[#888888]">
+                      {f.a}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </section>
       </main>
