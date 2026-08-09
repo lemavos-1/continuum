@@ -44,7 +44,7 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
         {/* Logo mais sutil */}
         <a href="/" className="flex items-center gap-2 shrink-0 opactiy-85 hover:opacity-100 transition-opacity duration-300">
           <div className="opacity-70 group-hover:opacity-100 transition-opacity">
-            <AppLogo />
+            <AppLogo className="w-5 h-5 object-contain" />
           </div>
           <span
             className="text-white/80 font-medium tracking-wide text-[0.95rem]"

@@ -163,7 +163,7 @@ export const dict: Module = {
     lp_metaDescription:
       "O Continuum é um app de segundo cérebro para notas conectadas: notas em markdown, @menções, grafo de conhecimento automático, sincronização nativa grátis e reaparecimento inteligente. Uma alternativa moderna ao Obsidian.",
 
-    lp_nav_signIn: "Entrar com o Google",
+    lp_nav_signIn: "Entrar",
 
     lp_hero_badge: "Continuum",
     lp_hero_title: "Seu segundo cérebro,",
