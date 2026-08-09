@@ -54,20 +54,20 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
           </span>
         </a>
 
-        <div className="flex flex-1 items-center justify-center min-w-0">
+        <div className="flex flex-1 min-w-0" />
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => {
+              if (onAuthOpen) onAuthOpen();
+              else navigate("/login");
+            }}
+            className="shrink-0 text-white/60 hover:text-white/100 text-[11px] sm:text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-2 whitespace-nowrap"
+          >
+            {compactLoginLabel}
+          </button>
           <LanguageSelector compact />
         </div>
-
-        {/* Botão de Login via Google */}
-        <button
-          onClick={() => {
-            if (onAuthOpen) onAuthOpen();
-            else navigate("/login");
-          }}
-          className="shrink-0 text-white/60 hover:text-white/100 text-[10px] sm:text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-2 sm:px-3 whitespace-nowrap"
-        >
-          {compactLoginLabel}
-        </button>
       </div>
     </motion.header>
   );
