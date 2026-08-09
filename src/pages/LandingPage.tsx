@@ -138,7 +138,7 @@ export default function LandingPage() {
 
         {/* FAQ — keyword-rich, crawlable content */}
         <section id="faq" className="relative border-t border-white/[0.06] py-20 lg:py-28">
-          <div className="container relative z-10 max-w-3xl">
+          <div className="container relative z-10 max-w-3xl lg:mx-0 lg:pl-8 xl:pl-12">
             <p className="label-caps mb-4 text-[#888888]">{t("lp_faq_label")}</p>
             <h2
               className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight mb-10"

@@ -37,9 +37,9 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-between h-14 px-6 md:px-8">
+      <div className="container mx-auto flex items-center h-14 px-6 md:px-8">
         {/* Logo mais sutil */}
-        <a href="/" className="flex items-center gap-2 opactiy-85 hover:opacity-100 transition-opacity duration-300">
+        <a href="/" className="flex items-center gap-2 shrink-0 opactiy-85 hover:opacity-100 transition-opacity duration-300">
           <div className="opacity-70 group-hover:opacity-100 transition-opacity">
             <AppLogo />
           </div>
@@ -51,19 +51,20 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
           </span>
         </a>
 
-        {/* Botão de Login via Google e seletor discreto de idioma */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center justify-center min-w-0">
           <LanguageSelector compact />
-          <button
-            onClick={() => {
-              if (onAuthOpen) onAuthOpen();
-              else navigate("/login");
-            }}
-            className="text-white/60 hover:text-white/100 text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-3"
-          >
-            {t("lp_nav_signIn")}
-          </button>
         </div>
+
+        {/* Botão de Login via Google */}
+        <button
+          onClick={() => {
+            if (onAuthOpen) onAuthOpen();
+            else navigate("/login");
+          }}
+          className="shrink-0 text-white/60 hover:text-white/100 text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-3 whitespace-nowrap"
+        >
+          {t("lp_nav_signIn")}
+        </button>
       </div>
     </motion.header>
   );

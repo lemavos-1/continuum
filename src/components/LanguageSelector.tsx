@@ -18,7 +18,7 @@ export function LanguageSelector({ compact = false }: Props) {
   if (compact) {
     return (
       <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
-        <SelectTrigger className="h-8 w-[124px] rounded-full border border-white/10 bg-white/[0.03] px-3 text-[10px] font-medium text-white/70 shadow-none transition-colors hover:border-white/25 hover:bg-white/[0.07] hover:text-white focus:ring-0 focus:ring-offset-0 data-[state=open]:bg-white/[0.08]">
+        <SelectTrigger className="h-8 w-[88px] sm:w-[124px] rounded-full border border-white/10 bg-white/[0.03] px-2 sm:px-3 text-[9px] sm:text-[10px] font-medium text-white/70 shadow-none transition-colors hover:border-white/25 hover:bg-white/[0.07] hover:text-white focus:ring-0 focus:ring-offset-0 data-[state=open]:bg-white/[0.08]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="border-white/10 bg-black text-white">
