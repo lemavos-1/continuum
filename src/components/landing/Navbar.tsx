@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AppLogo from "./AppLogo";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavbarProps {
   onAuthOpen?: () => void;
@@ -15,6 +16,8 @@ interface NavbarProps {
 export default function Navbar({ onAuthOpen }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
