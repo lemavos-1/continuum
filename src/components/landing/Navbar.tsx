@@ -53,9 +53,7 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
 
         {/* Botão de Login via Google e seletor discreto de idioma */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:block">
-            <LanguageSelector compact />
-          </div>
+          <LanguageSelector compact />
           <button
             onClick={() => {
               if (onAuthOpen) onAuthOpen();
