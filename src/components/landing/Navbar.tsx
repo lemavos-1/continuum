@@ -19,6 +19,9 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
+  const compactLoginLabel = t("lp_nav_signIn")
+    .replace(/\s+(with|com|con|avec)\s+(google|Google)?/i, "")
+    .trim();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -61,9 +64,9 @@ export default function Navbar({ onAuthOpen }: NavbarProps) {
             if (onAuthOpen) onAuthOpen();
             else navigate("/login");
           }}
-          className="shrink-0 text-white/60 hover:text-white/100 text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-3 whitespace-nowrap"
+          className="shrink-0 text-white/60 hover:text-white/100 text-[10px] sm:text-xs font-medium tracking-wide transition-colors duration-300 py-2 px-2 sm:px-3 whitespace-nowrap"
         >
-          {t("lp_nav_signIn")}
+          {compactLoginLabel}
         </button>
       </div>
     </motion.header>
