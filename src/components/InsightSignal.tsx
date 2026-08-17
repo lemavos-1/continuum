@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { insightsApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { FireIcon, SparklesIcon, ArrowPathIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -105,6 +104,54 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   const { t } = useLanguage();
   const signal = useInsightSignal(kind, id);
   const [open, setOpen] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ left: 0, top: 0 });
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const updatePosition = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const width = 170;
+      const left = Math.min(window.innerWidth - width - 12, Math.max(12, rect.left + rect.width / 2 - width / 2));
+      const top = Math.max(12, rect.top - 8);
+      setPopupPosition({ left, top });
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerOutside = (event: PointerEvent | MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const insideTrigger = triggerRef.current?.contains(target);
+      const insidePopup = popupRef.current?.contains(target);
+      if (!insideTrigger && !insidePopup) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerOutside, true);
+    document.addEventListener("mousedown", handlePointerOutside, true);
+    document.addEventListener("touchstart", handlePointerOutside, true);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerOutside, true);
+      document.removeEventListener("mousedown", handlePointerOutside, true);
+      document.removeEventListener("touchstart", handlePointerOutside, true);
+    };
+  }, [open]);
 
   if (!signal) return null;
 
@@ -120,46 +167,47 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   const label = BADGE_KEY_MAP[key] ? t(BADGE_KEY_MAP[key]) : signal.badge;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={label}
-          title={label}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setOpen((v) => !v);
-          }}
-          className={cn(
-            "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors hover:brightness-125",
-            style.classes,
-            className
-          )}
-        >
-          <Icon className="h-3 w-3" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        align="center"
-        sideOffset={8}
-        className="w-auto max-w-[180px] p-2"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onClick={(e) => e.stopPropagation()}
-        onPointerDown={(e) => e.stopPropagation()}
-        onInteractOutside={(event) => {
-          if (event.defaultPrevented) return;
-          setOpen(false);
+    <div className="relative inline-flex">
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label={label}
+        title={label}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          setOpen((v) => !v);
         }}
+        className={cn(
+          "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors hover:brightness-125",
+          style.classes,
+          className
+        )}
       >
-        <div className="flex items-center justify-center gap-2">
-          <span className={cn("inline-flex h-4 w-4 items-center justify-center rounded-full border", style.classes)}>
-            <Icon className="h-2.5 w-2.5" />
-          </span>
-          <p className="text-xs font-medium text-foreground">{label}</p>
+        <Icon className="h-3 w-3" />
+      </button>
+
+      {open && (
+        <div
+          ref={popupRef}
+          role="dialog"
+          aria-label={label}
+          className="fixed z-[60] rounded-md border border-white/10 bg-black/90 px-2 py-1.5 text-popover-foreground shadow-2xl backdrop-blur-xl"
+          style={{
+            left: `${popupPosition.left}px`,
+            top: `${popupPosition.top}px`,
+            width: "170px",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <span className={cn("inline-flex h-4 w-4 items-center justify-center rounded-full border", style.classes)}>
+              <Icon className="h-2.5 w-2.5" />
+            </span>
+            <p className="text-[11px] font-medium text-foreground">{label}</p>
+          </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      )}
+    </div>
   );
 }
