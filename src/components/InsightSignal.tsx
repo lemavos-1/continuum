@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { insightsApi } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { FireIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { FireIcon, SparklesIcon, ArrowPathIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
