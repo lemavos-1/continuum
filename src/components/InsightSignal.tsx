@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { insightsApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -105,6 +105,29 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   const { t } = useLanguage();
   const signal = useInsightSignal(kind, id);
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (
+        !target ||
+        (triggerRef.current && triggerRef.current.contains(target)) ||
+        (contentRef.current && contentRef.current.contains(target))
+      ) {
+        return;
+      }
+
+      setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () => document.removeEventListener("pointerdown", handlePointerDown, true);
+  }, [open]);
+
   if (!signal) return null;
 
   const key = normalizeBadgeKey(signal.badge || "");
@@ -123,6 +146,7 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          ref={triggerRef}
           type="button"
           aria-label={label}
           title={`${label} — ${help}`}
@@ -145,6 +169,7 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
         </button>
       </PopoverTrigger>
       <PopoverContent
+        ref={contentRef}
         align="start"
         className="w-60 p-3"
         onOpenAutoFocus={(e) => e.preventDefault()}
