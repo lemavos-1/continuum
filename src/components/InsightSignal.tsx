@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { insightsApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -105,28 +105,6 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   const { t } = useLanguage();
   const signal = useInsightSignal(kind, id);
   const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null;
-      if (
-        !target ||
-        (triggerRef.current && triggerRef.current.contains(target)) ||
-        (contentRef.current && contentRef.current.contains(target))
-      ) {
-        return;
-      }
-
-      setOpen(false);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown, true);
-    return () => document.removeEventListener("pointerdown", handlePointerDown, true);
-  }, [open]);
 
   if (!signal) return null;
 
@@ -146,14 +124,9 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          ref={triggerRef}
           type="button"
           aria-label={label}
           title={`${label} — ${help}`}
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setOpen(false)}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -169,11 +142,16 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
         </button>
       </PopoverTrigger>
       <PopoverContent
-        ref={contentRef}
-        align="start"
+        side="top"
+        align="center"
+        sideOffset={8}
         className="w-60 p-3"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onClick={(e) => e.stopPropagation()}
+        onInteractOutside={(event) => {
+          if (event.defaultPrevented) return;
+          setOpen(false);
+        }}
       >
 
         <div className="flex items-center gap-2">
