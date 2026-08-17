@@ -317,7 +317,20 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         VaultPdf,
         VaultAudio,
         TaskList,
-        TaskItem.configure({ nested: true, onReadOnlyChecked: () => true }),
+        TaskItem.configure({
+          nested: true,
+          onReadOnlyChecked: ({ node, getPos, editor }) => {
+            const pos = getPos();
+            if (typeof pos !== "number") return false;
+            editor.view.dispatch(
+              editor.state.tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                checked: !node.attrs.checked,
+              })
+            );
+            return true;
+          },
+        }),
         HeadingFold.configure({
           onFoldChange: (indices) => onFoldChangeRef.current?.(indices),
         }),
@@ -549,32 +562,44 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       if (!dom) return;
       const onClick = (event: MouseEvent) => {
         const target = event.target as HTMLElement | null;
-        const label = target?.closest?.('li[data-type="taskItem"] > label') as HTMLElement | null;
-        const li = label?.parentElement as HTMLElement | null;
-        if (!li) return;
+        const input = target?.closest?.('input[type="checkbox"]') as HTMLInputElement | null;
+        const li = input?.closest?.('li[data-type="taskItem"]') as HTMLElement | null;
+        if (!input || !li) return;
+
         event.preventDefault();
         event.stopPropagation();
+
         const view = editor.view;
-        const pos = view.posAtDOM(li, 0);
-        if (pos == null || pos < 0) return;
+        const pos = view.posAtDOM(li, 0, 1);
         const $pos = view.state.doc.resolve(pos);
-        for (let depth = $pos.depth; depth > 0; depth--) {
+        let taskPos = -1;
+        let taskNode: any = null;
+
+        for (let depth = $pos.depth; depth >= 0; depth--) {
           const node = $pos.node(depth);
           if (node.type.name === "taskItem") {
-            const nodePos = $pos.before(depth);
-            view.dispatch(
-              view.state.tr.setNodeMarkup(nodePos, undefined, {
-                ...node.attrs,
-                checked: !node.attrs.checked,
-              })
-            );
-            onChangeRef.current?.(editor.getJSON());
+            taskPos = $pos.before(depth);
+            taskNode = node;
             break;
           }
         }
+
+        if (taskPos < 0 || !taskNode) return;
+
+        view.dispatch(
+          view.state.tr.setNodeMarkup(taskPos, undefined, {
+            ...taskNode.attrs,
+            checked: !taskNode.attrs.checked,
+          })
+        );
+        onChangeRef.current?.(editor.getJSON());
       };
       dom.addEventListener("click", onClick, true);
-      return () => dom.removeEventListener("click", onClick, true);
+      dom.addEventListener("pointerdown", onClick, true);
+      return () => {
+        dom.removeEventListener("click", onClick, true);
+        dom.removeEventListener("pointerdown", onClick, true);
+      };
     }, [editor, editable]);
 
 
