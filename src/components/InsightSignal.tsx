@@ -93,6 +93,7 @@ const BADGE_STYLE: Record<
 export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: string; className?: string }) {
   const { t } = useLanguage();
   const signal = useInsightSignal(kind, id);
+  const [open, setOpen] = useState(false);
   if (!signal) return null;
 
   const key = signal.badge?.toLowerCase()?.trim() || "";
@@ -105,16 +106,23 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   };
   const Icon = style.icon;
   const label = BADGE_KEY_MAP[key] ? t(BADGE_KEY_MAP[key]) : signal.badge;
+  const help = signal.category === "hot" ? t("ins_badge_hot_help") : t("ins_badge_forgotten_help");
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"
           aria-label={label}
+          title={`${label} — ${help}`}
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
+            setOpen((v) => !v);
           }}
           className={cn(
             "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors hover:brightness-125",
@@ -128,8 +136,10 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
       <PopoverContent
         align="start"
         className="w-60 p-3"
+        onOpenAutoFocus={(e) => e.preventDefault()}
         onClick={(e) => e.stopPropagation()}
       >
+
         <div className="flex items-center gap-2">
           <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full border", style.classes)}>
             <Icon className="h-3 w-3" />

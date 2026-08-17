@@ -542,6 +542,42 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       dom?.classList.toggle("is-readonly", !editable);
     }, [editor, editable]);
 
+    // Checklists stay tickable in view (read-only) mode
+    useEffect(() => {
+      if (!editor || editable) return;
+      const dom = editor.view?.dom as HTMLElement | undefined;
+      if (!dom) return;
+      const onClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement | null;
+        const label = target?.closest?.('li[data-type="taskItem"] > label') as HTMLElement | null;
+        const li = label?.parentElement as HTMLElement | null;
+        if (!li) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const view = editor.view;
+        const pos = view.posAtDOM(li, 0);
+        if (pos == null || pos < 0) return;
+        const $pos = view.state.doc.resolve(pos);
+        for (let depth = $pos.depth; depth > 0; depth--) {
+          const node = $pos.node(depth);
+          if (node.type.name === "taskItem") {
+            const nodePos = $pos.before(depth);
+            view.dispatch(
+              view.state.tr.setNodeMarkup(nodePos, undefined, {
+                ...node.attrs,
+                checked: !node.attrs.checked,
+              })
+            );
+            onChangeRef.current?.(editor.getJSON());
+            break;
+          }
+        }
+      };
+      dom.addEventListener("click", onClick, true);
+      return () => dom.removeEventListener("click", onClick, true);
+    }, [editor, editable]);
+
+
     // "/" command + toolbar upload entry point
     useEffect(() => {
       const open = (ev: Event) => {
