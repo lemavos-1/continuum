@@ -317,7 +317,7 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         VaultPdf,
         VaultAudio,
         TaskList,
-        TaskItem.configure({ nested: true }),
+        TaskItem.configure({ nested: true, onReadOnlyChecked: () => true }),
         HeadingFold.configure({
           onFoldChange: (indices) => onFoldChangeRef.current?.(indices),
         }),

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { insightsApi } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { FireIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { FireIcon, SparklesIcon, ArrowPathIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
@@ -79,26 +79,70 @@ const BADGE_KEY_MAP: Record<string, string> = {
   "hot": "ins_badge_hot",
 };
 
+const BADGE_STYLE: Record<
+  string,
+  { icon: typeof FireIcon; classes: string }
+> = {
+  "hot right now": { icon: FireIcon, classes: "border-orange-500/30 bg-orange-500/10 text-orange-300" },
+  hot: { icon: FireIcon, classes: "border-orange-500/30 bg-orange-500/10 text-orange-300" },
+  "worth revisiting": { icon: ArrowPathIcon, classes: "border-sky-500/30 bg-sky-500/10 text-sky-300" },
+  "forgotten gem": { icon: SparklesIcon, classes: "border-violet-500/30 bg-violet-500/10 text-violet-300" },
+  "key entity": { icon: KeyIcon, classes: "border-amber-500/30 bg-amber-500/10 text-amber-300" },
+};
+
 export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: string; className?: string }) {
   const { t } = useLanguage();
   const signal = useInsightSignal(kind, id);
   if (!signal) return null;
-  const isHot = signal.category === "hot";
-  const Icon = isHot ? FireIcon : SparklesIcon;
+
+  const key = signal.badge?.toLowerCase()?.trim() || "";
+  const style = BADGE_STYLE[key] || {
+    icon: signal.category === "hot" ? FireIcon : SparklesIcon,
+    classes:
+      signal.category === "hot"
+        ? "border-orange-500/30 bg-orange-500/10 text-orange-300"
+        : "border-violet-500/30 bg-violet-500/10 text-violet-300",
+  };
+  const Icon = style.icon;
+  const label = BADGE_KEY_MAP[key] ? t(BADGE_KEY_MAP[key]) : signal.badge;
+
   return (
-    <Badge
-      variant="outline"
-      className={cn(
-        "inline-flex items-center gap-1 border text-[9px] font-medium uppercase tracking-wider h-5 px-2",
-        isHot
-          ? "border-orange-500/30 bg-orange-500/10 text-orange-300"
-          : "border-violet-500/30 bg-violet-500/10 text-violet-300",
-        className
-      )}
-      title={`${BADGE_KEY_MAP[signal.badge?.toLowerCase()?.trim()] ? t(BADGE_KEY_MAP[signal.badge.toLowerCase().trim()]) : signal.badge} · score ${signal.score.toFixed(1)}`}
-    >
-      <Icon className="h-3 w-3" />
-      {BADGE_KEY_MAP[signal.badge?.toLowerCase()?.trim()] ? t(BADGE_KEY_MAP[signal.badge?.toLowerCase()?.trim()]) : signal.badge}
-    </Badge>
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={label}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          className={cn(
+            "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors hover:brightness-125",
+            style.classes,
+            className
+          )}
+        >
+          <Icon className="h-3 w-3" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-60 p-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2">
+          <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full border", style.classes)}>
+            <Icon className="h-3 w-3" />
+          </span>
+          <p className="text-sm font-medium text-foreground">{label}</p>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {signal.category === "hot" ? t("ins_badge_hot_help") : t("ins_badge_forgotten_help")}
+        </p>
+        <p className="mt-2 text-[11px] uppercase tracking-wider text-muted-foreground/70">
+          score {signal.score.toFixed(1)}
+        </p>
+      </PopoverContent>
+    </Popover>
   );
 }

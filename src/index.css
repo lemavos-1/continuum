@@ -679,12 +679,20 @@
   .continuum-editor li > p { @apply my-0.5; }
   /* Task list — large, tactile checkboxes */
   .continuum-editor ul[data-type="taskList"] { @apply list-none pl-0 my-2; }
-  .continuum-editor ul[data-type="taskList"] li { @apply flex items-start gap-3 my-0.5 rounded-md transition-colors; }
+  .continuum-editor ul[data-type="taskList"] li { @apply flex items-start gap-2 my-0.5 rounded-md transition-colors; }
   .continuum-editor ul[data-type="taskList"] li > label {
     @apply relative flex shrink-0 items-center justify-center select-none cursor-pointer;
-    width: 1.75rem; height: 1.75rem; margin-left: -0.25rem;
+    width: 1.15rem; height: 1.15rem; margin: 0; margin-top: 0.28em;
   }
   .continuum-editor ul[data-type="taskList"] li > div { @apply flex-1 min-w-0; }
+  .continuum-editor ul[data-type="taskList"] li > div > p { @apply my-0; }
+  /* Nested task lists keep their own indentation */
+  .continuum-editor ul[data-type="taskList"] ul[data-type="taskList"] { @apply pl-5 my-0.5; }
+  /* Checkboxes stay interactive in read/view mode */
+  .continuum-editor.is-readonly ul[data-type="taskList"] li > label,
+  .continuum-editor.is-readonly ul[data-type="taskList"] input[type="checkbox"] {
+    pointer-events: auto; cursor: pointer;
+  }
   .continuum-editor ul[data-type="taskList"] input[type="checkbox"] {
     appearance: none; -webkit-appearance: none;
     width: 1.15rem; height: 1.15rem; margin: 0; cursor: pointer;
