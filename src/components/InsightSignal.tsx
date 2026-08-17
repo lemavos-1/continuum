@@ -76,8 +76,18 @@ const BADGE_KEY_MAP: Record<string, string> = {
   "worth revisiting": "ins_badge_worth_revisiting",
   "forgotten gem": "ins_badge_forgotten_gem",
   "key entity": "ins_badge_key_entity",
-  "hot": "ins_badge_hot",
+  hot: "ins_badge_hot",
+  forgotten: "ins_badge_forgotten_gem",
 };
+
+function normalizeBadgeKey(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 const BADGE_STYLE: Record<
   string,
@@ -87,7 +97,8 @@ const BADGE_STYLE: Record<
   hot: { icon: FireIcon, classes: "border-orange-500/30 bg-orange-500/10 text-orange-300" },
   "worth revisiting": { icon: ArrowPathIcon, classes: "border-sky-500/30 bg-sky-500/10 text-sky-300" },
   "forgotten gem": { icon: SparklesIcon, classes: "border-violet-500/30 bg-violet-500/10 text-violet-300" },
-  "key entity": { icon: KeyIcon, classes: "border-amber-500/30 bg-amber-500/10 text-amber-300" },
+  forgotten: { icon: SparklesIcon, classes: "border-violet-500/30 bg-violet-500/10 text-violet-300" },
+  "key entity": { icon: KeyIcon, classes: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" },
 };
 
 export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: string; className?: string }) {
@@ -96,7 +107,7 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   const [open, setOpen] = useState(false);
   if (!signal) return null;
 
-  const key = signal.badge?.toLowerCase()?.trim() || "";
+  const key = normalizeBadgeKey(signal.badge || "");
   const style = BADGE_STYLE[key] || {
     icon: signal.category === "hot" ? FireIcon : SparklesIcon,
     classes:

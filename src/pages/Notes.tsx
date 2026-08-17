@@ -786,55 +786,44 @@ export default function Notes() {
                                     }
                                   />
 
-
                                   {!selectMode && (
-                                  <div className="flex shrink-0 items-center gap-1 pt-1">
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="icon"
-                                      className={cn(
-                                        "transition-colors p-1.5 opacity-70 hover:opacity-100",
-                                        note.favorite ? "text-white" : "text-white"
-                                      )} 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleFavorite(note.id, e);
-                                      }}
-                                      aria-label={note.favorite ? t("notes_unfavorite") : t("notes_favorite")}
-                                    >
-                                      {note.favorite ? (
-                                        <BookmarkCheck className="h-3 w-3 fill-current" />
-                                      ) : (
-                                        <Bookmark className="h-3 w-3" />
-                                      )}
-                                    </Button>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="icon"
-                                      className="text-white transition p-1.5 opacity-70 hover:opacity-100"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        setPendingDelete(note);
-                                      }}
-                                      aria-label={t("common_delete")}
-                                    >
-                                      <Trash2 className="h-3 w-3" />
-                                    </Button>
-                                    <InsightSignalBadge kind="note" id={note.id} />
-                                  </div>
-                                  )}
-                                  {selectMode && (
-                                    <span
-                                      className={cn(
-                                        "mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-sm border transition-colors",
-                                        selected ? "border-white bg-white text-black" : "border-white/30 text-transparent"
-                                      )}
-                                    >
-                                      <Check className="h-3.5 w-3.5" />
-                                    </span>
+                                    <div className="flex shrink-0 items-center gap-2 pt-1">
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className={cn(
+                                          "transition-colors p-1.5 opacity-70 hover:opacity-100",
+                                          note.favorite ? "text-white" : "text-white"
+                                        )}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleFavorite(note.id, e);
+                                        }}
+                                        aria-label={note.favorite ? t("notes_unfavorite") : t("notes_favorite")}
+                                      >
+                                        {note.favorite ? (
+                                          <BookmarkCheck className="h-3 w-3 fill-current" />
+                                        ) : (
+                                          <Bookmark className="h-3 w-3" />
+                                        )}
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-white transition p-1.5 opacity-70 hover:opacity-100"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          setPendingDelete(note);
+                                        }}
+                                        aria-label={t("common_delete")}
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                      <InsightSignalBadge kind="note" id={note.id} />
+                                    </div>
                                   )}
                               </NoteRow>
                             );
