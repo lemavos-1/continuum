@@ -319,13 +319,24 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         TaskList,
         TaskItem.configure({
           nested: true,
-          onReadOnlyChecked: ({ node, getPos, editor }) => {
-            const pos = getPos();
-            if (typeof pos !== "number") return false;
+          onReadOnlyChecked: (node, checked) => {
+            if (!editor) return false;
+
+            let taskPos: number | null = null;
+            editor.state.doc.descendants((currentNode, pos) => {
+              if (currentNode === node) {
+                taskPos = pos;
+                return false;
+              }
+              return true;
+            });
+
+            if (taskPos === null) return false;
+
             editor.view.dispatch(
-              editor.state.tr.setNodeMarkup(pos, undefined, {
+              editor.state.tr.setNodeMarkup(taskPos, undefined, {
                 ...node.attrs,
-                checked: !node.attrs.checked,
+                checked,
               })
             );
             return true;
@@ -554,54 +565,6 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       const dom = editor.view?.dom as HTMLElement | undefined;
       dom?.classList.toggle("is-readonly", !editable);
     }, [editor, editable]);
-
-    // Checklists stay tickable in view (read-only) mode
-    useEffect(() => {
-      if (!editor || editable) return;
-      const dom = editor.view?.dom as HTMLElement | undefined;
-      if (!dom) return;
-      const onClick = (event: MouseEvent) => {
-        const target = event.target as HTMLElement | null;
-        const input = target?.closest?.('input[type="checkbox"]') as HTMLInputElement | null;
-        const li = input?.closest?.('li[data-type="taskItem"]') as HTMLElement | null;
-        if (!input || !li) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const view = editor.view;
-        const pos = view.posAtDOM(li, 0, 1);
-        const $pos = view.state.doc.resolve(pos);
-        let taskPos = -1;
-        let taskNode: any = null;
-
-        for (let depth = $pos.depth; depth >= 0; depth--) {
-          const node = $pos.node(depth);
-          if (node.type.name === "taskItem") {
-            taskPos = $pos.before(depth);
-            taskNode = node;
-            break;
-          }
-        }
-
-        if (taskPos < 0 || !taskNode) return;
-
-        view.dispatch(
-          view.state.tr.setNodeMarkup(taskPos, undefined, {
-            ...taskNode.attrs,
-            checked: !taskNode.attrs.checked,
-          })
-        );
-        onChangeRef.current?.(editor.getJSON());
-      };
-      dom.addEventListener("click", onClick, true);
-      dom.addEventListener("pointerdown", onClick, true);
-      return () => {
-        dom.removeEventListener("click", onClick, true);
-        dom.removeEventListener("pointerdown", onClick, true);
-      };
-    }, [editor, editable]);
-
 
     // "/" command + toolbar upload entry point
     useEffect(() => {
