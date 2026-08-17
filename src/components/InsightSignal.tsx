@@ -118,7 +118,6 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
   };
   const Icon = style.icon;
   const label = BADGE_KEY_MAP[key] ? t(BADGE_KEY_MAP[key]) : signal.badge;
-  const help = signal.category === "hot" ? t("ins_badge_hot_help") : t("ins_badge_forgotten_help");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -126,7 +125,7 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
         <button
           type="button"
           aria-label={label}
-          title={`${label} — ${help}`}
+          title={label}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -145,27 +144,21 @@ export function InsightSignalBadge({ kind, id, className }: { kind: Kind; id?: s
         side="top"
         align="center"
         sideOffset={8}
-        className="w-60 p-3"
+        className="w-auto max-w-[180px] p-2"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
         onInteractOutside={(event) => {
           if (event.defaultPrevented) return;
           setOpen(false);
         }}
       >
-
-        <div className="flex items-center gap-2">
-          <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full border", style.classes)}>
-            <Icon className="h-3 w-3" />
+        <div className="flex items-center justify-center gap-2">
+          <span className={cn("inline-flex h-4 w-4 items-center justify-center rounded-full border", style.classes)}>
+            <Icon className="h-2.5 w-2.5" />
           </span>
-          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="text-xs font-medium text-foreground">{label}</p>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          {signal.category === "hot" ? t("ins_badge_hot_help") : t("ins_badge_forgotten_help")}
-        </p>
-        <p className="mt-2 text-[11px] uppercase tracking-wider text-muted-foreground/70">
-          score {signal.score.toFixed(1)}
-        </p>
       </PopoverContent>
     </Popover>
   );
