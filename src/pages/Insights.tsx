@@ -13,7 +13,7 @@ import AppLayout from "@/components/AppLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { SkeletonList } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { FilterChips } from "@/components/ui/filter-chips";
@@ -514,7 +514,11 @@ export default function Insights() {
 
             <div className="mt-2">
               {loading ? (
-                <SkeletonList rows={7} className="py-6" />
+                <div className="space-y-3 py-6">
+                  {Array.from({ length: 7 }).map((_, index) => (
+                    <Skeleton key={index} className="h-14 w-full" />
+                  ))}
+                </div>
               ) : filteredInsights.length === 0 ? (
                 <div className="py-24 text-center">
                   <p className="font-serif text-2xl italic text-white/40">
