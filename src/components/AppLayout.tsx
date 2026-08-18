@@ -77,6 +77,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const isGraphPage = location.pathname.startsWith("/graph");
   // The note editor owns the top area on mobile — it renders its own header.
   const hideMobileTopBar = /^\/notes\/[^/]+$/.test(location.pathname);
+  const isNoteEditor = hideMobileTopBar;
   const mobileTitleKey = MOBILE_TITLES.find(([p]) => location.pathname === p)?.[1];
 
   const initial = (user?.username || user?.email || "U").trim().charAt(0).toUpperCase();
@@ -138,7 +139,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Mobile bottom tab bar — floating, rounded */}
-      {!isGraphPage && (
+      {!isGraphPage && !isNoteEditor && (
         <nav
           className="fixed inset-x-3 z-40 lg:hidden"
           style={{ bottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
