@@ -464,7 +464,7 @@ export default function NoteEditor() {
 
   return (
     <AppLayout>
-      <div className="relative flex h-[100dvh] bg-background lg:h-[calc(100vh-3.5rem)]">
+      <div className="relative flex h-dvh min-h-0 overflow-hidden bg-background lg:h-screen">
         {/* Wallpaper layer (global, per-user) - covers entire editor area including sidebar */}
         {wallpaperUrl && (
           <div
@@ -654,8 +654,8 @@ export default function NoteEditor() {
           </header>
 
           {/* Editor Canvas */}
-          <div className="relative z-10 flex-1 overflow-y-auto scroll-smooth">
-            <div className="max-w-[750px] mx-auto w-full px-6 py-12 lg:px-12 pb-32">
+          <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain scroll-smooth">
+            <div className="mx-auto w-full max-w-[750px] px-6 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-12 lg:px-12 lg:pb-32">
               <Input
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
@@ -685,7 +685,7 @@ export default function NoteEditor() {
           
           {/* Footer Metadata */}
           {note?.updatedAt && (
-            <div className="absolute bottom-2 left-4 flex items-center gap-1.5 text-[10px] text-muted-foreground bg-background/80 backdrop-blur px-2 py-1 rounded-md border border-white/5">
+            <div className="pointer-events-none absolute bottom-[calc(0.5rem+env(safe-area-inset-bottom))] left-4 flex items-center gap-1.5 rounded-md border border-white/5 bg-background/80 px-2 py-1 text-[10px] text-muted-foreground backdrop-blur">
               <Clock className="w-3 h-3" />
               {t("ed_edited", { date: new Date(note.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) })}
             </div>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton, SkeletonGrid } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { FilterChips } from "@/components/ui/filter-chips";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -304,7 +304,11 @@ export default function Vault() {
           <Skeleton className="h-3 w-20" />
           <Skeleton className="mt-4 h-9 w-48" />
           <Skeleton className="mt-6 h-2 w-full rounded-full" />
-          <SkeletonGrid items={6} className="mt-8" />
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="aspect-[4/3] w-full" />
+            ))}
+          </div>
         </div>
       </AppLayout>
     );
