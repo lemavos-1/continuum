@@ -710,7 +710,42 @@ export default function NoteEditor() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
+            {/* Note type */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                <FileText className="w-3 h-3" />
+                <span>{t("ed_note_type")}</span>
+              </div>
+              <div className="flex gap-2">
+                {availableTypes.length > 0 && (
+                  <Select value={type} onValueChange={handleTypeChange}>
+                    <SelectTrigger className="flex-1 bg-white/5 border-white/10 h-8 text-xs">
+                      <SelectValue placeholder={t("ed_select_ellipsis")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableTypes.map((tp) => (
+                        <SelectItem key={tp} value={tp} className="text-xs">{tp}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <Input
+                  value={type}
+                  onChange={(e) => handleTypeChange(e.target.value)}
+                  placeholder={t("ed_or_new")}
+                  className="flex-1 bg-white/5 border-white/10 h-8 text-xs"
+                  maxLength={50}
+                />
+                {type && (
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive" onClick={() => handleTypeChange("")}>
+                    <X className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-4">
+
               <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                 <AtSign className="w-3 h-3" />
                 <span>{t("ed_note_metadata")}</span>
