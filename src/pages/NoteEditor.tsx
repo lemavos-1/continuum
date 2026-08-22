@@ -108,37 +108,9 @@ export default function NoteEditor() {
     return () => { cancelled = true; };
   }, [wallpaper.fileId]);
 
-  const handleWallpaperFile = async (file: File | undefined | null) => {
-    if (!file) return;
-    if (!isAllowedWallpaperFile(file)) {
-      toast({ title: t("ed_unsupported_format"), description: t("ed_unsupported_format_desc"), variant: "destructive" });
-      return;
-    }
-    setWallpaperUploading(true);
-    try {
-      await uploadWallpaper(file);
-      toast({ title: t("ed_wallpaper_updated") });
-    } catch (e: any) {
-      toast({ title: t("ed_upload_failed"), description: e?.message || t("ed_upload_failed_desc"), variant: "destructive" });
-    } finally {
-      setWallpaperUploading(false);
-      if (wallpaperInputRef.current) wallpaperInputRef.current.value = "";
-    }
-  };
+  // Wallpaper is configured in /profile; the editor only renders it.
 
-  const handleWallpaperRemove = async () => {
-    try {
-      await removeWallpaper();
-      toast({ title: t("ed_wallpaper_removed") });
-    } catch {
-      toast({ title: t("ed_wallpaper_remove_failed"), variant: "destructive" });
-    }
-  };
 
-  const updateWallpaperAdjustment = (patch: Partial<NoteWallpaperSettings>) => {
-    const next = { ...wallpaper, ...patch };
-    saveWallpaperSettings(next);
-  };
 
   // ── Collapsed headings (persisted server-side per note) ────────────────
   const [foldedHeadings, setFoldedHeadings] = useState<number[] | undefined>(undefined);
