@@ -24,7 +24,10 @@ export default function WallpaperSettings() {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => subscribeWallpaper(setWallpaper), []);
+  useEffect(() => {
+    const unsubscribe = subscribeWallpaper(setWallpaper);
+    return () => { unsubscribe(); };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
