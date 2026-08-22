@@ -11,18 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { 
   ArrowLeft, Loader2, Check, PanelRight, 
-  Settings2, ImageIcon, FileText, X, Clock,
+  FileText, X, Clock,
   Link2, AtSign, Eye, PenLine
 } from "@/lib/heroicons";
 import { useToast } from "@/hooks/use-toast";
@@ -30,13 +23,9 @@ import { TiptapEditor, type TiptapEditorHandle } from "@/components/TiptapEditor
 import { BacklinksPanel } from "@/components/BacklinksPanel";
 import { countTiptapMentions, extractMentionIds, extractMentionLabels, parseTiptapContent, sanitizeTiptapMentions, tiptapContentToPlainText } from "@/lib/tiptap-content";
 import {
-  isAllowedWallpaperFile,
   loadWallpaperSettings,
-  removeWallpaper,
   resolveVaultBlobFast,
-  saveWallpaperSettings,
   subscribeWallpaper,
-  uploadWallpaper,
   type NoteWallpaperSettings,
 } from "@/lib/note-wallpaper";
 import { useLanguage } from "@/contexts/LanguageContext";
