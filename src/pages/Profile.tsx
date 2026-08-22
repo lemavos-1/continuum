@@ -37,6 +37,7 @@ import { flushQueue, getLastSyncAt } from "@/lib/offline/sync";
 import { toast as sonnerToast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import WallpaperSettings from "@/components/profile/WallpaperSettings";
 
 /* ── Shared building blocks ──────────────────────────────────────────── */
 
