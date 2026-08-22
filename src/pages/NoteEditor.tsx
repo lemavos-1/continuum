@@ -80,8 +80,6 @@ export default function NoteEditor() {
   // ── Wallpaper (global to all notes, persisted in localStorage) ──────────
   const [wallpaper, setWallpaper] = useState<NoteWallpaperSettings>(() => loadWallpaperSettings());
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
-  const [wallpaperUploading, setWallpaperUploading] = useState(false);
-  const wallpaperInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeWallpaper(setWallpaper);
