@@ -77,6 +77,18 @@ export default function NoteEditor() {
     void loadEditorReadOnly().then((v) => setReadOnly(v));
   }, []);
 
+  // Close the context sidebar with Escape.
+  useEffect(() => {
+    if (!showBacklinks) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowBacklinks(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showBacklinks]);
+
+
+
   // ── Wallpaper (global to all notes, persisted in localStorage) ──────────
   const [wallpaper, setWallpaper] = useState<NoteWallpaperSettings>(() => loadWallpaperSettings());
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
