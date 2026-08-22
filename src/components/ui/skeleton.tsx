@@ -11,23 +11,28 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
   );
 }
 
-/** Full-page placeholder used as the Suspense fallback for lazy routes. */
+/**
+ * Neutral full-page placeholder used as the Suspense fallback for lazy routes.
+ * Deliberately generic (header + stacked rows) so it doesn't mimic any single
+ * page layout while a route chunk loads.
+ */
 function SkeletonPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl animate-fade-in px-4 py-8 sm:px-6 lg:px-12">
-      <Skeleton className="h-3 w-28" />
-      <Skeleton className="mt-4 h-10 w-2/3 max-w-md" />
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" style={{ animationDelay: `${i * 80}ms` }} />
+    <div className="mx-auto w-full max-w-5xl animate-fade-in px-4 py-8 sm:px-6 lg:px-12">
+      <Skeleton className="h-3 w-24" />
+      <Skeleton className="mt-4 h-8 w-1/2 max-w-sm" />
+      <div className="mt-8 space-y-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className="h-16 rounded-xl"
+            style={{ animationDelay: `${i * 70}ms` }}
+          />
         ))}
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <Skeleton className="h-[340px] rounded-xl lg:col-span-8" />
-        <Skeleton className="h-[340px] rounded-xl lg:col-span-4" />
       </div>
     </div>
   );
 }
+
 
 export { Skeleton, SkeletonPage };

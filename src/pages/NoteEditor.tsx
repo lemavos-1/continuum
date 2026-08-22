@@ -77,6 +77,18 @@ export default function NoteEditor() {
     void loadEditorReadOnly().then((v) => setReadOnly(v));
   }, []);
 
+  // Close the context sidebar with Escape.
+  useEffect(() => {
+    if (!showBacklinks) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowBacklinks(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showBacklinks]);
+
+
+
   // ── Wallpaper (global to all notes, persisted in localStorage) ──────────
   const [wallpaper, setWallpaper] = useState<NoteWallpaperSettings>(() => loadWallpaperSettings());
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
@@ -527,8 +539,18 @@ export default function NoteEditor() {
           )}
         </div>
 
+        {/* Click-outside overlay for the context sidebar */}
+        {showBacklinks && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-20"
+            onPointerDown={() => setShowBacklinks(false)}
+          />
+        )}
+
         {/* Combined Context Sidebar */}
         <aside
+
           aria-hidden={!showBacklinks}
           className={`absolute right-0 top-0 bottom-0 z-30 flex w-full max-w-[20rem] flex-col overflow-hidden border-l border-white/5 bg-black/80 backdrop-blur-2xl transition-transform duration-300 ease-in-out
           ${showBacklinks ? "translate-x-0" : "pointer-events-none translate-x-full"}`}
