@@ -345,8 +345,12 @@ export default function Profile() {
                 subtitle={t("profile_secureAuthDesc")}
               />
               <OfflineSyncRow />
+              <div className="p-4 sm:p-5">
+                <WallpaperSettings />
+              </div>
             </CardContent>
           </Card>
+
         </section>
 
         {/* DATA */}
