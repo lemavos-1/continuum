@@ -11,18 +11,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { 
   ArrowLeft, Loader2, Check, PanelRight, 
-  Settings2, ImageIcon, FileText, X, Clock,
+  FileText, X, Clock,
   Link2, AtSign, Eye, PenLine
 } from "@/lib/heroicons";
 import { useToast } from "@/hooks/use-toast";
@@ -30,13 +23,9 @@ import { TiptapEditor, type TiptapEditorHandle } from "@/components/TiptapEditor
 import { BacklinksPanel } from "@/components/BacklinksPanel";
 import { countTiptapMentions, extractMentionIds, extractMentionLabels, parseTiptapContent, sanitizeTiptapMentions, tiptapContentToPlainText } from "@/lib/tiptap-content";
 import {
-  isAllowedWallpaperFile,
   loadWallpaperSettings,
-  removeWallpaper,
   resolveVaultBlobFast,
-  saveWallpaperSettings,
   subscribeWallpaper,
-  uploadWallpaper,
   type NoteWallpaperSettings,
 } from "@/lib/note-wallpaper";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -91,8 +80,6 @@ export default function NoteEditor() {
   // ── Wallpaper (global to all notes, persisted in localStorage) ──────────
   const [wallpaper, setWallpaper] = useState<NoteWallpaperSettings>(() => loadWallpaperSettings());
   const [wallpaperUrl, setWallpaperUrl] = useState<string | null>(null);
-  const [wallpaperUploading, setWallpaperUploading] = useState(false);
-  const wallpaperInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeWallpaper(setWallpaper);
@@ -108,37 +95,9 @@ export default function NoteEditor() {
     return () => { cancelled = true; };
   }, [wallpaper.fileId]);
 
-  const handleWallpaperFile = async (file: File | undefined | null) => {
-    if (!file) return;
-    if (!isAllowedWallpaperFile(file)) {
-      toast({ title: t("ed_unsupported_format"), description: t("ed_unsupported_format_desc"), variant: "destructive" });
-      return;
-    }
-    setWallpaperUploading(true);
-    try {
-      await uploadWallpaper(file);
-      toast({ title: t("ed_wallpaper_updated") });
-    } catch (e: any) {
-      toast({ title: t("ed_upload_failed"), description: e?.message || t("ed_upload_failed_desc"), variant: "destructive" });
-    } finally {
-      setWallpaperUploading(false);
-      if (wallpaperInputRef.current) wallpaperInputRef.current.value = "";
-    }
-  };
+  // Wallpaper is configured in /profile; the editor only renders it.
 
-  const handleWallpaperRemove = async () => {
-    try {
-      await removeWallpaper();
-      toast({ title: t("ed_wallpaper_removed") });
-    } catch {
-      toast({ title: t("ed_wallpaper_remove_failed"), variant: "destructive" });
-    }
-  };
 
-  const updateWallpaperAdjustment = (patch: Partial<NoteWallpaperSettings>) => {
-    const next = { ...wallpaper, ...patch };
-    saveWallpaperSettings(next);
-  };
 
   // ── Collapsed headings (persisted server-side per note) ────────────────
   const [foldedHeadings, setFoldedHeadings] = useState<number[] | undefined>(undefined);
@@ -521,131 +480,7 @@ export default function NoteEditor() {
               </Button>
 
 
-              {/* Note Settings Popover */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="w-8 h-8 text-muted-foreground hover:text-foreground">
-                    <Settings2 className="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4 border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl rounded-2xl" align="end">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-sm text-foreground mb-1">{t("ed_properties")}</h4>
-                      <p className="text-xs text-muted-foreground">{t("ed_properties_desc")}</p>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs uppercase tracking-wider text-muted-foreground">{t("ed_note_type")}</Label>
-                        <div className="flex gap-2">
-                          {availableTypes.length > 0 && (
-                            <Select value={type} onValueChange={handleTypeChange}>
-                              <SelectTrigger className="flex-1 bg-white/5 border-white/10 h-8 text-xs">
-                                <SelectValue placeholder={t("ed_select_ellipsis")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {availableTypes.map((t) => (
-                                  <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-                          <Input
-                            value={type}
-                            onChange={(e) => handleTypeChange(e.target.value)}
-                            placeholder={t("ed_or_new")}
-                            className="flex-1 bg-white/5 border-white/10 h-8 text-xs"
-                            maxLength={50}
-                          />
-                          {type && (
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive" onClick={() => handleTypeChange("")}>
-                              <X className="w-3 h-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
 
-
-                      {/* Wallpaper Settings */}
-                      <div className="pt-3 border-t border-white/5 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs uppercase tracking-wider text-muted-foreground">{t("ed_wallpaper")}</Label>
-                          {wallpaper.fileId && (
-                            <Button
-                              type="button"
-                              variant="quiet"
-                              size="xs"
-                              onClick={handleWallpaperRemove}
-                              className="h-auto p-0 text-[10px] uppercase tracking-wider hover:text-destructive"
-                            >
-                              {t("ed_remove")}
-                            </Button>
-                          )}
-                        </div>
-
-                        <input
-                          ref={wallpaperInputRef}
-                          type="file"
-                          accept="image/jpeg,image/png,.jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={(e) => handleWallpaperFile(e.target.files?.[0])}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          disabled={wallpaperUploading}
-                          onClick={() => wallpaperInputRef.current?.click()}
-                          className="w-full h-8 text-xs bg-white/5 border-white/10 hover:bg-white/10"
-                        >
-                          {wallpaperUploading ? (
-                            <><Loader2 className="w-3 h-3 mr-1.5 animate-spin" /> {t("ed_uploading")}</>
-                          ) : wallpaper.fileId ? (
-                            <><ImageIcon className="w-3 h-3 mr-1.5" /> {t("ed_replace_image")}</>
-                          ) : (
-                            <><ImageIcon className="w-3 h-3 mr-1.5" /> {t("ed_upload_image")}</>
-                          )}
-                        </Button>
-
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("ed_blur")}</Label>
-                            <span className="text-[10px] text-muted-foreground tabular-nums">{wallpaper.blur}px</span>
-                          </div>
-                          <Slider
-                            min={0}
-                            max={40}
-                            step={1}
-                            value={[wallpaper.blur]}
-                            onValueChange={([v]) => updateWallpaperAdjustment({ blur: v })}
-                            disabled={!wallpaper.fileId}
-                          />
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("ed_brightness")}</Label>
-                            <span className="text-[10px] text-muted-foreground tabular-nums">{wallpaper.brightness}%</span>
-                          </div>
-                          <Slider
-                            min={20}
-                            max={150}
-                            step={1}
-                            value={[wallpaper.brightness]}
-                            onValueChange={([v]) => updateWallpaperAdjustment({ brightness: v })}
-                            disabled={!wallpaper.fileId}
-                          />
-                        </div>
-
-                        <p className="text-[10px] text-muted-foreground/70 leading-relaxed">
-                          {t("ed_wallpaper_note")}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
 
               <Button variant="ghost" size="icon" className={`w-8 h-8 transition-colors ${showBacklinks ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`} onClick={() => setShowBacklinks(!showBacklinks)} title={t("ed_toggle_side_panel")}>
                 <PanelRight className="w-4 h-4" />
@@ -710,7 +545,42 @@ export default function NoteEditor() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
+            {/* Note type */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                <FileText className="w-3 h-3" />
+                <span>{t("ed_note_type")}</span>
+              </div>
+              <div className="flex gap-2">
+                {availableTypes.length > 0 && (
+                  <Select value={type} onValueChange={handleTypeChange}>
+                    <SelectTrigger className="flex-1 bg-white/5 border-white/10 h-8 text-xs">
+                      <SelectValue placeholder={t("ed_select_ellipsis")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableTypes.map((tp) => (
+                        <SelectItem key={tp} value={tp} className="text-xs">{tp}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <Input
+                  value={type}
+                  onChange={(e) => handleTypeChange(e.target.value)}
+                  placeholder={t("ed_or_new")}
+                  className="flex-1 bg-white/5 border-white/10 h-8 text-xs"
+                  maxLength={50}
+                />
+                {type && (
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive" onClick={() => handleTypeChange("")}>
+                    <X className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-4">
+
               <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                 <AtSign className="w-3 h-3" />
                 <span>{t("ed_note_metadata")}</span>
