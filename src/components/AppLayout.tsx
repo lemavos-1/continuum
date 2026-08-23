@@ -170,7 +170,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 }}
               </NavLink>
             ))}
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
@@ -183,25 +183,26 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" align="end" className="mb-2 w-56">
-                <DropdownMenuItem onClick={() => navigate("/projects")}>
+                <DropdownMenuItem onSelect={() => navigate("/projects")}>
                   <FolderOpen className="mr-2 h-4 w-4" /> {t("nav_projects")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/activities")}>
+                <DropdownMenuItem onSelect={() => navigate("/activities")}>
                   <Clock className="mr-2 h-4 w-4" /> {t("nav_activities")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/graph")}>
+                <DropdownMenuItem onSelect={() => navigate("/graph")}>
                   <GlobeAlt className="mr-2 h-4 w-4" /> {t("nav_graph")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/vault")}>
+                <DropdownMenuItem onSelect={() => navigate("/vault")}>
                   <Lock className="mr-2 h-4 w-4" /> {t("nav_vault")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs text-zinc-500">{user?.email}</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <DropdownMenuLabel className="text-xs text-muted-foreground">{user?.email}</DropdownMenuLabel>
+                <DropdownMenuItem onSelect={() => navigate("/profile")}>
                   <UserIcon className="mr-2 h-4 w-4" /> {t("nav_profile")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
           </div>
         </nav>
       )}
