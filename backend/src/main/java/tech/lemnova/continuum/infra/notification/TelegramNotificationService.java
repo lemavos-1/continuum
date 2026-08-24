@@ -2,6 +2,7 @@ package tech.lemnova.continuum.infra.notification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class TelegramNotificationService {
 
     private final TelegramBotClient bot;
 
+    @Autowired
     public TelegramNotificationService(
             @Value("${telegram.newuser.bot-token:${TELEGRAM_NEWUSER_BOT_TOKEN:}}") String botToken,
             @Value("${telegram.newuser.chat-id:${TELEGRAM_NEWUSER_CHAT_ID:}}") String chatId) {
