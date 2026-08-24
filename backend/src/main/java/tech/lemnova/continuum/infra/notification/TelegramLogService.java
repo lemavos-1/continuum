@@ -52,11 +52,27 @@ public class TelegramLogService {
         this.environment = environment;
     }
 
+    public boolean isConfigured() {
+        return bot.isConfigured();
+    }
+
+    public String describe() {
+        return bot.describe() + " minLevel=" + minLevel;
+    }
+
+    /** Blocking test send used by the diagnostics endpoint. */
+    public TelegramBotClient.SendResult sendTest() {
+        return bot.sendSync("\u2705 <b>Teste do bot de logs</b>\n\ud83d\udd52 " + Instant.now());
+    }
+
     @EventListener(ApplicationReadyEvent.class)
     public void onReady() {
         if (!bot.isConfigured()) {
+            System.out.println("[telegram-logs] NOT configured (" + bot.describe()
+                    + "). Set TELEGRAM_LOGS_BOT_TOKEN and TELEGRAM_LOGS_CHAT_ID.");
             return;
         }
+        System.out.println("[telegram-logs] configured (" + bot.describe() + " minLevel=" + minLevel + ")");
         startWorker();
         attachAppender();
         String profiles = String.join(", ", environment.getActiveProfiles());

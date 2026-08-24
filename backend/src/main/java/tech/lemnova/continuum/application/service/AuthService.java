@@ -175,6 +175,7 @@ public class AuthService {
         user = users.save(user);
         createFreeSubscription(user.getId());
         initVaultAsync(vaultId);
+        notifyTelegramNewUser(user);
         return buildAuthResponseWithTokenPair(user).withNewUserFlag(true);
     }
 

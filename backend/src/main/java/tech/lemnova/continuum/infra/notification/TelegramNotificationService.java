@@ -35,6 +35,28 @@ public class TelegramNotificationService {
         this.bot = bot;
     }
 
+    @jakarta.annotation.PostConstruct
+    void logConfiguration() {
+        if (bot.isConfigured()) {
+            log.info("Telegram new-user bot configured ({})", bot.describe());
+        } else {
+            log.warn("Telegram new-user bot NOT configured ({}). Set TELEGRAM_NEWUSER_BOT_TOKEN and TELEGRAM_NEWUSER_CHAT_ID.", bot.describe());
+        }
+    }
+
+    public boolean isConfigured() {
+        return bot.isConfigured();
+    }
+
+    public String describe() {
+        return bot.describe();
+    }
+
+    /** Blocking test send used by the diagnostics endpoint. */
+    public TelegramBotClient.SendResult sendTest() {
+        return bot.sendSync("\u2705 <b>Teste do bot de novos usuarios</b>\n\ud83d\udd52 " + Instant.now());
+    }
+
     public void notifyNewUser(String name, String email) {
         if (!bot.isConfigured()) {
             log.warn("Telegram new-user bot not configured (TELEGRAM_NEWUSER_BOT_TOKEN / TELEGRAM_NEWUSER_CHAT_ID). Skipping notification for {} <{}>", name, email);
@@ -46,6 +68,7 @@ public class TelegramNotificationService {
                 + "✉️ " + TelegramBotClient.escapeHtml(email) + "\n"
                 + "🕒 " + Instant.now();
 
+        log.info("Enviando notificação Telegram de novo usuário {} <{}>", name, email);
         bot.sendMessage(message, (status, body) ->
                 log.error("Falha ao enviar notificação Telegram (novo usuário {} <{}>): status={} body={}", name, email, status, body));
     }

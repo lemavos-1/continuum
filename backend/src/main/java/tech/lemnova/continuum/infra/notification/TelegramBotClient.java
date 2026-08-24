@@ -83,6 +83,33 @@ public class TelegramBotClient {
         return future;
     }
 
+    /** Blocking send used by diagnostics so the caller sees Telegram's answer. */
+    public SendResult sendSync(String text) {
+        if (!isConfigured()) {
+            return new SendResult(false, -1, "bot not configured (missing token or chat id)");
+        }
+        try {
+            HttpResponse<String> response = sendMessage(text).join();
+            int status = response == null ? -1 : response.statusCode();
+            String body = response == null ? "no response" : response.body();
+            boolean ok = status >= 200 && status < 300 && body != null && body.contains("\"ok\":true");
+            return new SendResult(ok, status, body);
+        } catch (Exception e) {
+            return new SendResult(false, -1, String.valueOf(e.getMessage()));
+        }
+    }
+
+    /** Non-sensitive description of this bot's configuration. */
+    public String describe() {
+        if (botToken.isBlank() && chatId.isBlank()) {
+            return "token=missing chatId=missing";
+        }
+        return "token=" + (botToken.isBlank() ? "missing" : "set(len=" + botToken.length() + ")")
+                + " chatId=" + (chatId.isBlank() ? "missing" : chatId);
+    }
+
+    public record SendResult(boolean ok, int status, String body) {}
+
     /** Escapes HTML special chars so user-provided content can't break markup. */
     public static String escapeHtml(String value) {
         if (value == null) {
