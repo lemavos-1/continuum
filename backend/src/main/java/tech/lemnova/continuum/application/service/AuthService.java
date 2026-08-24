@@ -94,7 +94,7 @@ public class AuthService {
             user = users.save(user);
             createFreeSubscription(user.getId());
             initVaultAsync(vaultId);
-            notifyDiscordNewUser(user);
+            notifyTelegramNewUser(user);
         } else {
             boolean changed = false;
             if (user.getGoogleId() == null) {
@@ -129,7 +129,7 @@ public class AuthService {
         return user;
     }
 
-    private void notifyDiscordNewUser(User user) {
+    private void notifyTelegramNewUser(User user) {
         try {
             telegramNotificationService.notifyNewUser(user.getUsername(), user.getEmail());
         } catch (Exception e) {
