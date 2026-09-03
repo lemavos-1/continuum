@@ -223,40 +223,23 @@
   .font-mono { font-family: var(--font-mono-stack); }
 
   /* --- Motion system: skeletons & loading ------------------------------- */
+  /* Lightweight skeleton: single compositor-friendly opacity pulse.
+     (No gradient sweep pseudo-element — it forced constant repaints.) */
   .skeleton-shimmer {
-    position: relative;
-    overflow: hidden;
     background: hsl(var(--foreground) / 0.07);
     animation: skeleton-pulse 1.9s ease-in-out infinite;
-  }
-  .skeleton-shimmer::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(var(--foreground) / 0.07) 45%,
-      hsl(var(--foreground) / 0.1) 55%,
-      transparent 100%
-    );
-    animation: skeleton-sweep 1.6s ease-in-out infinite;
+    will-change: opacity;
   }
 
   @keyframes skeleton-pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.72; }
-  }
-
-  @keyframes skeleton-sweep {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(100%); }
+    50% { opacity: 0.6; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .skeleton-shimmer::after { animation: none; }
+    .skeleton-shimmer { animation: none; }
   }
+
 
   /* Hairline divider */
   .hairline { border-color: hsl(var(--border)); }
@@ -667,7 +650,37 @@
 
 /* Continuum editor */
 @layer components {
-  .continuum-editor { @apply text-foreground leading-relaxed; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; }
+  :root {
+    --note-title-font-scale: 100;
+    --note-body-font-scale: 100;
+  }
+
+  .continuum-editor {
+    @apply text-foreground leading-relaxed;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: calc(16px * var(--note-body-font-scale) / 100) !important;
+    line-height: 1.7;
+  }
+  .continuum-editor,
+  .continuum-editor .ProseMirror {
+    font-size: calc(16px * var(--note-body-font-scale) / 100) !important;
+    line-height: 1.7;
+  }
+  .continuum-editor .ProseMirror > * {
+    font-size: inherit !important;
+  }
+  .continuum-editor .ProseMirror p,
+  .continuum-editor .ProseMirror li,
+  .continuum-editor .ProseMirror blockquote,
+  .continuum-editor .ProseMirror td,
+  .continuum-editor .ProseMirror th,
+  .continuum-editor .ProseMirror table,
+  .continuum-editor .ProseMirror code,
+  .continuum-editor .ProseMirror pre,
+  .continuum-editor .ProseMirror a,
+  .continuum-editor .ProseMirror span {
+    font-size: calc(1em * var(--note-body-font-scale) / 100) !important;
+  }
   .continuum-editor p { @apply my-2; }
   .continuum-editor h1 { @apply text-3xl font-serif mt-8 mb-3 tracking-tight; }
   .continuum-editor h2 { @apply text-2xl font-serif mt-7 mb-2 tracking-tight; }
