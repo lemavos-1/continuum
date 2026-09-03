@@ -103,10 +103,21 @@ const getToken = () => {
   return window.sessionStorage.getItem("access_token") ?? window.localStorage.getItem("access_token");
 };
 
+/** Tracks every open mention popup so we can always clean up stragglers. */
+const activeMentionPopups = new Set<TippyInstance>();
+
+export const destroyAllMentionPopups = () => {
+  activeMentionPopups.forEach((instance) => {
+    try { instance.destroy(); } catch { /* already destroyed */ }
+  });
+  activeMentionPopups.clear();
+};
+
 export const resetEditorCaches = () => {
   Object.assign(entityCache, { token: null, at: 0, data: [], pending: null });
   Object.assign(noteCache, { token: null, at: 0, data: [], pending: null });
 };
+
 
 const loadEntities = async (): Promise<Entity[]> => {
   const token = getToken();
