@@ -203,14 +203,33 @@ const buildSuggestion = (variant: "entity" | "note", currentNoteId?: string) => 
   },
   render: () => {
     let component: ReactRenderer<MentionListRef> | null = null;
-    let popup: TippyInstance[] | null = null;
+    let popup: TippyInstance | null = null;
+
+    const teardown = () => {
+      if (popup) {
+        activeMentionPopups.delete(popup);
+        try { popup.destroy(); } catch { /* already destroyed */ }
+        popup = null;
+      }
+      if (component) {
+        try { component.destroy(); } catch { /* noop */ }
+        component = null;
+      }
+    };
+
     return {
       onStart: (props: SuggestionProps<MentionItem>) => {
+        // Any leftover popup (from an interrupted session) must go first.
+        destroyAllMentionPopups();
+        teardown();
         component = new ReactRenderer(MentionList, {
           props: { ...props, query: props.query, variant },
           editor: props.editor,
         });
-        if (!props.clientRect) return;
+        if (!props.clientRect) {
+          teardown();
+          return;
+        }
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect as () => DOMRect,
           appendTo: () => document.body,
@@ -219,20 +238,23 @@ const buildSuggestion = (variant: "entity" | "note", currentNoteId?: string) => 
           interactive: true,
           trigger: "manual",
           placement: "bottom-start",
-        });
+          onHidden: () => teardown(),
+        })[0] ?? null;
+        if (popup) activeMentionPopups.add(popup);
       },
       onUpdate(props: SuggestionProps<MentionItem>) {
         component?.updateProps({ ...props, query: props.query, variant });
-        if (props.clientRect) popup?.[0]?.setProps({ getReferenceClientRect: props.clientRect as () => DOMRect });
+        if (props.clientRect) popup?.setProps({ getReferenceClientRect: props.clientRect as () => DOMRect });
       },
       onKeyDown(props: SuggestionKeyDownProps) {
-        if (props.event.key === "Escape") { popup?.[0]?.hide(); return true; }
+        if (props.event.key === "Escape") { teardown(); return true; }
         return component?.ref?.onKeyDown(props) ?? false;
       },
-      onExit() { popup?.[0]?.destroy(); component?.destroy(); },
+      onExit() { teardown(); },
     };
   },
 });
+
 
 /* ── Component API ── */
 export interface TiptapEditorHandle {
