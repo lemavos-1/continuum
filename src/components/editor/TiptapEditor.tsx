@@ -427,6 +427,14 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
           return false;
         },
       },
+      onBlur: () => {
+        // Leaving the editor must never leave a mention dropdown floating around.
+        window.setTimeout(() => {
+          if (!document.querySelector(".tippy-box:hover")) destroyAllMentionPopups();
+        }, 120);
+      },
+      onDestroy: () => destroyAllMentionPopups(),
+
       onUpdate: ({ editor }) => {
         // Throttled: avoids re-rendering the whole note page on every keystroke.
         if (updateTimerRef.current) window.clearTimeout(updateTimerRef.current);
