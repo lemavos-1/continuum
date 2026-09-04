@@ -52,8 +52,6 @@ const DashboardSkeleton = () => (
         <Skeleton className="lg:col-span-8 h-[300px] rounded-2xl" style={{ animationDelay: "240ms" }} />
       </div>
     </div>
-
-    </div>
   </AppLayout>
 );
 
