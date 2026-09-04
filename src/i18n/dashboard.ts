@@ -309,6 +309,10 @@ export const dict: Module = {
     db_habitsMarkDone: "Feito",
     db_habitsMarked: "Marcado como feito",
     db_habitsMarkFailed: "Não foi possível marcar",
+    db_projectsEyebrow: "Em andamento",
+    db_projectsTitle: "Projetos ativos",
+    db_projectsEmpty: "Criar um projeto",
+    db_projectsLinks: "{n} conexões",
   },
   fr: {
     db_overview: "Aperçu",
