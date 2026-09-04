@@ -42,17 +42,17 @@ const formatNoteDate = (timestamp?: number) => {
 // --- SUB-COMPONENTS ---
 const DashboardSkeleton = () => (
   <AppLayout>
-    <div className="px-4 sm:px-6 lg:px-12 py-6 sm:py-10 max-w-7xl mx-auto space-y-6">
+    <div className="px-4 sm:px-6 lg:px-12 py-6 sm:py-10 max-w-7xl mx-auto space-y-4 sm:space-y-6">
+      <Skeleton className="h-20 rounded-2xl" />
       <Skeleton className="h-16 rounded-2xl" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-2xl" style={{ animationDelay: `${i * 80}ms` }} />
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+        <Skeleton className="lg:col-span-4 h-[220px] rounded-2xl" />
+        <Skeleton className="lg:col-span-8 h-[360px] rounded-2xl" style={{ animationDelay: "80ms" }} />
+        <Skeleton className="lg:col-span-4 h-[220px] rounded-2xl" style={{ animationDelay: "160ms" }} />
+        <Skeleton className="lg:col-span-8 h-[300px] rounded-2xl" style={{ animationDelay: "240ms" }} />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Skeleton className="lg:col-span-8 h-[360px] rounded-2xl" />
-        <Skeleton className="lg:col-span-4 h-[360px] rounded-2xl" style={{ animationDelay: "120ms" }} />
-      </div>
+    </div>
+
     </div>
   </AppLayout>
 );
