@@ -8,6 +8,7 @@ import { SummaryMetric, SummaryMetricRow } from "@/components/ui/summary-metric"
 import { FloatingCreateButton } from "@/components/ui/floating-create-button";
 import { TodayHabitsCard } from "@/components/dashboard/TodayHabitsCard";
 import { ScoreEvolutionCard } from "@/components/dashboard/ScoreEvolutionCard";
+import { ActiveProjectsCard } from "@/components/dashboard/ActiveProjectsCard";
 
 import { dashboardApi, graphApi, notesApi } from "@/lib/api";
 import { useCreateNote } from "@/hooks/useCreateNote";
