@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Detectar Diretório do Frontend
         id: detect-dir
@@ -104,6 +104,7 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ALIAS_PASSWORD }}
+          buildToolsVersion: '34.0.0'
 
       - name: Renomear APK Assinado
         run: |
