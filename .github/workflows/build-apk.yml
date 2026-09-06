@@ -1,4 +1,4 @@
-name: Build Debug APK
+name: Build Release APK Assinado
 
 on:
   workflow_dispatch:
@@ -91,21 +91,30 @@ jobs:
         working-directory: ${{ env.ANDROID_DIR }}
         run: chmod +x gradlew
 
-      - name: Build APK Debug
+      - name: Build APK Release (Não assinado)
         working-directory: ${{ env.ANDROID_DIR }}
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease
 
-      - name: Renomear APK
+      - name: Assinar APK com a Keystore (Signature)
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ALIAS_PASSWORD }}
+
+      - name: Renomear APK Assinado
         run: |
-          mv ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/app-debug.apk ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/continuum.apk
+          mv ${{ steps.sign_app.outputs.signedReleaseFile }} ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
 
-      - name: Criar GitHub Release e anexar APK
+      - name: Criar GitHub Release e anexar APK Assinado
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
           name: Release ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
-          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/continuum.apk
+          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
           draft: false
           prerelease: false
-          
