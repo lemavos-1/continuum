@@ -49,27 +49,35 @@ jobs:
         run: |
           set -e
 
-          echo "Procurando favicon em todo o projeto..."
+          echo "Procurando favicon/icon/logo em todo o projeto..."
 
-          # Busca qualquer arquivo com "favicon" ou "logo" no nome, ignorando pastas irrelevantes
-          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
+          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "icon*.png" -o -iname "icon*.svg" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
             -not -path "*/node_modules/*" -not -path "*/android/*" -not -path "*/ios/*" -not -path "*/dist/*" 2>/dev/null)
 
           echo "Candidatos encontrados:"
           echo "$CANDIDATOS"
 
-          # Prioriza PNG > SVG > ICO
-          SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | head -n 1)
+          # Prioridade 1: PNG dentro de public/
+          SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | grep -iE '(^|/)public/' | head -n 1)
+          # Prioridade 2: qualquer PNG
+          if [ -z "$SRC" ]; then
+            SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | head -n 1)
+          fi
+          # Prioridade 3: SVG dentro de public/
+          if [ -z "$SRC" ]; then
+            SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | grep -iE '(^|/)public/' | head -n 1)
+          fi
+          # Prioridade 4: qualquer SVG
           if [ -z "$SRC" ]; then
             SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | head -n 1)
           fi
+          # Prioridade 5: ICO
           if [ -z "$SRC" ]; then
             SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            echo "ERRO: nenhum favicon/logo encontrado em lugar nenhum do repositório."
-            echo "Rode 'find . -iname \"*favicon*\" -o -iname \"*logo*\"' localmente e verifique o caminho real."
+            echo "ERRO: nenhum favicon/icon/logo encontrado em lugar nenhum do repositório."
             exit 1
           fi
 
