@@ -34,15 +34,16 @@ jobs:
             echo "ANDROID_DIR=android" >> $GITHUB_ENV
           fi
 
-      - name: Instalar dependências e Build Web
+      - name: Instalar dependências e Capacitor
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           npm ci
-          npm run build
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/status-bar
 
-      - name: Instalar Capacitor e Assets Generator
+      - name: Instalar dependências e Build Web
         working-directory: ${{ env.FRONT_DIR }}
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/status-bar
+        run: |
+          npm run build
 
       - name: Preparar icon.png (fonte dos ícones)
         working-directory: ${{ env.FRONT_DIR }}
