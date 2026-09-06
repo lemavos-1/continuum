@@ -3,7 +3,12 @@ name: Build Release APK
 on:
   workflow_dispatch:
   push:
+    tags:
+      - 'v*' # Dispara automaticamente ao criar e enviar tags como v1.0.0, v1.0.1
     branches: [main]
+
+permissions:
+  contents: write # Permissão necessária para publicar na aba Releases do GitHub
 
 jobs:
   build:
@@ -23,14 +28,17 @@ jobs:
           npm ci
           npm run build
 
-      - name: Instalar Capacitor
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+      - name: Instalar Capacitor e Assets Generator
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
 
       - name: Inicializar projeto Android
         run: |
           npx cap init "Continuum" "com.continuumnodes.continuum" --web-dir=dist
           npx cap add android
           npx cap sync android
+
+      - name: Gerar Ícones do App
+        run: npx @capacitor/assets generate --android
 
       - name: Fix Kotlin stdlib duplicate classes
         working-directory: android
@@ -65,8 +73,12 @@ jobs:
         run: |
           mv android/app/build/outputs/apk/release/app-release-unsigned.apk android/app/build/outputs/apk/release/continuum-release.apk
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Criar GitHub Release e anexar APK
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
-          name: continuum-release-apk
-          path: android/app/build/outputs/apk/release/continuum-release.apk
+          tag_name: ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
+          name: Release ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
+          files: android/app/build/outputs/apk/release/continuum-release.apk
+          draft: false
+          prerelease: false
