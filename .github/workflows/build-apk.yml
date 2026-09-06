@@ -42,7 +42,7 @@ jobs:
 
       - name: Instalar Capacitor e Assets Generator
         working-directory: ${{ env.FRONT_DIR }}
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/status-bar
 
       - name: Preparar icon.png (fonte dos ícones)
         working-directory: ${{ env.FRONT_DIR }}
@@ -95,9 +95,6 @@ jobs:
           TIPO_REAL=$(file -b "$SRC")
           echo "Tipo real do arquivo: $TIPO_REAL"
 
-          # IMPORTANTE: checa "icon resource" (ICO real) ANTES de checar PNG,
-          # porque um ICO pode conter PNG internamente e o `file` mistura as duas
-          # descrições na mesma linha (ex: "MS Windows icon resource ... PNG image data").
           if echo "$TIPO_REAL" | grep -qi "icon resource"; then
             echo "É um contêiner ICO. Convertendo para PNG puro..."
             convert "$SRC[0]" -resize 1024x1024 assets/icon.png
@@ -115,7 +112,25 @@ jobs:
       - name: Inicializar projeto Android
         working-directory: ${{ env.FRONT_DIR }}
         run: |
-          npx cap init "Continuum" "com.continuumnodes.continuum" --web-dir=dist
+          cat > capacitor.config.ts << 'EOF'
+          import { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.continuumnodes.continuum',
+            appName: 'Continuum',
+            webDir: 'dist',
+            plugins: {
+              StatusBar: {
+                overlaysWebView: false,
+                style: 'DARK',
+                backgroundColor: '#000000',
+              },
+            },
+          };
+
+          export default config;
+          EOF
+
           npx cap add android
           npx cap sync android
 
