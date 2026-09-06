@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Release APK
 
 on:
   workflow_dispatch:
@@ -8,14 +8,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Instalar deps e build web
+      - name: Instalar dependências e Build Web
         run: |
           npm ci
           npm run build
@@ -33,7 +36,7 @@ jobs:
         working-directory: android
         run: |
           cat >> build.gradle << 'EOF'
-          
+
           subprojects {
               configurations.all {
                   resolutionStrategy {
@@ -44,16 +47,26 @@ jobs:
           }
           EOF
 
-      - uses: actions/setup-java@v4
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build APK
+      - name: Permissão de execução no Gradle
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: chmod +x gradlew
 
-      - uses: actions/upload-artifact@v4
+      - name: Build APK Release
+        working-directory: android
+        run: ./gradlew assembleRelease
+
+      - name: Renomear APK
+        run: |
+          mv android/app/build/outputs/apk/release/app-release-unsigned.apk android/app/build/outputs/apk/release/continuum-release.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: continuum-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: continuum-release-apk
+          path: android/app/build/outputs/apk/release/continuum-release.apk
