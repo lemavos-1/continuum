@@ -1,24 +1,23 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLogo from "@/components/landing/AppLogo";
 import Footer from "@/components/landing/Footer";
+import type { ComponentType, SVGProps } from "react";
 import {
-  ArrowTopRightOnSquareIcon,
-  CodeBracketIcon,
-  LockClosedIcon,
-  ServerStackIcon,
-  CpuChipIcon,
-  GlobeAltIcon,
-  EyeIcon,
-  BugAntIcon,
-  SparklesIcon,
-  PencilSquareIcon,
-  LinkIcon,
-  ChartBarIcon,
-  ArrowDownTrayIcon,
-  CloudIcon,
-  CheckIcon,
-  type ComponentType,
-  type SVGProps,
+  ExternalLink as ArrowTopRightOnSquareIcon,
+  Code as CodeBracketIcon,
+  Lock as LockClosedIcon,
+  HardDrive as ServerStackIcon,
+  Activity as CpuChipIcon,
+  GlobeAlt as GlobeAltIcon,
+  Eye as EyeIcon,
+  Bug as BugAntIcon,
+  Sparkles as SparklesIcon,
+  Edit as PencilSquareIcon,
+  Link as LinkIcon,
+  BarChart3 as ChartBarIcon,
+  Download as ArrowDownTrayIcon,
+  Cloud as CloudIcon,
+  Check as CheckIcon,
 } from "@/lib/heroicons";
 
 const GITHUB_URL = "https://github.com/continuumnodes/continuum";
