@@ -24,6 +24,7 @@ import { Mathematics } from "@tiptap/extension-mathematics";
 import "katex/dist/katex.min.css";
 import { common, createLowlight } from "lowlight";
 import tippy, { type Instance as TippyInstance } from "tippy.js";
+import "tippy.js/dist/tippy.css";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from "react";
 import type { ChangeEvent } from "react";
 import type { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
@@ -105,6 +106,9 @@ const getToken = () => {
 
 /** Tracks every open mention popup so we can always clean up stragglers. */
 const activeMentionPopups = new Set<TippyInstance>();
+
+/** True while a mention suggestion session is open (prevents blur from killing it). */
+let mentionSuggestionActive = false;
 
 export const destroyAllMentionPopups = () => {
   activeMentionPopups.forEach((instance) => {
@@ -217,6 +221,7 @@ const buildSuggestion = (variant: "entity" | "note", currentNoteId?: string) => 
     let popup: TippyInstance | null = null;
 
     const teardown = () => {
+      mentionSuggestionActive = false;
       if (popup) {
         activeMentionPopups.delete(popup);
         try { popup.destroy(); } catch { /* already destroyed */ }
@@ -233,6 +238,7 @@ const buildSuggestion = (variant: "entity" | "note", currentNoteId?: string) => 
         // Any leftover popup (from an interrupted session) must go first.
         destroyAllMentionPopups();
         teardown();
+        mentionSuggestionActive = true;
         component = new ReactRenderer(MentionList, {
           props: { ...props, query: props.query, variant },
           editor: props.editor,
@@ -430,8 +436,10 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       onBlur: () => {
         // Leaving the editor must never leave a mention dropdown floating around.
         window.setTimeout(() => {
-          if (!document.querySelector(".tippy-box:hover")) destroyAllMentionPopups();
-        }, 120);
+          // Touch devices have no :hover, so rely on the session flag instead.
+          if (mentionSuggestionActive) return;
+          destroyAllMentionPopups();
+        }, 200);
       },
       onDestroy: () => destroyAllMentionPopups(),
 
