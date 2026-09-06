@@ -31,6 +31,16 @@ jobs:
       - name: Instalar Capacitor e Assets Generator
         run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
 
+      - name: Copiar Favicon para a raiz como Icon
+        run: |
+          if [ -f public/favicon.png ]; then
+            cp public/favicon.png icon.png
+          elif [ -f public/favicon.ico ]; then
+            cp public/favicon.ico icon.png
+          elif [ -f dist/favicon.ico ]; then
+            cp dist/favicon.ico icon.png
+          fi
+
       - name: Inicializar projeto Android
         run: |
           npx cap init "Continuum" "com.continuumnodes.continuum" --web-dir=dist
