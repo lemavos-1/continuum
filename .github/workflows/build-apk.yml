@@ -44,16 +44,33 @@ jobs:
         working-directory: ${{ env.FRONT_DIR }}
         run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
 
-      - name: Copiar Favicon para Icon
+      - name: Preparar icon.png (fonte dos ícones)
         working-directory: ${{ env.FRONT_DIR }}
         run: |
-          if [ -f public/favicon.png ]; then
-            cp public/favicon.png icon.png
-          elif [ -f public/favicon.ico ]; then
-            cp public/favicon.ico icon.png
-          elif [ -f dist/favicon.ico ]; then
-            cp dist/favicon.ico icon.png
+          set -e
+          SRC=""
+          for candidate in public/favicon.png public/logo.png public/icon.png public/favicon.svg dist/favicon.png dist/favicon.ico public/favicon.ico; do
+            if [ -f "$candidate" ]; then
+              SRC="$candidate"
+              break
+            fi
+          done
+
+          if [ -z "$SRC" ]; then
+            echo "ERRO: nenhum favicon/ícone encontrado nos caminhos esperados. Verifique o caminho real do favicon no projeto."
+            exit 1
           fi
+
+          echo "Usando $SRC como fonte do ícone"
+
+          if [[ "$SRC" == *.ico ]] || [[ "$SRC" == *.svg ]]; then
+            sudo apt-get update -qq && sudo apt-get install -y imagemagick
+            convert "$SRC" -resize 1024x1024 icon.png
+          else
+            cp "$SRC" icon.png
+          fi
+
+          file icon.png
 
       - name: Inicializar projeto Android
         working-directory: ${{ env.FRONT_DIR }}
@@ -110,7 +127,7 @@ jobs:
 
           # 2. Localiza as ferramentas do Android SDK
           BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
-          
+
           # 3. Executa o zipalign
           $BUILD_TOOLS_DIR/zipalign -v -p 4 \
             ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/app-release-unsigned.apk \
@@ -127,12 +144,28 @@ jobs:
           # 5. Remove o arquivo sensível da keystore
           rm keystore.jks
 
+      - name: Upload APK (sempre, independente de tag)
+        uses: actions/upload-artifact@v4
+        with:
+          name: continuum-release-apk
+          path: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
+          retention-days: 14
+
+      - name: Definir nome da tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_NAME=build-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+          fi
+
       - name: Criar GitHub Release e anexar APK Assinado
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
-          tag_name: ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
-          name: Release ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
+          tag_name: ${{ steps.tag.outputs.TAG_NAME }}
+          name: Release ${{ steps.tag.outputs.TAG_NAME }}
           files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
           draft: false
           prerelease: false
