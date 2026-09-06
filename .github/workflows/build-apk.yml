@@ -1,4 +1,4 @@
-name: Build Release APK
+name: Build Debug APK
 
 on:
   workflow_dispatch:
@@ -91,13 +91,13 @@ jobs:
         working-directory: ${{ env.ANDROID_DIR }}
         run: chmod +x gradlew
 
-      - name: Build APK Release
+      - name: Build APK Debug
         working-directory: ${{ env.ANDROID_DIR }}
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleDebug
 
       - name: Renomear APK
         run: |
-          mv ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/app-release-unsigned.apk ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
+          mv ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/app-debug.apk ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/continuum.apk
 
       - name: Criar GitHub Release e anexar APK
         uses: softprops/action-gh-release@v2
@@ -105,6 +105,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
           name: Release ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
-          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
+          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/debug/continuum.apk
           draft: false
           prerelease: false
+          
