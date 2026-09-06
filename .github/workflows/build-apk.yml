@@ -167,4 +167,27 @@ jobs:
           rm keystore.jks
 
       - name: Upload APK (sempre, independente de tag)
-        uses:
+        uses: actions/upload-artifact@v4
+        with:
+          name: continuum-release-apk
+          path: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
+          retention-days: 14
+
+      - name: Definir nome da tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_NAME=build-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Criar GitHub Release e anexar APK Assinado
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG_NAME }}
+          name: Release ${{ steps.tag.outputs.TAG_NAME }}
+          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
+          draft: false
+          prerelease: false
