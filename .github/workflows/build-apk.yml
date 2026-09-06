@@ -48,20 +48,32 @@ jobs:
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           set -e
-          SRC=""
-          for candidate in public/favicon.png public/logo.png public/icon.png public/favicon.svg dist/favicon.png dist/favicon.ico public/favicon.ico; do
-            if [ -f "$candidate" ]; then
-              SRC="$candidate"
-              break
-            fi
-          done
+
+          echo "Procurando favicon em todo o projeto..."
+
+          # Busca qualquer arquivo com "favicon" ou "logo" no nome, ignorando pastas irrelevantes
+          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
+            -not -path "*/node_modules/*" -not -path "*/android/*" -not -path "*/ios/*" -not -path "*/dist/*" 2>/dev/null)
+
+          echo "Candidatos encontrados:"
+          echo "$CANDIDATOS"
+
+          # Prioriza PNG > SVG > ICO
+          SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | head -n 1)
+          if [ -z "$SRC" ]; then
+            SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | head -n 1)
+          fi
+          if [ -z "$SRC" ]; then
+            SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | head -n 1)
+          fi
 
           if [ -z "$SRC" ]; then
-            echo "ERRO: nenhum favicon/ícone encontrado nos caminhos esperados. Verifique o caminho real do favicon no projeto."
+            echo "ERRO: nenhum favicon/logo encontrado em lugar nenhum do repositório."
+            echo "Rode 'find . -iname \"*favicon*\" -o -iname \"*logo*\"' localmente e verifique o caminho real."
             exit 1
           fi
 
-          echo "Usando $SRC como fonte do ícone"
+          echo "Usando como fonte: $SRC"
 
           if [[ "$SRC" == *.ico ]] || [[ "$SRC" == *.svg ]]; then
             sudo apt-get update -qq && sudo apt-get install -y imagemagick
