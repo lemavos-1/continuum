@@ -49,9 +49,9 @@ jobs:
         run: |
           set -e
 
-          echo "Procurando favicon/icon/logo em todo o projeto..."
+          echo "Procurando favicon/logo em todo o projeto..."
 
-          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "icon*.png" -o -iname "icon*.svg" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
+          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
             -not -path "*/node_modules/*" -not -path "*/android/*" -not -path "*/ios/*" -not -path "*/dist/*" -not -path "*/assets/*" 2>/dev/null)
 
           echo "Candidatos encontrados:"
@@ -71,13 +71,17 @@ jobs:
           if [ -z "$SRC" ]; then
             SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | head -n 1)
           fi
-          # Prioridade 5: ICO
+          # Prioridade 5: ICO dentro de public/
+          if [ -z "$SRC" ]; then
+            SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | grep -iE '(^|/)public/' | head -n 1)
+          fi
+          # Prioridade 6: qualquer ICO
           if [ -z "$SRC" ]; then
             SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            echo "ERRO: nenhum favicon/icon/logo encontrado em lugar nenhum do repositório."
+            echo "ERRO: nenhum favicon/logo encontrado em lugar nenhum do repositório."
             exit 1
           fi
 
@@ -91,14 +95,21 @@ jobs:
           TIPO_REAL=$(file -b "$SRC")
           echo "Tipo real do arquivo: $TIPO_REAL"
 
-          if echo "$TIPO_REAL" | grep -qi "PNG image data"; then
-            echo "É um PNG de verdade, copiando direto."
+          # IMPORTANTE: checa "icon resource" (ICO real) ANTES de checar PNG,
+          # porque um ICO pode conter PNG internamente e o `file` mistura as duas
+          # descrições na mesma linha (ex: "MS Windows icon resource ... PNG image data").
+          if echo "$TIPO_REAL" | grep -qi "icon resource"; then
+            echo "É um contêiner ICO. Convertendo para PNG puro..."
+            convert "$SRC[0]" -resize 1024x1024 assets/icon.png
+          elif echo "$TIPO_REAL" | grep -qi "^PNG image data"; then
+            echo "É um PNG puro, copiando direto."
             cp "$SRC" assets/icon.png
           else
-            echo "Conteúdo não é PNG puro (provavelmente ICO/SVG por dentro). Convertendo..."
-            convert "$SRC[0]" -resize 1024x1024 assets/icon.png
+            echo "Formato não reconhecido como PNG puro (provavelmente SVG). Convertendo..."
+            convert "$SRC" -resize 1024x1024 assets/icon.png
           fi
 
+          echo "Resultado final:"
           file assets/icon.png
 
       - name: Inicializar projeto Android
