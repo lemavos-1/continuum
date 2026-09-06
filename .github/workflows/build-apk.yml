@@ -23,15 +23,29 @@ jobs:
         with:
           node-version: 20
 
+      - name: Detectar Diretório do Frontend
+        id: detect-dir
+        run: |
+          if [ -f "frontend/package.json" ]; then
+            echo "FRONT_DIR=frontend" >> $GITHUB_ENV
+            echo "ANDROID_DIR=frontend/android" >> $GITHUB_ENV
+          else
+            echo "FRONT_DIR=." >> $GITHUB_ENV
+            echo "ANDROID_DIR=android" >> $GITHUB_ENV
+          fi
+
       - name: Instalar dependências e Build Web
+        working-directory: ${{ env.FRONT_DIR }}
         run: |
           npm ci
           npm run build
 
       - name: Instalar Capacitor e Assets Generator
+        working-directory: ${{ env.FRONT_DIR }}
         run: npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets
 
-      - name: Copiar Favicon para a raiz como Icon
+      - name: Copiar Favicon para Icon
+        working-directory: ${{ env.FRONT_DIR }}
         run: |
           if [ -f public/favicon.png ]; then
             cp public/favicon.png icon.png
@@ -42,16 +56,18 @@ jobs:
           fi
 
       - name: Inicializar projeto Android
+        working-directory: ${{ env.FRONT_DIR }}
         run: |
           npx cap init "Continuum" "com.continuumnodes.continuum" --web-dir=dist
           npx cap add android
           npx cap sync android
 
       - name: Gerar Ícones do App
+        working-directory: ${{ env.FRONT_DIR }}
         run: npx @capacitor/assets generate --android
 
       - name: Fix Kotlin stdlib duplicate classes
-        working-directory: android
+        working-directory: ${{ env.ANDROID_DIR }}
         run: |
           cat >> build.gradle << 'EOF'
 
@@ -72,16 +88,16 @@ jobs:
           java-version: '21'
 
       - name: Permissão de execução no Gradle
-        working-directory: android
+        working-directory: ${{ env.ANDROID_DIR }}
         run: chmod +x gradlew
 
       - name: Build APK Release
-        working-directory: android
+        working-directory: ${{ env.ANDROID_DIR }}
         run: ./gradlew assembleRelease
 
       - name: Renomear APK
         run: |
-          mv android/app/build/outputs/apk/release/app-release-unsigned.apk android/app/build/outputs/apk/release/continuum-release.apk
+          mv ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/app-release-unsigned.apk ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
 
       - name: Criar GitHub Release e anexar APK
         uses: softprops/action-gh-release@v2
@@ -89,6 +105,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
           name: Release ${{ github.ref_name != 'main' && github.ref_name || 'latest' }}
-          files: android/app/build/outputs/apk/release/continuum-release.apk
+          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
           draft: false
           prerelease: false
