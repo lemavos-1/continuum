@@ -52,7 +52,7 @@ jobs:
           echo "Procurando favicon/icon/logo em todo o projeto..."
 
           CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "icon*.png" -o -iname "icon*.svg" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
-            -not -path "*/node_modules/*" -not -path "*/android/*" -not -path "*/ios/*" -not -path "*/dist/*" 2>/dev/null)
+            -not -path "*/node_modules/*" -not -path "*/android/*" -not -path "*/ios/*" -not -path "*/dist/*" -not -path "*/assets/*" 2>/dev/null)
 
           echo "Candidatos encontrados:"
           echo "$CANDIDATOS"
@@ -83,14 +83,16 @@ jobs:
 
           echo "Usando como fonte: $SRC"
 
+          mkdir -p assets
+
           if [[ "$SRC" == *.ico ]] || [[ "$SRC" == *.svg ]]; then
             sudo apt-get update -qq && sudo apt-get install -y imagemagick
-            convert "$SRC" -resize 1024x1024 icon.png
+            convert "$SRC" -resize 1024x1024 assets/icon.png
           else
-            cp "$SRC" icon.png
+            cp "$SRC" assets/icon.png
           fi
 
-          file icon.png
+          file assets/icon.png
 
       - name: Inicializar projeto Android
         working-directory: ${{ env.FRONT_DIR }}
@@ -101,7 +103,7 @@ jobs:
 
       - name: Gerar Ícones do App
         working-directory: ${{ env.FRONT_DIR }}
-        run: npx @capacitor/assets generate --android
+        run: npx @capacitor/assets generate --android --assetPath assets
 
       - name: Fix Kotlin stdlib duplicate classes
         working-directory: ${{ env.ANDROID_DIR }}
@@ -165,27 +167,4 @@ jobs:
           rm keystore.jks
 
       - name: Upload APK (sempre, independente de tag)
-        uses: actions/upload-artifact@v4
-        with:
-          name: continuum-release-apk
-          path: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
-          retention-days: 14
-
-      - name: Definir nome da tag
-        id: tag
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          else
-            echo "TAG_NAME=build-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Criar GitHub Release e anexar APK Assinado
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-        with:
-          tag_name: ${{ steps.tag.outputs.TAG_NAME }}
-          name: Release ${{ steps.tag.outputs.TAG_NAME }}
-          files: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
-          draft: false
-          prerelease: false
+        uses:
