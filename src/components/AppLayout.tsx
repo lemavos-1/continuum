@@ -57,28 +57,13 @@ const mobileTabs = [
   { to: "/insights", icon: BarChart3, iconSolid: BarChart3Solid, key: "nav_insights" },
 ];
 
-// Mobile top bar shows the page title instead of the app logo on list screens.
-const MOBILE_TITLES: [string, string][] = [
-  ["/notes", "notes_title"],
-  ["/entities", "entities_title"],
-  ["/insights", "ins_title"],
-  ["/projects", "projects_title"],
-  ["/activities", "activities_title"],
-  ["/vault", "vault_title"],
-];
-
-
-
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
   const isGraphPage = location.pathname.startsWith("/graph");
-  // The note editor owns the top area on mobile — it renders its own header.
-  const hideMobileTopBar = /^\/notes\/[^/]+$/.test(location.pathname);
-  const isNoteEditor = hideMobileTopBar;
-  const mobileTitleKey = MOBILE_TITLES.find(([p]) => location.pathname === p)?.[1];
+  const isNoteEditor = /^\/notes\/[^/]+$/.test(location.pathname);
 
   const initial = (user?.username || user?.email || "U").trim().charAt(0).toUpperCase();
   const display = user?.username || user?.email?.split("@")[0] || "Guest";
