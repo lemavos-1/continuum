@@ -1,6 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLogo from "@/components/landing/AppLogo";
-import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import type { ComponentType, SVGProps } from "react";
 import {
@@ -431,7 +430,31 @@ export default function About() {
         </section>
       </main>
 
-      <Footer />
+      {/* Footer simples, no tema do app */}
+      <footer className="border-t border-border">
+        <div className="container mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-8 sm:px-6">
+          <a href="/" className="flex items-center gap-2.5">
+            <AppLogo />
+            <span className="font-serif text-sm font-semibold tracking-tight text-foreground">
+              Continuum
+            </span>
+          </a>
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+            <a href="/pricing" className="transition-colors hover:text-foreground">{t("lp_footer_pricing")}</a>
+            <a href="/support" className="transition-colors hover:text-foreground">{t("lp_footer_support")}</a>
+            <a href="/terms" className="transition-colors hover:text-foreground">{t("lp_footer_terms")}</a>
+            <a href="/privacy" className="transition-colors hover:text-foreground">{t("lp_footer_privacy")}</a>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
+              GitHub
+            </a>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }
