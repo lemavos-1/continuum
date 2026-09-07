@@ -91,14 +91,21 @@ jobs:
           TIPO_REAL=$(file -b "$SRC")
           echo "Tipo real do arquivo: $TIPO_REAL"
 
-          if echo "$TIPO_REAL" | grep -qi "PNG image data"; then
-            echo "É um PNG de verdade, copiando direto."
+          # IMPORTANTE: checa "icon resource" (ICO real) ANTES de checar PNG,
+          # porque um ICO pode conter PNG internamente e o `file` mistura as duas
+          # descrições na mesma linha (ex: "MS Windows icon resource ... PNG image data").
+          if echo "$TIPO_REAL" | grep -qi "icon resource"; then
+            echo "É um contêiner ICO (mesmo que tenha PNG dentro). Convertendo..."
+            convert "$SRC[0]" -resize 1024x1024 assets/icon.png
+          elif echo "$TIPO_REAL" | grep -qi "^PNG image data"; then
+            echo "É um PNG puro, copiando direto."
             cp "$SRC" assets/icon.png
           else
-            echo "Conteúdo não é PNG puro (provavelmente ICO/SVG por dentro). Convertendo..."
+            echo "Formato não reconhecido como PNG puro. Convertendo por segurança..."
             convert "$SRC[0]" -resize 1024x1024 assets/icon.png
           fi
 
+          echo "Resultado final:"
           file assets/icon.png
 
       - name: Inicializar projeto Android
