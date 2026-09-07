@@ -4,20 +4,16 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
   StickyNote,
   Tag,
   User as UserIcon,
   Menu,
   GlobeAlt,
-  Timer,
   Clock,
   Lock,
   BarChart3,
-  X,
   FolderOpen,
   Squares2x2,
-  ArrowLeft,
 } from "@/lib/heroicons";
 import {
   Squares2X2Icon as Squares2x2Solid,
@@ -64,9 +60,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
   const isGraphPage = location.pathname.startsWith("/graph");
   const isNoteEditor = /^\/notes\/[^/]+$/.test(location.pathname);
-
-  const initial = (user?.username || user?.email || "U").trim().charAt(0).toUpperCase();
-  const display = user?.username || user?.email?.split("@")[0] || "Guest";
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
