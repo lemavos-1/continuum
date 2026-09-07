@@ -19,6 +19,10 @@ import { EMAIL_AUTH_ENABLED } from "@/lib/dev-mode";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
+// Capacitor: aplica cor da status bar só quando rodando dentro do APK nativo
+import { Capacitor } from "@capacitor/core";
+import { StatusBar, Style } from "@capacitor/status-bar";
+
 // Auth-critical screens stay eager (they gate the first paint); everything else
 // is code-split and streamed in behind a skeleton.
 import LoginSuccess from "./pages/LoginSuccess";
@@ -142,29 +146,38 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <GlobalProgress />
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <LanguageProvider>
-            <AuthProvider>
-              <UsageProvider>
-                <EntityProvider>
-                  <AppRoutes />
-                </EntityProvider>
-              </UsageProvider>
-            </AuthProvider>
-          </LanguageProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-    <Analytics />
-    <SpeedInsights />
-  </QueryClientProvider>
-);
+const App = () => {
+  React.useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      StatusBar.setBackgroundColor({ color: "#000000" });
+      StatusBar.setStyle({ style: Style.Dark });
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <GlobalProgress />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LanguageProvider>
+              <AuthProvider>
+                <UsageProvider>
+                  <EntityProvider>
+                    <AppRoutes />
+                  </EntityProvider>
+                </UsageProvider>
+              </AuthProvider>
+            </LanguageProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+      <Analytics />
+      <SpeedInsights />
+    </QueryClientProvider>
+  );
+};
 
 export default App;
