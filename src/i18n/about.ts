@@ -10,6 +10,7 @@ export const dict: Module = {
     ab_hero_sub:
       "Continuum is an open-source personal knowledge management system designed to help you capture, connect, and resurface what matters.",
     ab_hero_cta: "View source on GitHub",
+    ab_back_to_home: "Back to home",
 
     ab_what_title: "What is Continuum?",
     ab_what_body:
@@ -107,6 +108,7 @@ export const dict: Module = {
     ab_hero_sub:
       "Continuum es un sistema de gestión de conocimiento personal de código abierto, diseñado para ayudarte a capturar, conectar y recuperar lo que importa.",
     ab_hero_cta: "Ver el código en GitHub",
+    ab_back_to_home: "Volver al inicio",
 
     ab_what_title: "¿Qué es Continuum?",
     ab_what_body:
@@ -205,6 +207,7 @@ export const dict: Module = {
     ab_hero_sub:
       "O Continuum é um sistema de gestão de conhecimento pessoal de código aberto, criado para ajudar você a capturar, conectar e recuperar o que importa.",
     ab_hero_cta: "Ver o código no GitHub",
+    ab_back_to_home: "Voltar ao início",
 
     ab_what_title: "O que é o Continuum?",
     ab_what_body:
@@ -303,6 +306,7 @@ export const dict: Module = {
     ab_hero_sub:
       "Continuum est un système de gestion des connaissances personnel open source, conçu pour vous aider à capturer, relier et faire resurgir ce qui compte.",
     ab_hero_cta: "Voir le code sur GitHub",
+    ab_back_to_home: "Retour à l'accueil",
 
     ab_what_title: "Qu'est-ce que Continuum ?",
     ab_what_body:
