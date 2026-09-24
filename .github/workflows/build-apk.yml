@@ -492,6 +492,9 @@ jobs:
 
       - name: Setup Android SDK Build-Tools
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          accept-android-sdk-licenses: true
 
       - name: Permissão de execução no Gradle
         working-directory: ${{ env.ANDROID_DIR }}
