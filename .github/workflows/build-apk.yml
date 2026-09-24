@@ -140,6 +140,26 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Definir versionCode Android
+        working-directory: ${{ env.ANDROID_DIR }}
+        run: |
+          set -e
+
+          VERSION_CODE="${GITHUB_RUN_NUMBER:-1}"
+          if [ -z "$VERSION_CODE" ] || [ "$VERSION_CODE" -lt 1 ]; then
+            VERSION_CODE=1
+          fi
+
+          if grep -qE 'versionCode[[:space:]]+[0-9]+' app/build.gradle; then
+            sed -i -E "s/(versionCode[[:space:]]+)[0-9]+/\1${VERSION_CODE}/" app/build.gradle
+          elif grep -q "versionCode" app/build.gradle; then
+            sed -i -E "s/(versionCode.*:[[:space:]]*)0/\1${VERSION_CODE}/" app/build.gradle
+          else
+            sed -i "/defaultConfig[[:space:]]*{/a\\        versionCode ${VERSION_CODE}" app/build.gradle
+          fi
+
+          grep -n "versionCode" app/build.gradle
+
       - name: Gerar Ícones do App
         working-directory: ${{ env.FRONT_DIR }}
         run: |
