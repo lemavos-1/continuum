@@ -145,21 +145,21 @@ jobs:
           fi
           npx cap sync android
 
-          - name: Configure Android 15 edge-to-edge opt-out
-          working-directory: ${{ env.ANDROID_DIR }}
-          run: |
-            set -e
-            mkdir -p app/src/main/res/values-v35
-            cat > app/src/main/res/values-v35/styles.xml << 'EOF'
-            <?xml version="1.0" encoding="utf-8"?>
-            <resources>
-                <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+      - name: Configure Android 15 edge-to-edge opt-out
+        working-directory: ${{ env.ANDROID_DIR }}
+        run: |
+          set -e
+          mkdir -p app/src/main/res/values-v35
+          cat > app/src/main/res/values-v35/styles.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
                   <item name="windowActionBar">false</item>
                   <item name="windowNoTitle">true</item>
-                <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+                  <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
               </style>
-            </resources>
-            EOF
+          </resources>
+          EOF
 
       - name: Set Android versionCode
         working-directory: ${{ env.ANDROID_DIR }}
@@ -237,9 +237,8 @@ jobs:
 
                   Window window = getWindow();
 
-                      if (android.os.Build.VERSION.SDK_INT >= 36) {
-                        // Android 16 no longer supports the Android 15 opt-out.
-                        // In that mode, keep edge-to-edge and inset the WebView
+                      if (android.os.Build.VERSION.SDK_INT >= 35) {
+                        // Android 15+ may enforce edge-to-edge. Inset the WebView
                         // once using the platform-reported system bars.
                         WindowCompat.setDecorFitsSystemWindows(window, false);
 
@@ -265,7 +264,7 @@ jobs:
                         );
                         ViewCompat.requestApplyInsets(webView);
                       } else {
-                        // Android 15 and older use the platform's normal fit.
+                        // Android 14 and older use the platform's normal fit.
                         WindowCompat.setDecorFitsSystemWindows(window, true);
                       }
 
