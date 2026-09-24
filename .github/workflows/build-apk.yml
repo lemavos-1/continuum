@@ -34,11 +34,21 @@ jobs:
             echo "ANDROID_DIR=android" >> $GITHUB_ENV
           fi
 
+      - name: Install native image dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libvips-dev
+
       - name: Install dependencies and Capacitor
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           npm ci
-          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/status-bar
+          npm install --no-save \
+            @capacitor/core@8.5.1 \
+            @capacitor/cli@8.5.1 \
+            @capacitor/android@8.5.1 \
+            @capacitor/assets@3.0.5 \
+            @capacitor/status-bar@8.0.3
 
       - name: Install dependencies and Build Web
         working-directory: ${{ env.FRONT_DIR }}
