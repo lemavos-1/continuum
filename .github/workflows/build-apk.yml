@@ -127,7 +127,7 @@ jobs:
             webDir: 'dist',
             plugins: {
               SystemBars: {
-                insetsHandling: 'css',
+                insetsHandling: 'disable',
                 style: 'DARK',
                 hidden: false,
                 animation: 'NONE',
@@ -221,10 +221,31 @@ jobs:
 
                   Window window = getWindow();
 
-                  // Let Android fit the WebView below the system bars where the
-                  // platform allows it. Capacitor 8 handles newer edge-to-edge
-                  // devices through SystemBars and CSS safe-area insets.
-                  WindowCompat.setDecorFitsSystemWindows(window, true);
+                    // Android 15+ enforces edge-to-edge. Apply the real system
+                    // insets to the WebView so every screen shares one safe area.
+                    WindowCompat.setDecorFitsSystemWindows(window, false);
+
+                    View webView = getBridge().getWebView();
+                    final int initialLeft = webView.getPaddingLeft();
+                    final int initialTop = webView.getPaddingTop();
+                    final int initialRight = webView.getPaddingRight();
+                    final int initialBottom = webView.getPaddingBottom();
+                    ViewCompat.setOnApplyWindowInsetsListener(
+                      webView,
+                      (view, insets) -> {
+                          Insets systemBars = insets.getInsets(
+                            WindowInsetsCompat.Type.systemBars()
+                          );
+                          view.setPadding(
+                            initialLeft + systemBars.left,
+                            initialTop + systemBars.top,
+                            initialRight + systemBars.right,
+                            initialBottom + systemBars.bottom
+                          );
+                          return insets;
+                      }
+                    );
+                    ViewCompat.requestApplyInsets(webView);
 
                   // The Status Bar becomes transparent.
                   // The View created below is responsible for the black background.

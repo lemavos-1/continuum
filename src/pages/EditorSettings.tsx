@@ -76,7 +76,7 @@ export default function EditorSettingsPage() {
             {wallpaperUrl && <div aria-hidden="true" className="absolute inset-0 bg-background/55" />}
 
             <div className="relative flex h-full flex-col">
-              <header className="flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-3 backdrop-blur-md">
+              <header className="flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md lg:pt-3">
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="ghost" size="icon" aria-label={t("common_back")} onClick={() => navigate(-1)} className="h-8 w-8 text-muted-foreground hover:text-foreground">
                     <ArrowLeftIcon className="h-4 w-4" />
