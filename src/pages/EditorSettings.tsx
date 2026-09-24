@@ -76,7 +76,7 @@ export default function EditorSettingsPage() {
             {wallpaperUrl && <div aria-hidden="true" className="absolute inset-0 bg-background/55" />}
 
             <div className="relative flex h-full flex-col">
-              <header className="flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md lg:pt-3">
+              <header className="flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-3 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="ghost" size="icon" aria-label={t("common_back")} onClick={() => navigate(-1)} className="h-8 w-8 text-muted-foreground hover:text-foreground">
                     <ArrowLeftIcon className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function EditorSettingsPage() {
             </div>
           </section>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-[calc(6rem+env(safe-area-inset-bottom))] flex flex-col items-center gap-2 px-3 lg:bottom-6">
+          <div className="pointer-events-none absolute inset-x-0 bottom-[calc(6rem+var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))] flex flex-col items-center gap-2 px-3 lg:bottom-6">
             {panel && (
               <div className="pointer-events-auto w-full max-w-md max-h-[45dvh] overflow-y-auto rounded-2xl border border-border/10 bg-background/80 px-4 shadow-lg backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2">
                 {panel === "text" ? (

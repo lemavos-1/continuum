@@ -126,10 +126,11 @@ jobs:
             appName: 'Continuum',
             webDir: 'dist',
             plugins: {
-              StatusBar: {
-                overlaysWebView: false,
-                style: 'LIGHT',
-                backgroundColor: '#000000',
+              SystemBars: {
+                insetsHandling: 'css',
+                style: 'DARK',
+                hidden: false,
+                animation: 'NONE',
               },
             },
           };
@@ -137,7 +138,11 @@ jobs:
           export default config;
           EOF
 
-          npx cap add android
+          if [ -d android ]; then
+            npx cap sync android
+          else
+            npx cap add android
+          fi
           npx cap sync android
 
       - name: Set Android versionCode
@@ -216,9 +221,10 @@ jobs:
 
                   Window window = getWindow();
 
-                  // Android 15+ uses edge-to-edge.
-                  // Content needs to be able to sit behind the Status Bar.
-                  WindowCompat.setDecorFitsSystemWindows(window, false);
+                  // Let Android fit the WebView below the system bars where the
+                  // platform allows it. Capacitor 8 handles newer edge-to-edge
+                  // devices through SystemBars and CSS safe-area insets.
+                  WindowCompat.setDecorFitsSystemWindows(window, true);
 
                   // The Status Bar becomes transparent.
                   // The View created below is responsible for the black background.

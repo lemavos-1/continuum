@@ -493,7 +493,7 @@ export default function NoteEditor() {
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
 
           {/* Top Toolbar */}
-          <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md lg:pt-3">
+          <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-border/5 bg-background/70 px-4 pb-3 pt-3 backdrop-blur-md">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/notes"))} className="text-muted-foreground hover:text-foreground w-8 h-8">
                 <ArrowLeft className="w-4 h-4" />
@@ -539,7 +539,7 @@ export default function NoteEditor() {
 
           {/* Editor Canvas */}
           <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain scroll-smooth">
-            <div className="mx-auto w-full max-w-[750px] px-6 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-12 lg:px-12 lg:pb-32">
+            <div className="mx-auto w-full max-w-[750px] px-6 pb-[calc(7rem+var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))] pt-12 lg:px-12 lg:pb-32">
               <Input
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
@@ -570,7 +570,7 @@ export default function NoteEditor() {
           
           {/* Footer Metadata */}
           {note?.updatedAt && (
-            <div className="pointer-events-none absolute bottom-[calc(0.5rem+env(safe-area-inset-bottom))] left-4 flex items-center gap-1.5 rounded-md border border-border/5 bg-background/80 px-2 py-1 text-[10px] text-muted-foreground backdrop-blur">
+            <div className="pointer-events-none absolute bottom-[calc(0.5rem+var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))] left-4 flex items-center gap-1.5 rounded-md border border-border/5 bg-background/80 px-2 py-1 text-[10px] text-muted-foreground backdrop-blur">
               <Clock className="w-3 h-3" />
               {t("ed_edited", { date: new Date(note.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) })}
             </div>

@@ -20,9 +20,9 @@ import { prefetchPrimaryLists } from "@/lib/prefetch";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
-// Capacitor: aplica cor da status bar só quando rodando dentro do APK nativo
+// Capacitor 8: configura as barras do sistema somente no APK nativo.
 import { Capacitor } from "@capacitor/core";
-import { StatusBar, Style } from "@capacitor/status-bar";
+import { SystemBars, SystemBarsStyle } from "@capacitor/core";
 
 // Auth-critical screens stay eager (they gate the first paint); everything else
 // is code-split and streamed in behind a skeleton.
@@ -172,8 +172,7 @@ const AppRoutes = () => {
 const App = () => {
   React.useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      StatusBar.setBackgroundColor({ color: "#000000" });
-      StatusBar.setStyle({ style: Style.Dark });
+      void SystemBars.setStyle({ style: SystemBarsStyle.Dark });
     }
   }, []);
 
