@@ -64,12 +64,10 @@ export function TimeTrackingList({
   const lower = hideInternalSearch ? (search ?? '').trim().toLowerCase() : query.trim().toLowerCase();
 
   const { data: trackableEntities, isLoading: entitiesLoading } = useQuery({
-    queryKey: qk.entities(filterType),
+    queryKey: qk.entities(),
     queryFn: async () => {
       const response = await entitiesApi.list();
-      const entities = response.data as Entity[];
-      if (filterType) return entities.filter((e) => e.type === filterType);
-      return entities.filter((e) => e.type === 'PROJECT' || e.type === 'ACTIVITY');
+      return response.data as Entity[];
     },
     staleTime: STALE.list,
   });
@@ -81,7 +79,11 @@ export function TimeTrackingList({
   const isLoading = entitiesLoading || summariesLoading;
   const typeLabels: Record<string, string> = { PROJECT: t('tm_project'), ACTIVITY: t('tm_activity') };
 
-  const all = useMemo(() => trackableEntities ?? [], [trackableEntities]);
+  const all = useMemo(() => {
+    const entities = trackableEntities ?? [];
+    if (filterType) return entities.filter((entity) => entity.type === filterType);
+    return entities.filter((entity) => entity.type === 'PROJECT' || entity.type === 'ACTIVITY');
+  }, [filterType, trackableEntities]);
   const visible = useMemo(() => {
     if (!lower) return all;
     return all.filter((e) =>
