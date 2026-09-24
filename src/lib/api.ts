@@ -1,5 +1,8 @@
 import axios from "axios";
 import { parseTiptapContent } from "@/lib/tiptap-content";
+import { getClientPlatform, getClientVersion } from "@/lib/updater/client-version";
+
+export const UPGRADE_REQUIRED_EVENT = "app:upgrade-required";
 
 // Lê em tempo de execução, não de build
 const getAPIBaseURL = () => {
@@ -113,6 +116,12 @@ api.interceptors.request.use((config) => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (tz) config.headers["X-Timezone"] = tz;
     config.headers["X-TZ-Offset"] = String(-new Date().getTimezoneOffset());
+  } catch { /* ignore */ }
+  // Version policy: the server decides what is current and what is blocked.
+  try {
+    const appVersion = getClientVersion();
+    if (appVersion) config.headers["X-App-Version"] = appVersion;
+    config.headers["X-App-Platform"] = getClientPlatform();
   } catch { /* ignore */ }
   const skipAuth =
     url === "/api/auth/login" ||
@@ -229,7 +238,13 @@ class RefreshTokenManager {
         console.log("[RefreshTokenManager] Token renovado com sucesso");
         
         // Atualiza tokens (pode vir novo refresh token por rotation)
-        setAuthTokens(data.accessToken, data.refreshToken);
+        // O endpoint pode não rotacionar o refresh token. Nesse caso, preserve
+        // o token atual em vez de apagá-lo ao salvar apenas o novo access token.
+        if (data.refreshToken) {
+          setAuthTokens(data.accessToken, data.refreshToken);
+        } else {
+          setAuthTokens(data.accessToken);
+        }
 
         // Processa fila de requisições
         this.processQueue(data.accessToken);
@@ -289,6 +304,14 @@ api.interceptors.response.use(
       url.startsWith("/api/auth/register") ||
       url.startsWith("/api/auth/refresh") ||
       url.startsWith("/api/auth/google");
+
+    // 426 Upgrade Required — the client is below the server's minimum version.
+    if (status === 426) {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent(UPGRADE_REQUIRED_EVENT, { detail: error.response?.data }));
+      }
+      return Promise.reject(error);
+    }
 
     if (status === 401 && !original?._retry && !isAuthEndpoint) {
       original._retry = true;
@@ -395,6 +418,8 @@ export const notesApi = {
   delete: (id: string) => api.delete(`/api/notes/${id}`),
   toggleFavorite: (id: string) => api.patch(`/api/notes/${id}/favorite`),
   getBacklinks: (id: string) => api.get(`/api/notes/${id}/backlinks`),
+  getForwardLinks: (id: string) => api.get(`/api/notes/${id}/forward-links`),
+  getBacklinkCount: (id: string) => api.get(`/api/notes/${id}/backlink-count`),
   getTypes: () => api.get("/api/notes/types"),
 };
 
@@ -550,6 +575,7 @@ export const importApi = {
   },
   commitMarkdown: (payload: unknown) =>
     api.post("/api/import/markdown/commit", payload, { timeout: 120000 }),
+  relinkEntities: () => api.post("/api/import/entities/relink", {}, { timeout: 180000 }),
 };
 
 export default api;
