@@ -1,4 +1,4 @@
-name: Build Release APK Assinado
+name: Build Signed Release APK
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Detectar Diretório do Frontend
+      - name: Detect Frontend Directory
         id: detect-dir
         run: |
           if [ -f "frontend/package.json" ]; then
@@ -34,88 +34,88 @@ jobs:
             echo "ANDROID_DIR=android" >> $GITHUB_ENV
           fi
 
-      - name: Instalar dependências e Capacitor
+      - name: Install dependencies and Capacitor
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           npm ci
           npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/assets @capacitor/status-bar
 
-      - name: Instalar dependências e Build Web
+      - name: Install dependencies and Build Web
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           npm run build
 
-      - name: Preparar icon.png (fonte dos ícones)
+      - name: Prepare icon.png (icon source)
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           set -e
 
-          echo "Procurando favicon/logo em todo o projeto..."
+          echo "Searching for a favicon/logo across the whole project..."
 
-          CANDIDATOS=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
+          CANDIDATES=$(find . -type f \( -iname "favicon*.png" -o -iname "favicon*.svg" -o -iname "favicon*.ico" -o -iname "logo*.png" -o -iname "logo*.svg" \) \
             -not -path "*/node_modules/*" \
             -not -path "*/android/*" \
             -not -path "*/ios/*" \
             -not -path "*/dist/*" \
             -not -path "*/assets/*" 2>/dev/null)
 
-          echo "Candidatos encontrados:"
-          echo "$CANDIDATOS"
+          echo "Candidates found:"
+          echo "$CANDIDATES"
 
-          SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | grep -iE '(^|/)public/' | head -n 1)
+          SRC=$(echo "$CANDIDATES" | grep -iE '\.png$' | grep -iE '(^|/)public/' | head -n 1)
 
           if [ -z "$SRC" ]; then
-            SRC=$(echo "$CANDIDATOS" | grep -iE '\.png$' | head -n 1)
+            SRC=$(echo "$CANDIDATES" | grep -iE '\.png$' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | grep -iE '(^|/)public/' | head -n 1)
+            SRC=$(echo "$CANDIDATES" | grep -iE '\.svg$' | grep -iE '(^|/)public/' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            SRC=$(echo "$CANDIDATOS" | grep -iE '\.svg$' | head -n 1)
+            SRC=$(echo "$CANDIDATES" | grep -iE '\.svg$' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | grep -iE '(^|/)public/' | head -n 1)
+            SRC=$(echo "$CANDIDATES" | grep -iE '\.ico$' | grep -iE '(^|/)public/' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            SRC=$(echo "$CANDIDATOS" | grep -iE '\.ico$' | head -n 1)
+            SRC=$(echo "$CANDIDATES" | grep -iE '\.ico$' | head -n 1)
           fi
 
           if [ -z "$SRC" ]; then
-            echo "ERRO: nenhum favicon/logo encontrado em lugar nenhum do repositório."
+            echo "ERROR: no favicon/logo found anywhere in the repository."
             exit 1
           fi
 
-          echo "Usando como fonte: $SRC"
+          echo "Using as source: $SRC"
 
           sudo apt-get update -qq
           sudo apt-get install -y imagemagick file
 
           mkdir -p assets
 
-          TIPO_REAL=$(file -b "$SRC")
-          echo "Tipo real do arquivo: $TIPO_REAL"
+          REAL_TYPE=$(file -b "$SRC")
+          echo "Actual file type: $REAL_TYPE"
 
-          if echo "$TIPO_REAL" | grep -qi "icon resource"; then
-            echo "É um contêiner ICO. Convertendo para PNG puro..."
+          if echo "$REAL_TYPE" | grep -qi "icon resource"; then
+            echo "It's an ICO container. Converting to plain PNG..."
             convert "$SRC[0]" -resize 1024x1024 assets/icon.png
 
-          elif echo "$TIPO_REAL" | grep -qi "^PNG image data"; then
-            echo "É um PNG puro, copiando direto."
+          elif echo "$REAL_TYPE" | grep -qi "^PNG image data"; then
+            echo "It's a plain PNG, copying directly."
             cp "$SRC" assets/icon.png
 
           else
-            echo "Formato não reconhecido como PNG puro (provavelmente SVG). Convertendo..."
+            echo "Format not recognized as plain PNG (probably SVG). Converting..."
             convert "$SRC" -resize 1024x1024 assets/icon.png
           fi
 
-          echo "Resultado final:"
+          echo "Final result:"
           file assets/icon.png
 
-      - name: Inicializar projeto Android
+      - name: Initialize Android Project
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           cat > capacitor.config.ts << 'EOF'
@@ -140,7 +140,7 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Definir versionCode Android
+      - name: Set Android versionCode
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           set -e
@@ -162,17 +162,17 @@ jobs:
 
           grep -RIn "versionCode" . --include="*.gradle"
 
-      - name: Gerar Ícones do App
+      - name: Generate App Icons
         working-directory: ${{ env.FRONT_DIR }}
         run: |
           npx @capacitor/assets generate --android --assetPath assets
 
-      - name: Corrigir Status Bar Android 15+
+      - name: Fix Status Bar for Android 15+
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           set -e
 
-          echo "Corrigindo Status Bar para Android 15/16+..."
+          echo "Fixing Status Bar for Android 15/16+..."
 
           MAIN_ACTIVITY="app/src/main/java/com/continuumnodes/continuum/MainActivity.java"
 
@@ -181,11 +181,11 @@ jobs:
           fi
 
           if [ -z "$MAIN_ACTIVITY" ] || [ ! -f "$MAIN_ACTIVITY" ]; then
-            echo "ERRO: MainActivity.java não encontrado."
+            echo "ERROR: MainActivity.java not found."
             exit 1
           fi
 
-          echo "MainActivity encontrada em: $MAIN_ACTIVITY"
+          echo "MainActivity found at: $MAIN_ACTIVITY"
 
           cat > "$MAIN_ACTIVITY" << 'EOF'
           package com.continuumnodes.continuum;
@@ -216,23 +216,23 @@ jobs:
 
                   Window window = getWindow();
 
-                  // Android 15+ usa edge-to-edge.
-                  // O conteúdo precisa poder ficar atrás da Status Bar.
+                  // Android 15+ uses edge-to-edge.
+                  // Content needs to be able to sit behind the Status Bar.
                   WindowCompat.setDecorFitsSystemWindows(window, false);
 
-                  // A Status Bar fica transparente.
-                  // A View criada abaixo será responsável pelo fundo preto.
+                  // The Status Bar becomes transparent.
+                  // The View created below is responsible for the black background.
                   window.setStatusBarColor(Color.TRANSPARENT);
 
-                  // Remove o contraste automático que pode criar a faixa cinza.
+                  // Removes automatic contrast enforcement that can create a gray band.
                   if (android.os.Build.VERSION.SDK_INT >= 29) {
                       window.setStatusBarContrastEnforced(false);
                   }
 
-                  // Fundo geral da janela.
+                  // Overall window background.
                   window.getDecorView().setBackgroundColor(Color.BLACK);
 
-                  // Ícones/texto da Status Bar brancos.
+                  // White Status Bar icons/text.
                   WindowInsetsControllerCompat controller =
                           WindowCompat.getInsetsController(
                                   window,
@@ -243,10 +243,10 @@ jobs:
                       controller.setAppearanceLightStatusBars(false);
                   }
 
-                  // Container principal do Android.
+                  // Android's main container.
                   ViewGroup decorView = (ViewGroup) window.getDecorView();
 
-                  // View preta dedicada para cobrir EXATAMENTE a área da Status Bar.
+                  // Dedicated black View to cover EXACTLY the Status Bar area.
                   statusBarBackground = new View(this);
                   statusBarBackground.setBackgroundColor(Color.BLACK);
 
@@ -260,7 +260,7 @@ jobs:
 
                   decorView.addView(statusBarBackground, params);
 
-                  // Usa WindowInsets para descobrir a altura real da Status Bar.
+                  // Use WindowInsets to find the real Status Bar height.
                   ViewCompat.setOnApplyWindowInsetsListener(
                           decorView,
                           (view, insets) -> {
@@ -286,32 +286,32 @@ jobs:
                           }
                   );
 
-                  // Força a aplicação inicial dos insets.
+                  // Force the initial application of insets.
                   ViewCompat.requestApplyInsets(decorView);
               }
           }
           EOF
 
-          echo "Status Bar corrigida."
+          echo "Status Bar fixed."
 
-      - name: Definir versionName/versionCode a partir da tag
+      - name: Set versionName/versionCode from tag
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           set -e
           RAW="${{ github.ref_name }}"
           if [[ "${{ github.ref }}" == refs/tags/v* && "$RAW" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="${BASH_REMATCH[3]}"
+            VERSION_NAME="$MAJOR.$MINOR.$PATCH"
+            VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+            echo "Semver tag detected: versionName=$VERSION_NAME versionCode=$VERSION_CODE"
+            sed -i "s/versionName \".*\"/versionName \"$VERSION_NAME\"/" app/build.gradle
+            sed -i "s/versionCode [0-9]\+/versionCode $VERSION_CODE/" app/build.gradle
           else
-            MAJOR=0; MINOR=0; PATCH=0
+            echo "Not a semver tag (ref=${{ github.ref }}) — keeping the versionCode already set by the previous step (${ANDROID_VERSION_CODE:-1})."
           fi
-          VERSION_NAME="$MAJOR.$MINOR.$PATCH"
-          VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
-          echo "versionName=$VERSION_NAME versionCode=$VERSION_CODE"
-          sed -i "s/versionName \".*\"/versionName \"$VERSION_NAME\"/" app/build.gradle
-          sed -i "s/versionCode [0-9]\+/versionCode $VERSION_CODE/" app/build.gradle
           grep -n "version" app/build.gradle
 
-      - name: Plugin nativo de instalação do APK
+      - name: APK install native plugin
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           set -e
@@ -518,17 +518,17 @@ jobs:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
           accept-android-sdk-licenses: true
 
-      - name: Permissão de execução no Gradle
+      - name: Grant Gradle execute permission
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           chmod +x gradlew
 
-      - name: Build APK Release
+      - name: Build Release APK
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
           ./gradlew -PversionCode="${ANDROID_VERSION_CODE:-1}" assembleRelease
 
-      - name: Decodificar e Assinar APK
+      - name: Decode and Sign APK
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -553,14 +553,14 @@ jobs:
 
           rm keystore.jks
 
-      - name: Upload APK (sempre, independente de tag)
+      - name: Upload APK (always, regardless of tag)
         uses: actions/upload-artifact@v4
         with:
           name: continuum-release-apk
           path: ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk
           retention-days: 14
 
-      - name: Definir nome da tag
+      - name: Set tag name
         id: tag
         run: |
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
@@ -569,7 +569,7 @@ jobs:
             echo "TAG_NAME=build-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
           fi
 
-      - name: Criar GitHub Release e anexar APK Assinado
+      - name: Create GitHub Release and attach Signed APK
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
