@@ -150,15 +150,17 @@ jobs:
             VERSION_CODE=1
           fi
 
-          if grep -qE 'versionCode[[:space:]]+[0-9]+' app/build.gradle; then
-            sed -i -E "s/(versionCode[[:space:]]+)[0-9]+/\1${VERSION_CODE}/" app/build.gradle
-          elif grep -q "versionCode" app/build.gradle; then
-            sed -i -E "s/(versionCode.*:[[:space:]]*)0/\1${VERSION_CODE}/" app/build.gradle
-          else
-            sed -i "/defaultConfig[[:space:]]*{/a\\        versionCode ${VERSION_CODE}" app/build.gradle
-          fi
+          while IFS= read -r -d '' GRADLE_FILE; do
+            if grep -q "versionCode" "$GRADLE_FILE"; then
+              sed -i -E "s/(versionCode[[:space:]]+)[0-9]+/\1${VERSION_CODE}/g" "$GRADLE_FILE"
+              sed -i -E "s/(versionCode[[:space:]]*=[[:space:]]*)0/\1${VERSION_CODE}/g" "$GRADLE_FILE"
+              sed -i -E "s/(versionCode[^:]*:[[:space:]]*)0/\1${VERSION_CODE}/g" "$GRADLE_FILE"
+            fi
+          done < <(find . -type f -name "*.gradle" -print0)
 
-          grep -n "versionCode" app/build.gradle
+          echo "ANDROID_VERSION_CODE=${VERSION_CODE}" >> "$GITHUB_ENV"
+
+          grep -RIn "versionCode" . --include="*.gradle"
 
       - name: Gerar Ícones do App
         working-directory: ${{ env.FRONT_DIR }}
@@ -524,7 +526,7 @@ jobs:
       - name: Build APK Release
         working-directory: ${{ env.ANDROID_DIR }}
         run: |
-          ./gradlew assembleRelease
+          ./gradlew -PversionCode="${ANDROID_VERSION_CODE:-1}" assembleRelease
 
       - name: Decodificar e Assinar APK
         env:
