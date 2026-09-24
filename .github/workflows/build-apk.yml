@@ -243,22 +243,27 @@ jobs:
                         WindowCompat.setDecorFitsSystemWindows(window, false);
 
                         View webView = getBridge().getWebView();
-                        final int initialLeft = webView.getPaddingLeft();
-                        final int initialTop = webView.getPaddingTop();
-                        final int initialRight = webView.getPaddingRight();
-                        final int initialBottom = webView.getPaddingBottom();
+                        ViewGroup.MarginLayoutParams initialLayoutParams =
+                          (ViewGroup.MarginLayoutParams) webView.getLayoutParams();
+                        final int initialLeft = initialLayoutParams.leftMargin;
+                        final int initialTop = initialLayoutParams.topMargin;
+                        final int initialRight = initialLayoutParams.rightMargin;
+                        final int initialBottom = initialLayoutParams.bottomMargin;
                         ViewCompat.setOnApplyWindowInsetsListener(
                             webView,
                             (view, insets) -> {
                               Insets systemBars = insets.getInsets(
                                   WindowInsetsCompat.Type.systemBars()
                               );
-                              view.setPadding(
-                                  initialLeft + systemBars.left,
-                                  initialTop + systemBars.top,
-                                  initialRight + systemBars.right,
-                                  initialBottom + systemBars.bottom
+                              ViewGroup.MarginLayoutParams layoutParams =
+                                (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                              layoutParams.setMargins(
+                                initialLeft + systemBars.left,
+                                initialTop + systemBars.top,
+                                initialRight + systemBars.right,
+                                initialBottom + systemBars.bottom
                               );
+                              view.setLayoutParams(layoutParams);
                               return insets;
                             }
                         );
