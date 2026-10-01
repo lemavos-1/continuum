@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # continuum-sync.sh
 #
-# Script único com os 3 fluxos de sincronização do repo continuum:
+# Script único com os 5 fluxos do repo continuum:
 #
 #   1) Dev -> Principal
 #      lemavos-N/continuum (REMOTE) -> repo principal local
@@ -17,6 +17,12 @@
 #      lemavos-X/continuum (REMOTE) -> lemavos-Y/continuum
 #      O conteúdo remoto da origem substitui o conteúdo do destino,
 #      preservando somente o .git do destino.
+#
+#   4) Auto commit
+#      git add -A && git commit -m "." && git push
+#
+#   5) Commit versionado
+#      Atualiza a versão do script, cria commit "vX.X" e faz push.
 #
 # REGRAS:
 #   - O destino NÃO precisa estar commitado ou clean.
@@ -36,6 +42,8 @@ set -euo pipefail
 
 REPO_NAME="continuum"
 MAIN_OWNER="continuumnodes"
+
+# VERSION: 1.0
 
 OPTIONS=("lemavos-1" "lemavos-2" "lemavos-3" "lemavos-4")
 
@@ -476,6 +484,100 @@ run_dev_to_dev() {
   echo "────────────────────────────────────────"
 }
 
+# ── Modo 5: Commit Versionado ──────────────────────────────────────────────
+
+run_versioned_commit() {
+  local script_path
+  script_path="$(realpath "$0")"
+
+  local current_version
+  current_version="$(grep "^# VERSION:" "$script_path" | cut -d ' ' -f 3)"
+
+  [ -n "$current_version" ] || {
+    echo "ERRO: não foi possível encontrar a versão atual no script." >&2
+    exit 1
+  }
+
+  echo ""
+  echo "--------------------------------------"
+  echo "Última versão registrada: $current_version"
+  read -rp "Digite o número da nova versão: " new_version
+  echo "--------------------------------------"
+  echo ""
+
+  [ -n "$new_version" ] || {
+    echo "ERRO: nenhuma versão informada." >&2
+    exit 1
+  }
+
+  if [[ ! "$new_version" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+    echo "ERRO: versão inválida."
+    echo "Exemplo válido: 7.2 ou 8.0.1"
+    exit 1
+  fi
+
+  if [ "$new_version" = "$current_version" ]; then
+    echo "ERRO: a nova versão é igual à versão atual ($current_version)." >&2
+    exit 1
+  fi
+
+  echo "Adicionando arquivos e preparando commit v$new_version..."
+
+  # Atualiza a versão ANTES do commit.
+  sed -i \
+    "s/^# VERSION: $current_version/# VERSION: $new_version/" \
+    "$script_path"
+
+  git add -A
+
+  if git diff --cached --quiet; then
+    echo "ERRO: não há alterações para commitar." >&2
+
+    # Desfaz a alteração da versão.
+    sed -i \
+      "s/^# VERSION: $new_version/# VERSION: $current_version/" \
+      "$script_path"
+
+    exit 1
+  fi
+
+  git commit -m "v$new_version"
+
+  echo ""
+  echo "Subindo v$new_version para o GitHub..."
+
+  if git push origin main; then
+    echo ""
+    echo "--------------------------------------"
+    echo "✔ Versão v$new_version lançada com sucesso."
+    echo "✔ Commit: v$new_version"
+    echo "✔ Script atualizado para $new_version"
+    echo "--------------------------------------"
+  else
+    echo ""
+    echo "--------------------------------------"
+    echo "✖ Erro ao subir para o GitHub."
+    echo "✖ A versão será restaurada para $current_version."
+    echo "--------------------------------------"
+
+    # Remove o commit local sem perder as alterações.
+    git reset --soft HEAD~1
+
+    # Restaura a versão anterior.
+    sed -i \
+      "s/^# VERSION: $new_version/# VERSION: $current_version/" \
+      "$script_path"
+
+    # Remove a alteração da versão do staging.
+    git reset
+
+    echo ""
+    echo "Alteração do commit v$new_version desfeita localmente."
+    echo "A versão continua em $current_version."
+    exit 1
+  fi
+}
+
 # ── Menu principal ─────────────────────────────────────────────────────────
 
 echo ""
@@ -493,8 +595,11 @@ echo ""
 echo "  4) Auto commit"
 echo "     git add -A && git commit -m \".\" && git push"
 echo ""
+echo "  5) Commit versionado"
+echo "     git add -A && git commit -m \"vX.X\" && git push"
+echo ""
 
-read -rp "Escolha [1-4]: " FLOW_CHOICE
+read -rp "Escolha [1-5]: " FLOW_CHOICE
 
 case "$FLOW_CHOICE" in
   1)
@@ -519,6 +624,10 @@ case "$FLOW_CHOICE" in
       git commit -m "."
       git push
     fi
+    ;;
+
+  5)
+    run_versioned_commit
     ;;
 
   *)
