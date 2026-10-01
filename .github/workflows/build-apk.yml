@@ -553,6 +553,15 @@ jobs:
           cat "$FILE_PATHS" || true
 
 
+      - name: Configure Google OAuth App Link
+        working-directory: ${{ env.ANDROID_DIR }}
+        run: |
+          set -e
+          MANIFEST="app/src/main/AndroidManifest.xml"
+          if ! grep -q 'android:autoVerify="true"' "$MANIFEST"; then
+            sed -i '/MainActivity/,/<\/activity>/s#</activity>#        <intent-filter android:autoVerify="true">\n            <action android:name="android.intent.action.VIEW" />\n            <category android:name="android.intent.category.DEFAULT" />\n            <category android:name="android.intent.category.BROWSABLE" />\n            <data\n                android:scheme="https"\n                android:host="continuum.onl"\n                android:pathPrefix="/google-callback" />\n        </intent-filter>\n    </activity>#' "$MANIFEST"
+          fi
+          grep -n -A 8 'android:autoVerify="true"' "$MANIFEST"
 
       - name: Fix Kotlin stdlib duplicate classes
         working-directory: ${{ env.ANDROID_DIR }}
@@ -613,6 +622,8 @@ jobs:
             --key-pass pass:"$ALIAS_PASSWORD" \
             --out ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-release.apk \
             ${{ env.ANDROID_DIR }}/app/build/outputs/apk/release/continuum-aligned.apk
+
+          keytool -list -v -keystore keystore.jks -alias "$KEY_ALIAS" -storepass "$KEY_STORE_PASSWORD" | grep 'SHA256:'
 
           rm keystore.jks
 

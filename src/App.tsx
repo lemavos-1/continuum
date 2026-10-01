@@ -23,6 +23,9 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 // Capacitor 8: configura as barras do sistema somente no APK nativo.
 import { Capacitor } from "@capacitor/core";
 import { SystemBars, SystemBarsStyle } from "@capacitor/core";
+import { App as CapacitorApp } from "@capacitor/app";
+import { Browser } from "@capacitor/browser";
+import { useNavigate } from "react-router-dom";
 
 // Auth-critical screens stay eager (they gate the first paint); everything else
 // is code-split and streamed in behind a skeleton.
@@ -77,6 +80,48 @@ function PrefetchPrimaryData() {
   React.useEffect(() => {
     if (user) prefetchPrimaryLists();
   }, [user]);
+  return null;
+}
+
+function NativeGoogleAuthRedirect() {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    let disposed = false;
+    let removeListener: (() => void) | undefined;
+    void CapacitorApp.addListener("appUrlOpen", async ({ url }) => {
+      let callbackUrl: URL;
+      try {
+        callbackUrl = new URL(url);
+      } catch {
+        return;
+      }
+
+      if (
+        callbackUrl.origin !== "https://continuum.onl" ||
+        callbackUrl.pathname !== "/google-callback"
+      ) {
+        return;
+      }
+
+      navigate(`/google-callback${callbackUrl.search}`);
+      await Browser.close();
+    }).then((listener) => {
+      if (disposed) {
+        void listener.remove();
+      } else {
+        removeListener = () => { void listener.remove(); };
+      }
+    });
+
+    return () => {
+      disposed = true;
+      removeListener?.();
+    };
+  }, [navigate]);
+
   return null;
 }
 
@@ -195,6 +240,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <NativeGoogleAuthRedirect />
             <LanguageProvider>
               <AuthProvider>
                 <UsageProvider>
