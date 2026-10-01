@@ -621,7 +621,7 @@ case "$FLOW_CHOICE" in
       echo ""
       echo "Nada para commitar."
     else
-      git commit -m "."
+      git commit -m "Fast commit"
       git push
     fi
     ;;
