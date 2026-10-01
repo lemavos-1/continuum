@@ -490,8 +490,11 @@ echo ""
 echo "  3) Dev -> Dev"
 echo "     lemavos-X/continuum -> lemavos-Y/continuum"
 echo ""
+echo "  4) Auto commit"
+echo "     git add -A && git commit -m \".\" && git push"
+echo ""
 
-read -rp "Escolha [1-3]: " FLOW_CHOICE
+read -rp "Escolha [1-4]: " FLOW_CHOICE
 
 case "$FLOW_CHOICE" in
   1)
@@ -504,6 +507,18 @@ case "$FLOW_CHOICE" in
 
   3)
     run_dev_to_dev
+    ;;
+
+  4)
+    git add -A
+
+    if git diff --cached --quiet; then
+      echo ""
+      echo "Nada para commitar."
+    else
+      git commit -m "."
+      git push
+    fi
     ;;
 
   *)
