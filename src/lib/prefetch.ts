@@ -42,32 +42,20 @@ export async function prefetchPrimaryLists() {
     }),
   ]);
 
+  void notes; void entities;
+  // Only light list queries — per-item detail/blob prefetching flooded the
+  // network and main thread for seconds after boot.
   await Promise.allSettled([
-    prefetchNotesAndContent(notes),
     prefetchQuery(qk.noteTypes(), () => notesApi.getTypes().then((res) => res.data), STALE.list),
     prefetchQuery(qk.folders(), () => foldersApi.list().then((res) => res.data), STALE.list),
-    prefetchVaultFiles(),
-    prefetchQuery(["vault", "entity-index"], () => vaultApi.entityIndex().then((res) => res.data), STALE.list),
     prefetchQuery(["account", "preferences"], () => preferencesApi.get().then((res) => res.data), STALE.preferences),
-    prefetchQuery(qk.graph(), async () => {
-      const [graphRes, entitiesRes] = await Promise.all([graphApi.data(), entitiesApi.list()]);
-      return { graph: graphRes.data, entities: entitiesRes.data };
-    }, STALE.list),
-    prefetchQuery(qk.insights("all", 12), async () => {
-      const [hn, fn, he, fe] = await Promise.all([
-        insightsApi.hotNotes(12), insightsApi.forgottenNotes(12),
-        insightsApi.hotEntities(12), insightsApi.forgottenEntities(12),
-      ]);
-      return { hotNotes: hn.data || [], forgottenNotes: fn.data || [], hotEntities: he.data || [], forgottenEntities: fe.data || [] };
-    }, STALE.insights),
-    prefetchQuery(["timeTracking", "summaries"], () => timeTrackingApi.getAllSummaries().then((res) => res.data), 5_000),
-    prefetchQuery(["tracking", "today"], () => trackingApi.today().then((res) => res.data), STALE.list),
-    prefetchQuery(qk.dashboard(), () => dashboardApi.summary().then((res) => res.data), STALE.insights),
-    prefetchQuery(["metrics", "dashboard"], () => metricsApi.dashboard().then((res) => res.data), STALE.insights),
     prefetchQuery(["subscription", "me"], () => subscriptionApi.me().then((res) => res.data), STALE.preferences),
-    ...prefetchEntityDetails(entities),
+    prefetchQuery(qk.dashboard(), () => dashboardApi.summary().then((res) => res.data), STALE.insights),
   ]);
 }
+
+// Kept for potential on-demand use.
+export const _unusedPrefetchers = { prefetchNotesAndContent, prefetchVaultFiles, prefetchEntityDetails, graphApi, insightsApi, timeTrackingApi, trackingApi, metricsApi };
 
 function prefetchQuery<T>(queryKey: readonly unknown[], queryFn: () => Promise<T>, staleTime: number) {
   return queryClient.prefetchQuery({ queryKey, queryFn, staleTime });
