@@ -78,7 +78,10 @@ if (typeof window !== "undefined") {
 function PrefetchPrimaryData() {
   const { user } = useAuth();
   React.useEffect(() => {
-    if (user) prefetchPrimaryLists();
+    if (!user) return;
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    const run = () => { void prefetchPrimaryLists(); };
+    if (idle) idle(run); else setTimeout(run, 1500);
   }, [user]);
   return null;
 }
