@@ -211,7 +211,27 @@ public class NoteService {
             .filter(n -> n.getUserId().equals(userId))
             .orElseThrow(() -> new NotFoundException("Note not found: " + noteId));
 
-        String newContent = note.getContent();
+        String storedContent = storageService.loadNoteContent(vaultId, noteId).orElse("");
+        boolean contentChanged = false;
+        if (req.content() != null && !req.content().isNull()) {
+            try {
+                JsonNode storedJson = storedContent.isBlank() ? null
+                        : new com.fasterxml.jackson.databind.ObjectMapper().readTree(storedContent);
+                contentChanged = storedJson == null || !storedJson.equals(req.content());
+            } catch (Exception e) {
+                contentChanged = true;
+            }
+        }
+        boolean titleChanged = req.title() != null && !req.title().isBlank()
+                && !req.title().equals(note.getTitle());
+        String reqType = req.type() == null ? null : (req.type().isBlank() ? null : req.type());
+        boolean typeChanged = req.type() != null && !java.util.Objects.equals(reqType, note.getType());
+        if (!contentChanged && !titleChanged && !typeChanged) {
+            // Nothing changed (e.g. note only opened/read): keep updatedAt intact.
+            return NoteResponse.from(note, storedContent);
+        }
+
+        String newContent = storedContent;
         List<String> newEntityIds = note.getEntityIds();
         
         // Se novo conteúdo foi fornecido (JsonNode), processar

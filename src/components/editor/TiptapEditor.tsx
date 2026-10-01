@@ -606,25 +606,37 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       const dom = editor.view.dom;
 
       const toggleReadOnlyTask = (event: Event) => {
-        const checkbox = event.target instanceof HTMLInputElement ? event.target : null;
-        if (!checkbox || checkbox.type !== "checkbox") return;
-        const taskItem = checkbox.closest<HTMLElement>('li[data-type="taskItem"]');
+        const target = event.target instanceof Element ? event.target : null;
+        if (!target) return;
+        const taskItem = target.closest<HTMLElement>('li[data-type="taskItem"]');
         if (!taskItem || !dom.contains(taskItem)) return;
+        // Only react to the checkbox/label, not the text of the item.
+        const label = target.closest("label");
+        if (!label || !taskItem.contains(label) || label.parentElement !== taskItem) return;
 
-        const position = editor.view.posAtDOM(taskItem, 0);
-        const node = editor.state.doc.nodeAt(position);
+        event.preventDefault();
+        event.stopPropagation();
+
+        let position: number;
+        try { position = editor.view.posAtDOM(taskItem, 0) - 1; } catch { return; }
+        let node = editor.state.doc.nodeAt(position);
+        if (!node || node.type.name !== "taskItem") {
+          position += 1;
+          node = editor.state.doc.nodeAt(position);
+        }
         if (!node || node.type.name !== "taskItem") return;
 
+        const checked = !node.attrs.checked;
         editor.view.dispatch(
-          editor.state.tr.setNodeMarkup(position, undefined, {
-            ...node.attrs,
-            checked: checkbox.checked,
-          })
+          editor.state.tr.setNodeMarkup(position, undefined, { ...node.attrs, checked })
         );
+        const checkbox = label.querySelector<HTMLInputElement>('input[type="checkbox"]');
+        if (checkbox) checkbox.checked = checked;
+        taskItem.setAttribute("data-checked", String(checked));
       };
 
-      dom.addEventListener("change", toggleReadOnlyTask);
-      return () => dom.removeEventListener("change", toggleReadOnlyTask);
+      dom.addEventListener("click", toggleReadOnlyTask, true);
+      return () => dom.removeEventListener("click", toggleReadOnlyTask, true);
     }, [editor, editable]);
 
     // "/" command + toolbar upload entry point
