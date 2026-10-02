@@ -1,3 +1,4 @@
+import { useVisionPrice } from "@/hooks/useVisionPrice";
 import { useEffect, useState } from "react";
 import api, { subscriptionApi } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,6 +19,7 @@ export default function SubscriptionContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const visionPrice = useVisionPrice();
   const [sub, setSub] = useState<SubInfo | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -112,7 +114,7 @@ export default function SubscriptionContent() {
         appName="Continuum"
         planType="VISION"
         features={visionBenefits.map((text) => ({ text }))}
-        pricingOptions={[{ id: "monthly", price: "$7.90", period: t("bill_per_month") }]}
+        pricingOptions={[{ id: "monthly", price: visionPrice, period: t("bill_per_month") }]}
         defaultPlanId="monthly"
         subscribeButtonText={isPro ? (portalLoading ? t("bill_opening") : t("bill_manage_billing")) : checkoutLoading ? t("bill_opening") : t("bill_upgrade_to_vision")}
         footerText={syncing ? "Confirming your payment with Stripe…" : t("bill_cancel_secure")}
