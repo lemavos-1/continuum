@@ -41,6 +41,7 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const visionPrice = useVisionPrice();
   const [sub, setSub] = useState<SubInfo | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
