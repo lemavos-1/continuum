@@ -1,3 +1,4 @@
+import { useVisionPrice } from "@/hooks/useVisionPrice";
 import { useEffect, useMemo, useState } from "react";
 import api, { plansApi, subscriptionApi } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +41,7 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const visionPrice = useVisionPrice();
   const [sub, setSub] = useState<SubInfo | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -117,7 +119,7 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
                 VISION
               </DialogTitle>
               <div className="text-right">
-                <p className="font-serif text-3xl text-foreground">$7.90</p>
+                <p className="font-serif text-3xl text-foreground">{visionPrice}</p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
                   {t("bill_per_month")}
                 </p>
