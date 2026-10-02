@@ -6,7 +6,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import LinkExtension from "@tiptap/extension-link";
 import Mention from "@tiptap/extension-mention";
 import TaskList from "@tiptap/extension-task-list";
-import TaskItem from "@tiptap/extension-task-item";
+import { ClickableTaskItem } from "./extensions/ClickableTaskItem";
 import { Table } from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
@@ -356,13 +356,9 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
         VaultPdf,
         VaultAudio,
         TaskList,
-        TaskItem.configure({
-          nested: true,
-          // The current document position is resolved by the change listener
-          // below. Returning true prevents Tiptap from reverting the native
-          // checkbox while the editor is read-only.
-          onReadOnlyChecked: () => true,
-        }),
+        // Custom node view: toggles via a real ProseMirror transaction, so it
+        // works in read-only mode too and triggers onUpdate/auto-save.
+        ClickableTaskItem.configure({ nested: true }),
         HeadingFold.configure({
           onFoldChange: (indices) => onFoldChangeRef.current?.(indices),
         }),
@@ -597,47 +593,8 @@ export const TiptapEditor = forwardRef<TiptapEditorHandle, Props>(
       dom?.classList.toggle("is-readonly", !editable);
     }, [editor, editable]);
 
-    // Tiptap's read-only callback receives the node captured when its node view
-    // was created. After the first toggle that object is stale, so subsequent
-    // clicks can fail. Resolve the live task node from the clicked DOM element
-    // on every change instead.
-    useEffect(() => {
-      if (!editor || editable) return;
-      const dom = editor.view.dom;
-
-      const toggleReadOnlyTask = (event: Event) => {
-        const target = event.target instanceof Element ? event.target : null;
-        if (!target) return;
-        const taskItem = target.closest<HTMLElement>('li[data-type="taskItem"]');
-        if (!taskItem || !dom.contains(taskItem)) return;
-        // Only react to the checkbox/label, not the text of the item.
-        const label = target.closest("label");
-        if (!label || !taskItem.contains(label) || label.parentElement !== taskItem) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        let position: number;
-        try { position = editor.view.posAtDOM(taskItem, 0) - 1; } catch { return; }
-        let node = editor.state.doc.nodeAt(position);
-        if (!node || node.type.name !== "taskItem") {
-          position += 1;
-          node = editor.state.doc.nodeAt(position);
-        }
-        if (!node || node.type.name !== "taskItem") return;
-
-        const checked = !node.attrs.checked;
-        editor.view.dispatch(
-          editor.state.tr.setNodeMarkup(position, undefined, { ...node.attrs, checked })
-        );
-        const checkbox = label.querySelector<HTMLInputElement>('input[type="checkbox"]');
-        if (checkbox) checkbox.checked = checked;
-        taskItem.setAttribute("data-checked", String(checked));
-      };
-
-      dom.addEventListener("click", toggleReadOnlyTask, true);
-      return () => dom.removeEventListener("click", toggleReadOnlyTask, true);
-    }, [editor, editable]);
+    // Checklist toggling (including read-only mode) is handled by the
+    // ClickableTaskItem node view, which dispatches a real transaction.
 
     // "/" command + toolbar upload entry point
     useEffect(() => {
