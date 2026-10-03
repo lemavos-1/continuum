@@ -1,8 +1,58 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer, NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { resolveVaultBlob } from "@/lib/vault-blob";
 import { FileText, Loader2, ExternalLink } from "@/lib/heroicons";
+
+/** Renders every PDF page to a canvas (mobile browsers can't show PDFs in iframes). */
+function PdfPages({ src, onError }: { src: string; onError: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    let doc: any;
+    (async () => {
+      try {
+        const pdfjs = await import("pdfjs-dist");
+        const worker = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
+        pdfjs.GlobalWorkerOptions.workerSrc = worker;
+        doc = await pdfjs.getDocument(src).promise;
+        const box = ref.current;
+        if (!box || cancelled) return;
+        box.innerHTML = "";
+        const width = box.clientWidth || 600;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        for (let i = 1; i <= doc.numPages && !cancelled; i++) {
+          const page = await doc.getPage(i);
+          const base = page.getViewport({ scale: 1 });
+          const vp = page.getViewport({ scale: (width / base.width) * dpr });
+          const canvas = document.createElement("canvas");
+          canvas.width = vp.width;
+          canvas.height = vp.height;
+          canvas.style.width = "100%";
+          canvas.style.display = "block";
+          box.appendChild(canvas);
+          await page.render({ canvasContext: canvas.getContext("2d")!, viewport: vp }).promise;
+          if (i === 1) setLoading(false);
+        }
+        setLoading(false);
+      } catch {
+        if (!cancelled) onError();
+      }
+    })();
+    return () => { cancelled = true; doc?.destroy?.(); };
+  }, [src]);
+  return (
+    <div className="max-h-[600px] overflow-y-auto bg-muted/20">
+      {loading && (
+        <div className="flex items-center justify-center gap-2 p-12 text-muted-foreground text-sm">
+          <Loader2 className="h-4 w-4 animate-spin" />
+        </div>
+      )}
+      <div ref={ref} className="flex flex-col gap-2" />
+    </div>
+  );
+}
 
 function VaultPdfView({ node }: NodeViewProps) {
   const vaultId: string | null = node.attrs.vaultId ?? null;
@@ -36,14 +86,7 @@ function VaultPdfView({ node }: NodeViewProps) {
         {error ? (
           <div className="p-6 text-sm text-destructive text-center">Failed to load PDF</div>
         ) : src ? (
-          <iframe
-            src={src}
-            title={fileName}
-            className="w-full h-[600px] bg-foreground"
-            sandbox="allow-same-origin allow-scripts"
-            referrerPolicy="no-referrer"
-            loading="lazy"
-          />
+          <PdfPages src={src} onError={() => setError(true)} />
         ) : (
           <div className="flex items-center justify-center gap-2 p-12 text-muted-foreground text-sm">
             <Loader2 className="h-4 w-4 animate-spin" /> Loading PDF…
