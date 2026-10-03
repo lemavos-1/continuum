@@ -59,7 +59,6 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   useEffect(() => {
     if (!open) return;
     subscriptionApi.me().then(({ data }) => setSub(data)).catch(() => {});
-    plansApi.list().then(({ data }) => setPlans(data || [])).catch(() => {});
     api
       .get("/api/plans/prices")
       .then(({ data }) => setPrices({ monthly: data?.vision?.monthly }))
@@ -70,7 +69,6 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   const normalizedPlan = currentPlan === "PRO" ? ("VISION" as Plan) : (currentPlan as Plan);
   const isPro = normalizedPlan === "VISION";
 
-  const visionLimits = useMemo(() => plans.find((p) => p.plan === "VISION")?.limits, [plans]);
 
   const handleCheckout = async () => {
     setCheckoutLoading(true);
@@ -163,19 +161,14 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
             ))}
           </ul>
 
-          {visionLimits && (
-            <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-border/10 pt-5 text-xs sm:grid-cols-4">
+          <div className="mt-5 border-t border-border/10 pt-5">
+            <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("bill_your_limits")}</p>
+            <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 text-xs sm:grid-cols-4">
               {[
-                { k: t("bill_notes"), v: formatLimit(visionLimits.maxNotes ?? -1) },
-                { k: t("bill_entities"), v: formatLimit(visionLimits.maxEntities ?? -1) },
-                { k: t("bill_vault"), v: formatLimit(visionLimits.maxVaultSizeMB ?? -1, " MB") },
-                {
-                  k: t("bill_history"),
-                  v: formatLimit(
-                    ((visionLimits as any)?.maxHistoryDays ?? (visionLimits as any)?.historyDays) ?? -1,
-                    "d",
-                  ),
-                },
+                { k: t("bill_notes"), v: formatLimit(user?.maxNotes) },
+                { k: t("bill_entities"), v: formatLimit(user?.maxEntities) },
+                { k: t("bill_vault"), v: formatLimit(user?.maxVaultSizeMB, " MB") },
+                { k: t("bill_history"), v: formatLimit(user?.historyDays, "d") },
               ].map((row) => (
                 <div key={row.k}>
                   <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{row.k}</dt>
@@ -183,7 +176,7 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
                 </div>
               ))}
             </dl>
-          )}
+          </div>
 
           <div className="mt-6 space-y-3">
             {isPro ? (
