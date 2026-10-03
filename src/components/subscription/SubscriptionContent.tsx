@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SubscriptionScreen } from "@/components/ui/subscription-screen";
 import type { Plan } from "@/types";
+import { isUnlimited } from "@/lib/plan";
 
 interface SubInfo {
   plan?: string;
@@ -79,6 +80,16 @@ export default function SubscriptionContent() {
 
   const currentPlan = ((sub?.effectivePlan || user?.plan) as Plan | string) || "FREE";
   const isPro = (currentPlan === "PRO" ? "VISION" : currentPlan) === "VISION";
+  const formatLimit = (value?: number, suffix = "") => {
+    if (value === undefined) return "—";
+    return isUnlimited(value) ? "∞" : `${value}${suffix}`;
+  };
+  const visionDetails = isPro ? [
+    { label: t("bill_notes"), value: formatLimit(user?.maxNotes) },
+    { label: t("bill_entities"), value: formatLimit(user?.maxEntities) },
+    { label: t("bill_history"), value: formatLimit(user?.historyDays, "d") },
+    { label: t("bill_vault"), value: formatLimit(user?.maxVaultSizeMB, " MB") },
+  ] : undefined;
 
   const handleCheckout = async () => {
     if (!prices.monthly || !prices.monthly.startsWith("price_")) {
@@ -119,6 +130,7 @@ export default function SubscriptionContent() {
         subscribeButtonText={isPro ? (portalLoading ? t("bill_opening") : t("bill_manage_billing")) : checkoutLoading ? t("bill_opening") : t("bill_upgrade_to_vision")}
         footerText={syncing ? "Confirming your payment with Stripe…" : t("bill_cancel_secure")}
         currentPlanText={`${t("bill_current")}: ${isPro ? "VISION" : "FREE"}${sub?.status ? ` · ${sub.status.toLowerCase()}` : ""}`}
+        planDetails={visionDetails}
         onSubscribe={isPro ? handlePortal : handleCheckout}
       />
     </div>
