@@ -130,7 +130,7 @@ export default function SubscriptionContent() {
         subscribeButtonText={isPro ? (portalLoading ? t("bill_opening") : t("bill_manage_billing")) : checkoutLoading ? t("bill_opening") : t("bill_upgrade_to_vision")}
         footerText={syncing ? "Confirming your payment with Stripe…" : t("bill_cancel_secure")}
         currentPlanText={`${t("bill_current")}: ${isPro ? "VISION" : "FREE"}${sub?.status ? ` · ${sub.status.toLowerCase()}` : ""}`}
-        planDetails={visionDetails}
+        planDetails={planDetails}
         onSubscribe={isPro ? handlePortal : handleCheckout}
       />
     </div>
