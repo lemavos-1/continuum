@@ -11,8 +11,10 @@ export function useVisionPrice() {
       const fmt = (cur: string, amt: number) =>
         new Intl.NumberFormat(undefined, { style: "currency", currency: cur.toUpperCase() }).format(amt / 100);
       const parts = [fmt(d.currency, d.unitAmount)];
-      const brl = d.currencyOptions?.brl;
-      if (brl != null && d.currency !== "brl") parts.push(fmt("brl", brl));
+      for (const cur of ["brl", "eur"]) {
+        const amt = d.currencyOptions?.[cur];
+        if (amt != null && d.currency !== cur) parts.push(fmt(cur, amt));
+      }
       setLabel(parts.join(" · "));
     }).catch(() => {});
   }, []);
