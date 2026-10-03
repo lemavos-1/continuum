@@ -94,8 +94,16 @@ export function SubscriptionScreen({
           ))}
         </ul>
 
-        {planDetails && planDetails.length > 0 ? (
-          <dl className="mt-6 grid w-full grid-cols-2 gap-x-5 gap-y-4 border-y border-border/20 py-5">
+        {pricing && (
+          <div className="mt-6 flex w-full items-baseline justify-center gap-2 border-y border-border/20 py-5 text-center">
+            <span className="font-serif text-2xl text-foreground">{pricing.price}</span>
+            <span className="text-sm text-muted-foreground">{pricing.period}</span>
+            {pricing.badge && <span className="text-xs font-semibold text-primary">{pricing.badge}</span>}
+          </div>
+        )}
+
+        {planDetails && planDetails.length > 0 && (
+          <dl className="mt-5 grid w-full grid-cols-2 gap-x-5 gap-y-4">
             {planDetails.map((detail) => (
               <div key={detail.label} className="min-w-0">
                 <dt className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{detail.label}</dt>
@@ -103,13 +111,7 @@ export function SubscriptionScreen({
               </div>
             ))}
           </dl>
-        ) : pricing ? (
-          <div className="mt-6 flex w-full items-baseline justify-center gap-2 border-y border-border/20 py-5 text-center">
-            <span className="font-serif text-2xl text-foreground">{pricing.price}</span>
-            <span className="text-sm text-muted-foreground">{pricing.period}</span>
-            {pricing.badge && <span className="text-xs font-semibold text-primary">{pricing.badge}</span>}
-          </div>
-        ) : null}
+        )}
 
         <Button size="lg" className="mt-6 w-full text-base" onClick={() => onSubscribe(defaultPlanId)}>
           {subscribeButtonText}

@@ -84,12 +84,12 @@ export default function SubscriptionContent() {
     if (value === undefined) return "—";
     return isUnlimited(value) ? "∞" : `${value}${suffix}`;
   };
-  const visionDetails = isPro ? [
+  const planDetails = [
     { label: t("bill_notes"), value: formatLimit(user?.maxNotes) },
     { label: t("bill_entities"), value: formatLimit(user?.maxEntities) },
     { label: t("bill_history"), value: formatLimit(user?.historyDays, "d") },
     { label: t("bill_vault"), value: formatLimit(user?.maxVaultSizeMB, " MB") },
-  ] : undefined;
+  ];
 
   const handleCheckout = async () => {
     if (!prices.monthly || !prices.monthly.startsWith("price_")) {
