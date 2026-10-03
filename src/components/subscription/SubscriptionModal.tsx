@@ -59,7 +59,6 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   useEffect(() => {
     if (!open) return;
     subscriptionApi.me().then(({ data }) => setSub(data)).catch(() => {});
-    plansApi.list().then(({ data }) => setPlans(data || [])).catch(() => {});
     api
       .get("/api/plans/prices")
       .then(({ data }) => setPrices({ monthly: data?.vision?.monthly }))
@@ -70,7 +69,6 @@ export default function SubscriptionModal({ open, onOpenChange }: Props) {
   const normalizedPlan = currentPlan === "PRO" ? ("VISION" as Plan) : (currentPlan as Plan);
   const isPro = normalizedPlan === "VISION";
 
-  const visionLimits = useMemo(() => plans.find((p) => p.plan === "VISION")?.limits, [plans]);
 
   const handleCheckout = async () => {
     setCheckoutLoading(true);
