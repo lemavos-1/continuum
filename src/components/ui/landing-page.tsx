@@ -10,7 +10,7 @@ interface ScrollGlobeProps {
     subtitle?: string;
     description: string;
     align?: "left" | "center" | "right";
-    features?: { title: string; description: string }[];
+    features?: { title: string; description: string; image?: string }[];
     actions?: { label: string; variant: "primary" | "secondary"; onClick?: () => void }[];
     screenshots?: { src?: string; alt: string; caption?: string }[];
   }[];
@@ -168,9 +168,7 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
           )}
         >
           <div className="w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
-            {section.badge && (
-              <p className="label-caps mb-4">{section.badge}</p>
-            )}
+            {section.badge && <p className="label-caps mb-4">{section.badge}</p>}
             {(() => {
               const Heading = (index === 0 ? "h1" : "h2") as "h1" | "h2";
               return (
@@ -196,7 +194,6 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
               );
             })()}
 
-
             <p
               className={cn(
                 "text-white/70 leading-relaxed mb-8 text-base sm:text-lg lg:text-xl font-light",
@@ -213,6 +210,16 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                     key={feature.title}
                     className="p-5 rounded-lg border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:bg-white/[0.05] transition-colors"
                   >
+                    {feature.image && (
+                      <div className="mb-4 overflow-hidden rounded-md border border-white/10 bg-white/[0.02]">
+                        <img
+                          src={feature.image}
+                          alt={feature.title}
+                          loading="lazy"
+                          className="block h-auto w-full object-cover"
+                        />
+                      </div>
+                    )}
                     <h3 className="font-serif text-lg mb-1.5">{feature.title}</h3>
                     <p className="text-white/60 text-sm leading-relaxed">{feature.description}</p>
                   </div>
