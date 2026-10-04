@@ -208,20 +208,20 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                 {section.features.map((feature) => (
                   <div
                     key={feature.title}
-                    className="p-5 rounded-lg border border-white/10 bg-white/[0.02] backdrop-blur-sm hover:bg-white/[0.05] transition-colors"
+                    className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-3 sm:p-4"
                   >
                     {feature.image && (
-                      <div className="mb-4 overflow-hidden rounded-md border border-white/10 bg-white/[0.02]">
+                      <div className="mb-4 overflow-hidden rounded-lg border border-white/10 bg-black/20">
                         <img
                           src={feature.image}
                           alt={feature.title}
                           loading="lazy"
-                          className="block h-auto w-full object-cover"
+                          className="block h-36 w-full object-cover sm:h-44 md:h-48"
                         />
                       </div>
                     )}
-                    <h3 className="font-serif text-lg mb-1.5">{feature.title}</h3>
-                    <p className="text-white/60 text-sm leading-relaxed">{feature.description}</p>
+                    <h3 className="font-serif text-lg sm:text-xl mb-2">{feature.title}</h3>
+                    <p className="text-white/60 text-sm sm:text-base leading-relaxed">{feature.description}</p>
                   </div>
                 ))}
               </div>
