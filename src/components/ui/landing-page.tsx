@@ -213,7 +213,7 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                     <h3 className="font-serif text-lg sm:text-xl mb-2">{feature.title}</h3>
                     <p className="text-white/60 text-sm sm:text-base leading-relaxed">{feature.description}</p>
                     {feature.image && (
-                      <div className="mt-4 overflow-hidden rounded-lg border border-white/10 bg-black/20 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+                      <div className="mt-4 overflow-hidden rounded-lg border border-white/10 bg-black/20">
                         <img
                           src={feature.image}
                           alt={feature.title}
