@@ -219,6 +219,7 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                           alt={feature.title}
                           loading="lazy"
                           className="block h-36 w-full object-cover sm:h-44 md:h-48"
+                          style={{ objectPosition: "center top" }}
                         />
                       </div>
                     )}
