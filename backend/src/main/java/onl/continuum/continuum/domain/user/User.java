@@ -76,6 +76,9 @@ public class User {
 
     private Instant lastLogoutAt;
 
+    /** When set, the account is scheduled for permanent deletion 7 days later. */
+    private Instant deletionRequestedAt;
+
     // Getters
     public String getId() {
         return id;
