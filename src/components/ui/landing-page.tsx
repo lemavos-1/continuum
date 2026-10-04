@@ -210,8 +210,10 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                     key={feature.title}
                     className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-3 sm:p-4"
                   >
+                    <h3 className="font-serif text-lg sm:text-xl mb-2">{feature.title}</h3>
+                    <p className="text-white/60 text-sm sm:text-base leading-relaxed">{feature.description}</p>
                     {feature.image && (
-                      <div className="mb-4 overflow-hidden rounded-lg border border-white/10 bg-black/20">
+                      <div className="mt-4 overflow-hidden rounded-lg border border-white/10 bg-black/20">
                         <img
                           src={feature.image}
                           alt={feature.title}
@@ -220,8 +222,6 @@ export function ScrollGlobe({ sections, globeConfig = defaultGlobeConfig, classN
                         />
                       </div>
                     )}
-                    <h3 className="font-serif text-lg sm:text-xl mb-2">{feature.title}</h3>
-                    <p className="text-white/60 text-sm sm:text-base leading-relaxed">{feature.description}</p>
                   </div>
                 ))}
               </div>
