@@ -97,6 +97,75 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public static final int DELETION_GRACE_DAYS = 7;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private onl.continuum.continuum.infra.vault.VaultStorageService vaultStorage;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    @org.springframework.context.annotation.Lazy
+    private SubscriptionService subscriptionService;
+
+    /** Marks the account for deletion; it can be restored within the grace period. */
+    public java.time.Instant scheduleDeletion(String userId) {
+        java.time.Instant now = java.time.Instant.now();
+        mongoTemplate.updateFirst(Query.query(Criteria.where("_id").is(userId)),
+            new Update().set("deletionRequestedAt", now), User.class);
+        return now.plus(java.time.Duration.ofDays(DELETION_GRACE_DAYS));
+    }
+
+    public void cancelDeletion(String userId) {
+        mongoTemplate.updateFirst(Query.query(Criteria.where("_id").is(userId)),
+            new Update().unset("deletionRequestedAt"), User.class);
+    }
+
+    /** Hourly: permanently erase accounts whose grace period has ended. */
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 0 * * * *")
+    public void purgeScheduledDeletions() {
+        java.time.Instant cutoff = java.time.Instant.now().minus(java.time.Duration.ofDays(DELETION_GRACE_DAYS));
+        java.util.List<User> due = mongoTemplate.find(
+            Query.query(Criteria.where("deletionRequestedAt").lt(cutoff)), User.class);
+        for (User u : due) {
+            try { purgeEverything(u); } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(UserService.class).error("Account purge failed for {}", u.getId(), e);
+            }
+        }
+    }
+
+    /** Removes every record and file belonging to the user, then the user itself. */
+    public void purgeEverything(User user) {
+        String userId = user.getId();
+        if (subscriptionService != null) {
+            try { subscriptionService.cancel(userId, true); } catch (Exception ignored) { }
+        }
+        if (vaultStorage != null && user.getVaultId() != null) {
+            String vaultId = user.getVaultId();
+            try {
+                for (var f : vaultStorage.listFiles(vaultId)) {
+                    try { vaultStorage.deleteFile(vaultId, f.fileId()); } catch (Exception ignored) { }
+                }
+            } catch (Exception ignored) { }
+            for (var n : noteRepository.findByUserId(userId)) {
+                try { vaultStorage.deleteNote(vaultId, n.getId()); } catch (Exception ignored) { }
+            }
+            try {
+                vaultStorage.saveEntities(vaultId, "[]");
+                vaultStorage.saveNoteIndex(vaultId, "[]");
+                vaultStorage.saveFolders(vaultId, "[]");
+                vaultStorage.saveTrackingEvents(vaultId, "[]");
+                vaultStorage.saveRefs(vaultId, "[]");
+                vaultStorage.savePreferences(vaultId, "{}");
+            } catch (Exception ignored) { }
+        }
+        Query byUser = Query.query(Criteria.where("userId").is(userId));
+        for (String c : java.util.List.of("notes", "entities", "entity_links", "note_links", "refresh_tokens",
+                "subscriptions", "time_entries", "timer_sessions", "token_blacklist", "tracking_events",
+                "user_score_snapshots", "trash_items", "folders")) {
+            try { mongoTemplate.remove(byUser, c); } catch (Exception ignored) { }
+        }
+        userRepository.deleteById(userId);
+    }
+
     public User getById(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found: " + userId));
