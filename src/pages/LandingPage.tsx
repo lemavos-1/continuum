@@ -10,7 +10,6 @@ import AuthDialog from "@/components/auth/AuthDialog";
 import PwaInstallListener from "@/components/pwa/PwaInstallListener";
 import { ScrollGlobe } from "@/components/ui/landing-page";
 import { useLanguage } from "@/contexts/LanguageContext";
-import landingNotes from "@/assets/landing-notes.jpg";
 import landingEditor from "@/assets/landing-editor.jpg";
 import landingGraph from "@/assets/landing-graph.jpg";
 import landingInsights from "@/assets/landing-insights.jpg";
@@ -97,7 +96,6 @@ export default function LandingPage() {
       description: t("lp_connect_description"),
       align: "center" as const,
       screenshots: [
-        { src: landingNotes, alt: t("lp_connect_shot1_alt"), caption: t("lp_connect_shot1_caption") },
         { src: landingEditor, alt: t("lp_connect_shot2_alt"), caption: t("lp_connect_shot2_caption") },
       ],
     },
