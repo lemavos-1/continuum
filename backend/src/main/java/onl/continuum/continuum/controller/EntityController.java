@@ -139,8 +139,9 @@ public class EntityController {
     @Operation(summary = "Track activity occurrence", description = "Records a tracking event for an activity entity on the current date")
     public ResponseEntity<EntityResponse> trackActivity(
             @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable String id) {
-        Entity entity = entityService.trackActivity(user.getUserId(), id);
+            @PathVariable String id,
+            @RequestParam(required = false) java.time.LocalDate date) {
+        Entity entity = entityService.trackActivity(user.getUserId(), id, date);
         return ResponseEntity.ok(EntityResponse.from(entity, historyDaysFor(user)));
     }
 }

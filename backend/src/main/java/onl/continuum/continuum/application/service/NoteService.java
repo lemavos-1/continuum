@@ -47,6 +47,8 @@ public class NoteService {
     private final PlanConfiguration planConfig;
     private final UserRepository userRepo;
     private final ObjectMapper objectMapper;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private onl.continuum.continuum.infra.persistence.TrashItemRepository trashRepo;
 
     public NoteService(
             NoteRepository noteRepo, 
@@ -398,6 +400,17 @@ public class NoteService {
         // OWNERSHIP: Validar que a nota pertence ao usuário autenticado
         if (!note.getUserId().equals(userId)) {
             throw new AccessDeniedException("You do not have permission to delete this note");
+        }
+
+        // Snapshot into the trash so the note can be restored for 30 days.
+        if (trashRepo != null) {
+            try {
+                String snapshot = storageService.loadNoteContent(vaultId, noteId).orElse("");
+                trashRepo.save(onl.continuum.continuum.domain.trash.TrashItem.builder()
+                    .userId(userId).vaultId(vaultId).kind("NOTE").originalId(noteId)
+                    .title(note.getTitle()).subtype(note.getType()).note(note).noteContent(snapshot)
+                    .deletedAt(Instant.now()).build());
+            } catch (Exception ignored) { }
         }
 
         // Delete file from B2 if fileKey exists
