@@ -107,13 +107,12 @@ export default function LandingPage() {
       description: t("lp_discover_description"),
       align: "left" as const,
       features: [
-        { title: t("lp_discover_f1_title"), description: t("lp_discover_f1_desc") },
+        { title: t("lp_discover_f1_title"), description: t("lp_discover_f1_desc"), image: landingInsights },
         { title: t("lp_discover_f2_title"), description: t("lp_discover_f2_desc") },
         { title: t("lp_discover_f3_title"), description: t("lp_discover_f3_desc") },
       ],
       screenshots: [
         { src: landingGraph, alt: t("lp_discover_shot1_alt"), caption: t("lp_discover_shot1_caption") },
-        { src: landingInsights, alt: t("lp_discover_shot2_alt"), caption: t("lp_discover_shot2_caption") },
       ],
     },
     {
