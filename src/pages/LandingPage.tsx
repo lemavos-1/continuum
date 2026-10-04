@@ -2,6 +2,7 @@
  * CONTINUUM — Landing Page
  * Powered by the ScrollGlobe scroll-driven story.
  * Copy is localized automatically from the visitor's browser language.
+ * File size: ~4.5 KB
  */
 import { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/landing/Navbar";
