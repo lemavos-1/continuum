@@ -615,6 +615,7 @@ export default function Notes() {
           <SheetContent
             side="left"
             className="w-[min(84vw,320px)] rounded-r-2xl border-border/10 bg-muted/60 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-[6px] supports-[backdrop-filter]:bg-muted/60"
+            onTouchStart={(event) => event.stopPropagation()}
           >
             <p className="mb-6 font-serif text-2xl text-foreground">{t("notes_filters")}</p>
             {SidebarContent}
@@ -668,23 +669,25 @@ export default function Notes() {
                   className="h-12 w-full rounded-2xl bg-accent pl-11 text-[15px] placeholder:italic placeholder:text-muted-foreground"
                 />
               </div>
-              <FilterChips
-                value={filterDrawerOpen ? "others" : view}
-                onChange={(v) => {
-                  if (v === "others") {
-                    setFilterDrawerOpen(true);
-                    return;
-                  }
-                  setView(v as View);
-                }}
-                options={[
-                  { value: "all", label: t("notes_archive") },
-                  { value: "recent", label: t("notes_recent") },
-                  { value: "favorites", label: t("notes_favorites") },
-                  { value: "archived", label: t("notes_dormant") },
-                  { value: "others", label: t("notes_others") },
-                ]}
-              />
+              <div onTouchStart={(event) => event.stopPropagation()}>
+                <FilterChips
+                  value={filterDrawerOpen ? "others" : view}
+                  onChange={(v) => {
+                    if (v === "others") {
+                      setFilterDrawerOpen(true);
+                      return;
+                    }
+                    setView(v as View);
+                  }}
+                  options={[
+                    { value: "all", label: t("notes_archive") },
+                    { value: "recent", label: t("notes_recent") },
+                    { value: "favorites", label: t("notes_favorites") },
+                    { value: "archived", label: t("notes_dormant") },
+                    { value: "others", label: t("notes_others") },
+                  ]}
+                />
+              </div>
             </div>
 
             {/* Sticky search (desktop) */}
