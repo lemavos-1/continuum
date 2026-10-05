@@ -89,7 +89,21 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
     const Trigger = variant === "note" ? Hash : AtSign;
 
     return (
-      <div className="w-fit min-w-[180px] max-w-[min(360px,calc(100vw-1rem))] rounded-[18px] border border-white/8 bg-[#1e1f22]/70 shadow-[0_12px_30px_rgba(0,0,0,0.34)] backdrop-blur-[10px] supports-[backdrop-filter]:bg-[#1e1f22]/70 overflow-hidden">
+      <div
+        style={{
+          width: "fit-content",
+          minWidth: 180,
+          maxWidth: "min(360px, calc(100vw - 1rem))",
+          borderRadius: 18,
+          border: "1px solid rgba(255,255,255,0.08)",
+          background: "rgba(18, 19, 22, 0.72)",
+          boxShadow: "0 12px 30px rgba(0,0,0,0.34)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          overflow: "hidden",
+        }}
+        className=""
+      >
         <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-white/8 bg-black/10">
           <Trigger className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           <span className="text-[10px] text-muted-foreground truncate font-medium">
