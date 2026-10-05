@@ -612,7 +612,10 @@ export default function Notes() {
 
         {/* Mobile filter drawer */}
         <Sheet open={filterDrawerOpen} onOpenChange={setFilterDrawerOpen}>
-          <SheetContent side="left" className="w-[280px] border-border/10 bg-background/95 p-6">
+          <SheetContent
+            side="left"
+            className="w-[min(84vw,320px)] rounded-r-2xl border-border/10 bg-muted/60 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-[6px] supports-[backdrop-filter]:bg-muted/60"
+          >
             <p className="mb-6 font-serif text-2xl text-foreground">{t("notes_filters")}</p>
             {SidebarContent}
           </SheetContent>
@@ -666,13 +669,20 @@ export default function Notes() {
                 />
               </div>
               <FilterChips
-                value={view}
-                onChange={(v) => setView(v as View)}
+                value={filterDrawerOpen ? "others" : view}
+                onChange={(v) => {
+                  if (v === "others") {
+                    setFilterDrawerOpen(true);
+                    return;
+                  }
+                  setView(v as View);
+                }}
                 options={[
                   { value: "all", label: t("notes_archive") },
                   { value: "recent", label: t("notes_recent") },
                   { value: "favorites", label: t("notes_favorites") },
                   { value: "archived", label: t("notes_dormant") },
+                  { value: "others", label: t("notes_others") },
                 ]}
               />
             </div>

@@ -111,6 +111,7 @@ const en = {
   notes_recent: "Recent",
   notes_favorites: "Favorites",
   notes_dormant: "Dormant",
+  notes_others: "Others",
   notes_types: "Types",
   notes_allTypes: "All types",
   notes_filters: "Filters",
@@ -433,6 +434,7 @@ const es: Dict = {
   notes_empty: "Aún no hay notas. Crea la primera.",
   notes_searchPlaceholder: "Buscar notas…",
   notes_subtitle: "Tu espacio de pensamiento.",
+  notes_others: "Otros",
 
   entities_title: "Entidades",
   entities_new: "Nueva entidad",
@@ -669,6 +671,7 @@ const pt: Dict = {
   notes_recent: "Recentes",
   notes_favorites: "Favoritas",
   notes_dormant: "Dormentes",
+  notes_others: "Outros",
   notes_types: "Tipos",
   notes_allTypes: "Todos os tipos",
   notes_filters: "Filtros",
@@ -980,6 +983,7 @@ const fr: Dict = {
   notes_empty: "Aucune note pour l'instant. Créez la première.",
   notes_searchPlaceholder: "Rechercher des notes…",
   notes_subtitle: "Votre espace de réflexion.",
+  notes_others: "Autres",
 
   entities_title: "Entités",
   entities_new: "Nouvelle entité",
