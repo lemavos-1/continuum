@@ -19,6 +19,7 @@ import {
   Link2, AtSign, Eye, PenLine
 } from "@/lib/heroicons";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { TiptapEditor, type TiptapEditorHandle } from "@/components/TiptapEditor";
 import { BacklinksPanel } from "@/components/BacklinksPanel";
 import { countTiptapMentions, extractMentionIds, extractMentionLabels, parseTiptapContent, sanitizeTiptapMentions, tiptapContentToPlainText } from "@/lib/tiptap-content";
@@ -60,7 +61,9 @@ export default function NoteEditor() {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const editorRef = useRef<TiptapEditorHandle>(null);
+  const [keyboardInset, setKeyboardInset] = useState(0);
   const tempId = searchParams.get("tempId");
   const isOptimistic = searchParams.get("optimistic") === "true";
   const optimisticKey = tempId ? `optimistic-note:${tempId}` : null;
@@ -90,6 +93,34 @@ export default function NoteEditor() {
     document.documentElement.style.setProperty("--note-title-font-scale", String(noteTitleScale));
     document.documentElement.style.setProperty("--note-body-font-scale", String(noteBodyScale));
   }, [noteTitleScale, noteBodyScale]);
+
+  useEffect(() => {
+    if (!isMobile || typeof window === "undefined") {
+      setKeyboardInset(0);
+      document.documentElement.style.setProperty("--mobile-keyboard-offset", "0px");
+      return;
+    }
+
+    const vv = window.visualViewport;
+    const updateKeyboardOffset = () => {
+      const rawOffset = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+      const next = rawOffset > 120 ? rawOffset : 0;
+      setKeyboardInset(next);
+      document.documentElement.style.setProperty("--mobile-keyboard-offset", `${next}px`);
+    };
+
+    updateKeyboardOffset();
+    vv?.addEventListener("resize", updateKeyboardOffset);
+    vv?.addEventListener("scroll", updateKeyboardOffset);
+    window.addEventListener("resize", updateKeyboardOffset);
+
+    return () => {
+      vv?.removeEventListener("resize", updateKeyboardOffset);
+      vv?.removeEventListener("scroll", updateKeyboardOffset);
+      window.removeEventListener("resize", updateKeyboardOffset);
+      document.documentElement.style.setProperty("--mobile-keyboard-offset", "0px");
+    };
+  }, [isMobile]);
 
   useEffect(() => {
     void loadEditorReadOnly().then((v) => setReadOnly(v));
@@ -539,7 +570,12 @@ export default function NoteEditor() {
 
           {/* Editor Canvas */}
           <div className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain scroll-smooth">
-            <div className="mx-auto w-full max-w-[750px] px-6 pb-[calc(7rem+var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))] pt-12 lg:px-12 lg:pb-32">
+            <div
+              className="mx-auto w-full max-w-[750px] px-6 pt-12 lg:px-12"
+              style={{
+                paddingBottom: `calc(${Math.max(7 * 16, keyboardInset + 140)}px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)))`,
+              }}
+            >
               <Input
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
