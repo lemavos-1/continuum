@@ -160,8 +160,18 @@ export const SlashCommands = Extension.create({
                 placement: "bottom-start",
                 theme: "transparent",
                 maxWidth: 360,
+                offset: [0, 10],
+                distance: 8,
                 duration: 0,
                 hideOnClick: false,
+                zIndex: 80,
+                popperOptions: {
+                  strategy: "fixed",
+                  modifiers: [
+                    { name: "flip", options: { fallbackPlacements: ["top-start", "bottom-start"], padding: 8 } },
+                    { name: "preventOverflow", options: { padding: 8 } },
+                  ],
+                },
               });
               const firstPopup = popup?.[0];
               const box = firstPopup?.popper?.querySelector(".tippy-box") as HTMLElement | null;
@@ -172,6 +182,7 @@ export const SlashCommands = Extension.create({
                 box.style.boxShadow = "none";
                 box.style.padding = "0";
                 box.style.maxWidth = "none";
+                box.style.zIndex = "80";
               }
               if (content) {
                 content.style.padding = "0";
