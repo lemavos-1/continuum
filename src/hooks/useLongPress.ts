@@ -47,7 +47,6 @@ export function useLongPress({ onLongPress, onClick, ms = 500, moveTolerance = 1
         Math.abs(y - start.current.y) > moveTolerance
       ) {
         clear();
-        start.current = null;
       }
     },
     [moveTolerance, clear],
@@ -94,7 +93,6 @@ export function useLongPress({ onLongPress, onClick, ms = 500, moveTolerance = 1
   );
 
   return {
-    style: { touchAction: "pan-y" },
     onPointerDown: begin,
     onPointerMove: (e: React.PointerEvent) => move(e.clientX, e.clientY),
     onPointerUp: (e: React.PointerEvent) => end(e),
