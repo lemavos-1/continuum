@@ -66,7 +66,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       {/* Desktop hover-expand sidebar */}
       <SessionNavBar />
 
-      <main className="min-w-0 flex-1 overflow-auto bg-background lg:ml-[3.25rem]">
+      <main
+        className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-background touch-pan-y overscroll-y-contain lg:ml-[3.25rem]"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         {children}
         {/* Spacer so content isn't hidden behind the floating mobile bottom nav */}
         {!isNoteEditor && <div className="h-[calc(5.5rem+var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))] lg:hidden" />}
