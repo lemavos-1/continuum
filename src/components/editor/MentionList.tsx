@@ -89,29 +89,28 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
     const Trigger = variant === "note" ? Hash : AtSign;
 
     return (
-      <div className="w-[min(300px,calc(100vw-2rem))] rounded-xl border border-white/10 bg-[#1a1b1e]/95 shadow-[0_18px_40px_rgba(0,0,0,0.38)] backdrop-blur-xl overflow-hidden">
-        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-white/8 bg-black/10">
-          <Trigger className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-[11px] text-muted-foreground truncate font-medium">
+      <div className="w-[min(280px,calc(100vw-1.5rem))] rounded-xl border border-white/8 bg-[#17191d]/95 shadow-[0_10px_28px_rgba(0,0,0,0.38)] backdrop-blur-md overflow-hidden">
+        <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-white/8 bg-black/10">
+          <Trigger className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <span className="text-[10px] text-muted-foreground truncate font-medium">
             {query ? t("ed_searching_query", { query }) : variant === "note" ? t("ed_link_a_note") : t("ed_mention_an_entity")}
           </span>
         </div>
 
-        {/* Entity type selector for entity creation */}
         {variant === "entity" && items.some(item => item.isCreate && item.createKind === "entity") && (
-          <div className="px-3 py-2 border-b border-white/8 bg-black/10">
-            <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground/80 mb-2">{t("ed_entity_type_label")}</div>
+          <div className="px-2.5 py-1.5 border-b border-white/8 bg-black/8">
+            <div className="text-[9px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70 mb-1.5">{t("ed_entity_type_label")}</div>
             <div className="relative">
               <button
                 onClick={() => setShowTypeSelector(!showTypeSelector)}
-                className="flex items-center gap-2 w-full px-2.5 py-1.5 text-sm rounded-md border border-white/8 bg-white/[0.03] text-foreground transition-colors hover:bg-white/[0.06]"
+                className="flex items-center gap-2 w-full px-2 py-1.5 text-[12px] rounded-md border border-white/8 bg-white/[0.02] text-foreground transition-colors hover:bg-white/[0.04]"
               >
                 {(() => {
                   const selectedType = entityTypes.find(t => t.value === entityType);
                   const Icon = selectedType?.icon || Tag;
                   return (
                     <>
-                      <Icon className="w-3.5 h-3.5" />
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
                       <span className="flex-1 text-left">{selectedType?.label}</span>
                       <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                     </>
@@ -119,7 +118,7 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
                 })()}
               </button>
               {showTypeSelector && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-[#1d1e22] border border-white/10 rounded-md shadow-[0_12px_32px_rgba(0,0,0,0.38)] z-50 max-h-40 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-[#1b1d20] border border-white/10 rounded-md shadow-[0_12px_30px_rgba(0,0,0,0.35)] z-50 max-h-36 overflow-y-auto">
                   {entityTypes.map((type) => {
                     const Icon = type.icon;
                     return (
@@ -129,7 +128,7 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
                           setEntityType(type.value);
                           setShowTypeSelector(false);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-foreground hover:bg-white/[0.05] transition-colors"
+                        className="flex items-center gap-2 w-full px-2.5 py-1.5 text-[12px] text-foreground hover:bg-white/[0.04] transition-colors"
                       >
                         <Icon className="w-3.5 h-3.5" />
                         <span>{type.label}</span>
@@ -142,9 +141,9 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
           </div>
         )}
 
-        <div className="max-h-64 overflow-y-auto py-1">
+        <div className="max-h-52 overflow-y-auto py-1">
           {items.length === 0 ? (
-            <div className="px-3 py-4 text-xs text-muted-foreground text-center">{t("ed_no_results")}</div>
+            <div className="px-2.5 py-3 text-[11px] text-muted-foreground text-center">{t("ed_no_results")}</div>
           ) : (
             items.map((item, i) => {
               const Icon = item.isCreate ? Plus : iconFor(item.type);
@@ -153,26 +152,26 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
                 <button
                   key={`${item.id}-${i}`}
                   onMouseDown={(e) => { e.preventDefault(); select(i); }}
-                  className={`flex items-center gap-2.5 w-full px-2.5 py-2 text-left text-sm transition-all ${
+                  className={`flex items-center gap-2 w-full px-2.5 py-1.5 text-left transition-colors ${
                     isSelected
                       ? "bg-white/[0.06] text-foreground"
-                      : "text-popover-foreground hover:bg-white/[0.04]"
+                      : "text-popover-foreground hover:bg-white/[0.03]"
                   }`}
                 >
-                  <span className={`flex items-center justify-center w-7 h-7 rounded-md ${
+                  <span className={`flex items-center justify-center w-6 h-6 rounded-md ${
                     item.isCreate ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
                   }`}>
                     <Icon className="w-3.5 h-3.5" />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <div className="truncate font-medium leading-tight">{item.title}</div>
+                    <div className="truncate text-[12px] font-medium leading-tight">{item.title}</div>
                     {item.isCreate && (
-                      <div className="text-[10px] text-muted-foreground mt-0.5">
+                      <div className="text-[9px] text-muted-foreground mt-0.5">
                         {t("ed_create_new", { kind: item.createKind === "entity" ? t("ed_kind_entity") : t("ed_kind_note") })}
                       </div>
                     )}
                     {!item.isCreate && (
-                      <div className="text-[10px] text-muted-foreground capitalize mt-0.5">
+                      <div className="text-[9px] text-muted-foreground capitalize mt-0.5">
                         {item.type.toLowerCase()}
                       </div>
                     )}
@@ -182,10 +181,10 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
             })
           )}
         </div>
-        <div className="px-3 py-1.5 border-t border-white/8 bg-black/10 text-[9px] text-muted-foreground flex items-center gap-3">
-          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.06] border border-white/8">↑↓</kbd> {t("ed_nav_hint")}</span>
-          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.06] border border-white/8">↵</kbd> {t("ed_select_hint")}</span>
-          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.06] border border-white/8">esc</kbd> {t("ed_close_hint")}</span>
+        <div className="px-2.5 py-1 border-t border-white/8 bg-black/10 text-[8px] text-muted-foreground flex items-center gap-2.5">
+          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.05] border border-white/8">↑↓</kbd> {t("ed_nav_hint")}</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.05] border border-white/8">↵</kbd> {t("ed_select_hint")}</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-white/[0.05] border border-white/8">esc</kbd> {t("ed_close_hint")}</span>
         </div>
       </div>
     );
