@@ -158,7 +158,25 @@ export const SlashCommands = Extension.create({
                 interactive: true,
                 trigger: "manual",
                 placement: "bottom-start",
+                theme: "transparent",
+                maxWidth: 360,
+                duration: 0,
+                hideOnClick: false,
               });
+              const firstPopup = popup?.[0];
+              const box = firstPopup?.popper?.querySelector(".tippy-box") as HTMLElement | null;
+              const content = firstPopup?.popper?.querySelector(".tippy-content") as HTMLElement | null;
+              if (box) {
+                box.style.background = "transparent";
+                box.style.border = "none";
+                box.style.boxShadow = "none";
+                box.style.padding = "0";
+                box.style.maxWidth = "none";
+              }
+              if (content) {
+                content.style.padding = "0";
+                content.style.background = "transparent";
+              }
             },
             onUpdate(props) {
               component?.updateProps(props);

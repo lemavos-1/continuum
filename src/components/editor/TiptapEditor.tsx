@@ -255,9 +255,28 @@ const buildSuggestion = (variant: "entity" | "note", currentNoteId?: string) => 
           interactive: true,
           trigger: "manual",
           placement: "bottom-start",
+          theme: "transparent",
+          maxWidth: 360,
+          duration: 0,
+          hideOnClick: false,
           onHidden: () => teardown(),
         })[0] ?? null;
-        if (popup) activeMentionPopups.add(popup);
+        if (popup) {
+          activeMentionPopups.add(popup);
+          const box = popup.popper?.querySelector(".tippy-box") as HTMLElement | null;
+          const content = popup.popper?.querySelector(".tippy-content") as HTMLElement | null;
+          if (box) {
+            box.style.background = "transparent";
+            box.style.border = "none";
+            box.style.boxShadow = "none";
+            box.style.padding = "0";
+            box.style.maxWidth = "none";
+          }
+          if (content) {
+            content.style.padding = "0";
+            content.style.background = "transparent";
+          }
+        }
       },
       onUpdate(props: SuggestionProps<MentionItem>) {
         component?.updateProps({ ...props, query: props.query, variant });
