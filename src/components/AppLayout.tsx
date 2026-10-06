@@ -145,6 +145,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 <DropdownMenuItem onSelect={() => navigate("/vault")}>
                   <Lock className="mr-2 h-4 w-4" /> {t("nav_vault")}
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate("/trash")}>
+                  <Trash2 className="mr-2 h-4 w-4" /> {t("nav_trash")}
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-xs text-muted-foreground">{user?.email}</DropdownMenuLabel>
                 <DropdownMenuItem onSelect={() => navigate("/settings")}>
