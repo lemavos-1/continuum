@@ -3,7 +3,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createIdbPersister, QUERY_CACHE_BUSTER } from "@/lib/offline/query-persister";
 import { queryClient } from "@/lib/query-client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UsageProvider } from "@/contexts/UsageContext";
@@ -241,7 +241,7 @@ const App = () => {
     >
       <ThemeProvider>
         <TooltipProvider>
-          <Sonner />
+          <Toaster />
           <BrowserRouter>
             <NativeGoogleAuthRedirect />
             <LanguageProvider>
