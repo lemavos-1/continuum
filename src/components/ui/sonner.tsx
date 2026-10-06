@@ -21,6 +21,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       {...props}
       position="bottom-right"
+      style={{
+        width: "min(356px, calc(100vw - 32px))",
+        left: "auto",
+        right: 16,
+        bottom: "calc(16px + env(safe-area-inset-bottom))",
+      }}
     />
   );
 };

@@ -617,17 +617,6 @@
   }
 }
 
-@media (max-width: 600px) {
-  [data-sonner-toaster][data-x-position="right"] {
-    left: auto !important;
-    right: 16px !important;
-    width: min(356px, calc(100vw - 32px)) !important;
-  }
-
-  [data-sonner-toaster][data-y-position="bottom"] {
-    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
-  }
-}
 
 @layer utilities {
   ::-webkit-scrollbar { width: 6px; height: 6px; }
