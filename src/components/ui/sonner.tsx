@@ -20,6 +20,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
       }}
       {...props}
+      position="bottom-right"
     />
   );
 };

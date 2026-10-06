@@ -1,4 +1,5 @@
 import * as React from "react";
+import { toast as sonnerToast } from "sonner";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
@@ -136,13 +137,36 @@ type Toast = Omit<ToasterToast, "id">;
 
 function toast({ ...props }: Toast) {
   const id = genId();
+  const sonnerOptions = {
+    description: props.description,
+    action: props.action,
+    duration: props.duration,
+  };
+  const sonnerId = props.variant === "destructive"
+    ? sonnerToast.error(props.title ?? "", sonnerOptions)
+    : sonnerToast.success(props.title ?? "", sonnerOptions);
 
-  const update = (props: ToasterToast) =>
+  const update = (nextToast: ToasterToast) => {
     dispatch({
       type: "UPDATE_TOAST",
-      toast: { ...props, id },
+      toast: { ...nextToast, id },
     });
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+    const options = {
+      id: sonnerId,
+      description: nextToast.description,
+      action: nextToast.action,
+      duration: nextToast.duration,
+    };
+    if (nextToast.variant === "destructive") {
+      sonnerToast.error(nextToast.title ?? "", options);
+    } else {
+      sonnerToast.success(nextToast.title ?? "", options);
+    }
+  };
+  const dismiss = () => {
+    dispatch({ type: "DISMISS_TOAST", toastId: id });
+    sonnerToast.dismiss(sonnerId);
+  };
 
   dispatch({
     type: "ADD_TOAST",
@@ -179,7 +203,10 @@ function useToast() {
   return {
     ...state,
     toast,
-    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    dismiss: (toastId?: string) => {
+      dispatch({ type: "DISMISS_TOAST", toastId });
+      sonnerToast.dismiss(toastId);
+    },
   };
 }
 

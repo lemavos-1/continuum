@@ -730,16 +730,16 @@ export default function Notes() {
 
             {/* Selection action bar */}
             {selectMode && (
-              <div className="sticky top-[7.5rem] z-20 mb-6 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-border/15 bg-background/80 px-3 py-2.5 backdrop-blur-xl">
+              <div className="sticky top-[7.5rem] z-20 mb-6 flex flex-col items-stretch gap-3 rounded-sm border border-border/15 bg-background/80 px-3 py-2.5 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
                 <span className="text-sm text-muted-foreground">
                   {t("select_selected", { n: selectedIds.size })}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="grid w-full min-w-0 grid-cols-2 gap-2 md:flex md:w-auto md:flex-wrap">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="normal-case px-3 py-1.5 text-xs text-muted-foreground hover:border-border/40 hover:text-foreground"
+                    className="w-full justify-center normal-case px-3 py-1.5 text-xs text-muted-foreground hover:border-border/40 hover:text-foreground md:w-auto"
                     onClick={() => {
                       const allIds = filtered.map((n) => n.id);
                       const allSelected = allIds.every((id) => selectedIds.has(id));
@@ -755,7 +755,7 @@ export default function Notes() {
                         variant="outline"
                         size="sm"
                         disabled={selectedIds.size === 0 || bulkTypeApplying}
-                        className="normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground"
+                        className="w-full justify-center normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground md:w-auto"
                       >
                         {bulkTypeApplying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Tag className="h-3.5 w-3.5" />} {t("notes_set_type") || "Set type"}
                       </Button>
@@ -781,7 +781,7 @@ export default function Notes() {
                     type="button"
                     variant="destructive"
                     size="sm"
-                    className="normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs"
+                    className="w-full justify-center normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs md:w-auto"
                     onClick={() => setBulkDeleteOpen(true)}
                     disabled={selectedIds.size === 0}
                   >
@@ -791,7 +791,7 @@ export default function Notes() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs"
+                    className="w-full justify-center normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs md:w-auto"
                     onClick={exitSelectMode}
                   >
                     <X className="h-3.5 w-3.5" /> {t("select_done")}
