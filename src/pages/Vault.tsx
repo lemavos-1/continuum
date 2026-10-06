@@ -466,6 +466,7 @@ export default function Vault() {
       <Dialog open={!!pdfPreview} onOpenChange={(open) => !open && setPdfPreview(null)}>
         <DialogContent
           hideClose
+          viewportAware={false}
           overlayClassName="bg-black/80 backdrop-blur-md"
           className="fixed inset-0 left-0 top-0 z-50 grid h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 grid-rows-[auto_1fr] gap-0 rounded-none border-0 bg-transparent p-0 shadow-none flex flex-col"
         >
@@ -489,6 +490,7 @@ export default function Vault() {
       <Dialog open={!!mediaPreview} onOpenChange={(open) => !open && setMediaPreview(null)}>
         <DialogContent
           hideClose
+          viewportAware={false}
           overlayClassName="bg-black/90 backdrop-blur-md"
           className="fixed inset-0 left-0 top-0 z-50 flex h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 bg-transparent p-0 shadow-none"
         >
