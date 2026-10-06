@@ -372,11 +372,6 @@ export default function Entities() {
                   <p className="mt-2 text-sm text-muted-foreground">{t("entities_tagline")}</p>
                 </div>
                 <div className="flex flex-wrap items-center justify-end gap-2">
-                  {selectMode && (
-                    <Button size="sm" className="gap-2" onClick={exitSelectMode}>
-                      <X className="h-3.5 w-3.5" /> {t("select_done")}
-                    </Button>
-                  )}
                   <Button size="sm" className="gap-2" onClick={() => setCreateOpen(true)}>
                     <Plus className="h-3.5 w-3.5" /> {t("entities_new")}
                   </Button>
@@ -387,11 +382,6 @@ export default function Entities() {
 
             {/* Mobile: search + type chips */}
             <div className="mb-5 space-y-3 lg:hidden">
-              {selectMode && (
-                <Button size="sm" className="gap-2" onClick={exitSelectMode}>
-                  <X className="h-3.5 w-3.5" /> {t("select_done")}
-                </Button>
-              )}
               <div className="relative z-0">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -491,6 +481,15 @@ export default function Entities() {
                     disabled={selectedIds.size === 0}
                   >
                     <Trash2 className="h-3.5 w-3.5" /> {t("common_delete")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs"
+                    onClick={exitSelectMode}
+                  >
+                    <X className="h-3.5 w-3.5" /> {t("select_done")}
                   </Button>
                 </div>
               </div>

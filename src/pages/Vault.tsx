@@ -5,10 +5,11 @@ import { vaultApi } from "@/lib/api";
 import { usePlanGate } from "@/hooks/usePlanGate";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { FilterChips } from "@/components/ui/filter-chips";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
@@ -445,18 +446,18 @@ export default function Vault() {
         </main>
       </div>
 
-      {/* CONFIRM DIALOG — Adaptado para seguir o design limpo do app */}
+      {/* CONFIRM DIALOG */}
       <AlertDialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
-        <AlertDialogContent className="bg-black border border-white/10 rounded-sm max-w-sm">
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif text-xl font-normal text-white">{t("gr_vault_remove_title")}</AlertDialogTitle>
-            <AlertDialogDescription className="text-white/40 text-xs mt-2">
+            <AlertDialogTitle>{t("gr_vault_remove_title")}</AlertDialogTitle>
+            <AlertDialogDescription>
               {t("gr_vault_remove_desc", { fileName: (pendingDelete ? nameOf(pendingDelete) : "") || t("gr_vault_this_asset") })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-4 gap-2">
-            <AlertDialogCancel className="bg-transparent hover:bg-white/5 text-white/60 border-white/10 rounded-sm text-xs">{t("gr_vault_cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-white text-black hover:bg-white/90 rounded-sm text-xs font-medium">{t("gr_vault_remove")}</AlertDialogAction>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("gr_vault_cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t("gr_vault_remove")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -505,24 +506,31 @@ export default function Vault() {
 
       {/* RENAME DIALOG — extension is preserved silently */}
       <Dialog open={!!renameTarget} onOpenChange={(open) => !open && setRenameTarget(null)}>
-        <DialogContent className="max-w-sm rounded-sm border border-white/10 bg-black">
-          <p className="font-serif text-xl text-white">{t("gr_vault_rename_title")}</p>
-          <p className="mt-1 text-[11px] text-white/40">{t("gr_vault_rename_hint")}</p>
+        <DialogContent className="max-w-sm">
+          <DialogHeader className="text-left">
+            <DialogTitle>{t("gr_vault_rename_title")}</DialogTitle>
+            <DialogDescription>{t("gr_vault_rename_hint")}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="vault-file-name" className="sr-only">{t("gr_vault_rename_title")}</Label>
           <Input
+            id="vault-file-name"
+            type="text"
             autoFocus
             value={renameValue}
             onChange={(e) => setRenameValue(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void submitRename(); } }}
-            className="mt-2 h-11 rounded-sm border-white/10 bg-white/[0.03] text-sm text-white"
+            className="h-10 border border-[hsl(var(--popup-border))] bg-white/[0.03] text-sm focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <div className="mt-4 flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setRenameTarget(null)} className="rounded-sm text-xs text-white/50 hover:bg-white/5 hover:text-white">
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => setRenameTarget(null)}>
               {t("gr_vault_cancel")}
             </Button>
-            <Button size="sm" onClick={() => void submitRename()} disabled={!renameValue.trim()} className="rounded-sm bg-white text-xs font-medium text-black hover:bg-white/90">
+            <Button type="button" onClick={() => void submitRename()} disabled={!renameValue.trim()}>
               {t("gr_vault_save")}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </AppLayout>

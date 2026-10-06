@@ -4,12 +4,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { entitiesApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Loader2, Edit, StickyNote, Network, Calendar, Tag, Clock } from "@/lib/heroicons";
+import { ArrowLeft, Loader2, Edit, StickyNote, Network, Calendar, Tag, Clock, Trash2 } from "@/lib/heroicons";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +25,7 @@ import { TimerWidget } from "@/components/TimerWidget";
 import { TimeHeatmap } from "@/components/TimeHeatmap";
 import type { HeatmapData, EntityStats } from "@/types";
 import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { usePlanGate } from "@/hooks/usePlanGate";
 import { queryClient } from "@/lib/query-client";
 import { qk, STALE } from "@/lib/queries";
 
@@ -37,6 +39,7 @@ export default function EntityDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { applyUsageDelta, refresh: refreshUsage } = usePlanGate();
   const [entity, setEntity] = useState<EntityData | null>(() => id ? queryClient.getQueryData<EntityData>(qk.entity(id)) ?? null : null);
   const [heatmap, setHeatmap] = useState<HeatmapData>({});
   const [stats, setStats] = useState<EntityStats | null>(null);
@@ -47,6 +50,7 @@ export default function EntityDetail() {
   const [newDescription, setNewDescription] = useState("");
   const [editingType, setEditingType] = useState(false);
   const [newType, setNewType] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [relatedNotes, setRelatedNotes] = useState<RelatedNote[]>([]);
   const [relatedEntities, setRelatedEntities] = useState<EntityData[]>([]);
 
@@ -245,6 +249,20 @@ export default function EntityDetail() {
     } catch { toast({ title: t("ent_error_updating"), variant: "destructive" }); }
   };
 
+  const handleDeleteEntity = async () => {
+    if (!id || !entity) return;
+    try {
+      await entitiesApi.delete(id);
+      applyUsageDelta({ entitiesCount: -1, activitiesCount: entity.type === "ACTIVITY" ? -1 : 0 });
+      void refreshUsage();
+      queryClient.removeQueries({ queryKey: qk.entity(id) });
+      void queryClient.invalidateQueries({ queryKey: qk.entities() });
+      navigate("/entities");
+    } catch {
+      toast({ title: t("ls_entities_error_deleting"), variant: "destructive" });
+    }
+  };
+
   if (loading)
     return (
       <AppLayout>
@@ -313,6 +331,15 @@ export default function EntityDetail() {
                 aria-label={t("ent_edit_name")}
               >
                 <Edit className="w-4 h-4 text-muted-foreground" />
+              </Button>
+              <Button
+                variant="destructive"
+                size="iconSm"
+                onClick={() => setDeleteDialogOpen(true)}
+                aria-label={t("common_delete")}
+                title={t("common_delete")}
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           )}
@@ -509,6 +536,15 @@ export default function EntityDetail() {
           </AccordionItem>
         </Accordion>
       </div>
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title={t("entities_delete_one_title")}
+        description={t("entities_delete_one_desc", { title: entity.title || t("notes_untitled") })}
+        confirmText={t("common_delete")}
+        destructive
+        onConfirm={handleDeleteEntity}
+      />
     </AppLayout>
   );
 }

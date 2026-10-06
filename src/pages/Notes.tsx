@@ -638,11 +638,6 @@ export default function Notes() {
                   <h1 className="mt-2 font-serif text-5xl tracking-tight text-foreground">{t("notes_title")}</h1>
                 </div>
                 <div className="flex flex-wrap items-center justify-end gap-2">
-                  {selectMode && (
-                    <Button size="sm" className="gap-2" onClick={exitSelectMode}>
-                      <X className="h-3.5 w-3.5" /> {t("select_done")}
-                    </Button>
-                  )}
                   <Button onClick={handleCreate} className="gap-2" disabled={creating}>
                     <Plus className="h-3.5 w-3.5" /> {creating ? t("notes_creating") : t("notes_new")}
                   </Button>
@@ -654,11 +649,6 @@ export default function Notes() {
 
             {/* Mobile: search + view chips */}
             <div className="mb-5 space-y-3 lg:hidden">
-              {selectMode && (
-                <Button size="sm" className="gap-2" onClick={exitSelectMode}>
-                  <X className="h-3.5 w-3.5" /> {t("select_done")}
-                </Button>
-              )}
               <div className="relative z-0">
 
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -797,6 +787,15 @@ export default function Notes() {
                   >
                     <Trash2 className="h-3.5 w-3.5" /> {t("common_delete")}
                   </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="normal-case inline-flex items-center gap-1.5 px-3 py-1.5 text-xs"
+                    onClick={exitSelectMode}
+                  >
+                    <X className="h-3.5 w-3.5" /> {t("select_done")}
+                  </Button>
                 </div>
               </div>
             )}
@@ -928,6 +927,9 @@ export default function Notes() {
                                   {!selectMode && (
                                     <div className="flex shrink-0 items-center gap-2 pt-1">
                                       <span className="flex h-5 w-5 items-center justify-center">
+                                        <InsightSignalBadge kind="note" id={note.id} className="h-5 w-5" />
+                                      </span>
+                                      <span className="flex h-5 w-5 items-center justify-center">
                                         <Button
                                           type="button"
                                           variant="ghost"
@@ -964,9 +966,6 @@ export default function Notes() {
                                         >
                                           <Trash2 className="h-3 w-3" />
                                         </Button>
-                                      </span>
-                                      <span className="flex h-5 w-5 items-center justify-center">
-                                        <InsightSignalBadge kind="note" id={note.id} className="h-5 w-5" />
                                       </span>
                                     </div>
                                   )}
