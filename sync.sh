@@ -31,12 +31,22 @@
 #   - sync.sh / continuum-sync.sh do destino nunca é apagado.
 #
 # USO:
-#   ./sync.sh [caminho-do-repo-principal-local]
+#   ./sync.sh        -> mostra o menu
+#   ./sync.sh 1      -> Dev -> Principal
+#   ./sync.sh 2      -> Principal -> Dev
+#   ./sync.sh 3      -> Dev -> Dev
+#   ./sync.sh 4      -> Fast commit
+#   ./sync.sh 5      -> Commit versionado
+#
+#   Os fluxos 1 a 3 usam a pasta atual como repo local.
 #
 # Requer:
 #   gh (GitHub CLI) autenticado.
 
-clear
+# Só limpa a tela no modo interativo (sem parâmetro).
+if [ "$#" -eq 0 ]; then
+  clear
+fi
 
 set -euo pipefail
 
@@ -580,38 +590,43 @@ run_versioned_commit() {
 
 # ── Menu principal ─────────────────────────────────────────────────────────
 
-echo ""
-echo "Qual fluxo rodar?"
-echo ""
-echo "  1) Dev -> Principal"
-echo "     lemavos-N/continuum -> repo principal local"
-echo ""
-echo "  2) Principal -> Dev"
-echo "     repo principal local -> lemavos-N/continuum"
-echo ""
-echo "  3) Dev -> Dev"
-echo "     lemavos-X/continuum -> lemavos-Y/continuum"
-echo ""
-echo "  4) Fast Commit"
-echo "     git add -A && git commit -m \"Fast commit\" && git push"
-echo ""
-echo "  5) Commit versionado"
-echo "     git add -A && git commit -m \"vX.X\" && git push"
-echo ""
+# Se veio um parâmetro, usa ele como escolha e pula o menu.
+FLOW_CHOICE="${1:-}"
 
-read -rp "Escolha [1-5]: " FLOW_CHOICE
+if [ -z "$FLOW_CHOICE" ]; then
+  echo ""
+  echo "Qual fluxo rodar?"
+  echo ""
+  echo "  1) Dev -> Principal"
+  echo "     lemavos-N/continuum -> repo principal local"
+  echo ""
+  echo "  2) Principal -> Dev"
+  echo "     repo principal local -> lemavos-N/continuum"
+  echo ""
+  echo "  3) Dev -> Dev"
+  echo "     lemavos-X/continuum -> lemavos-Y/continuum"
+  echo ""
+  echo "  4) Fast Commit"
+  echo "     git add -A && git commit -m \"Fast commit\" && git push"
+  echo ""
+  echo "  5) Commit versionado"
+  echo "     git add -A && git commit -m \"vX.X\" && git push"
+  echo ""
+
+  read -rp "Escolha [1-5]: " FLOW_CHOICE
+fi
 
 case "$FLOW_CHOICE" in
   1)
-    run_dev_to_main "${1:-$(pwd)}"
+    run_dev_to_main "$(pwd)"
     ;;
 
   2)
-    run_main_to_dev "${1:-$(pwd)}"
+    run_main_to_dev "$(pwd)"
     ;;
 
   3)
-    run_dev_to_dev
+    run_dev_to_dev "$(pwd)"
     ;;
 
   4)
@@ -631,7 +646,7 @@ case "$FLOW_CHOICE" in
     ;;
 
   *)
-    echo "Opção inválida." >&2
+    echo "Opção inválida: '$FLOW_CHOICE'. Use de 1 a 5." >&2
     exit 1
     ;;
 esac
