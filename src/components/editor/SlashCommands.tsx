@@ -56,7 +56,7 @@ const items: SlashItem[] = [
       editor.chain().focus().deleteRange(range).run();
       window.dispatchEvent(new CustomEvent("continuum:editor-upload"));
     } },
-  { title: "From vault", description: "Insert a file already in your vault", icon: ImageIcon, keywords: ["vault", "existing", "cofre", "file", "arquivo"],
+  { titleKey: "ed_slash_vault_title", descKey: "ed_slash_vault_desc", title: "From vault", description: "Insert a file already in your vault", icon: ImageIcon, keywords: ["vault", "existing", "cofre", "file", "arquivo"],
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).run();
       window.dispatchEvent(new CustomEvent("continuum:vault-pick", { detail: { editor } }));
