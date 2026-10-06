@@ -11,7 +11,7 @@ import AuthDialog from "@/components/auth/AuthDialog";
 import PwaInstallListener from "@/components/pwa/PwaInstallListener";
 import { ScrollGlobe } from "@/components/ui/landing-page";
 import { useLanguage } from "@/contexts/LanguageContext";
-import landingEditor from "@/assets/landing-editor.jpg";
+import landingEditor from "@/assets/landing-editor.png";
 import landingGraph from "@/assets/landing-graph.jpg";
 import landingInsights from "@/assets/landing-insights.jpg";
 
