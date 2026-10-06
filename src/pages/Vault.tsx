@@ -1,3 +1,4 @@
+import { PdfPages } from "@/components/editor/VaultPdf";
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "@/components/AppLayout";
 import { vaultApi } from "@/lib/api";
@@ -158,7 +159,7 @@ function PdfCard({ file, name, onDelete, onRename, onOpen }: {
         {error ? (
           <div className="text-[11px] font-mono text-red-400/60">{t("gr_vault_error_generic")}</div>
         ) : url ? (
-          <iframe src={`${url}#toolbar=0&navpanes=0`} title={name} className="w-full h-full pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity" />
+          <PdfPages src={url} maxPages={1} onError={() => {}} className="pointer-events-none absolute inset-0 overflow-hidden bg-white/90 opacity-80 group-hover:opacity-100 transition-opacity" />
         ) : (
           <Loader2 className="h-3 w-3 animate-spin text-white/20" />
         )}
@@ -473,7 +474,7 @@ export default function Vault() {
           </div>
           <div className="flex-1 p-6">
             {pdfPreviewBlob.url ? (
-              <iframe src={pdfPreviewBlob.url} title={pdfPreview?.fileName} className="w-full h-full bg-transparent border border-white/10 rounded-sm shadow-2xl" />
+              <PdfPages src={pdfPreviewBlob.url} onError={() => {}} className="mx-auto h-full max-w-3xl overflow-y-auto" />
             ) : (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="h-5 w-5 animate-spin text-white/30" />

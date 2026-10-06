@@ -132,6 +132,8 @@ export const dict: Module = {
     ed_always_on: "Always on",
     ed_slash_upload_title: "Upload file",
     ed_slash_upload_desc: "Image, PDF or audio from your device",
+    ed_slash_vault_title: "From vault",
+    ed_slash_vault_desc: "Insert a file already in your vault",
 
     ed_searching_query: 'Searching "{query}"',
     ed_link_a_note: "Link a note",
@@ -330,6 +332,8 @@ export const dict: Module = {
     ed_always_on: "Siempre activo",
     ed_slash_upload_title: "Subir archivo",
     ed_slash_upload_desc: "Imagen, PDF o audio desde tu dispositivo",
+    ed_slash_vault_title: "Desde el cofre",
+    ed_slash_vault_desc: "Insertar un archivo del cofre",
 
     ed_searching_query: 'Buscando "{query}"',
     ed_link_a_note: "Vincular una nota",
@@ -528,6 +532,8 @@ export const dict: Module = {
     ed_always_on: "Sempre ativo",
     ed_slash_upload_title: "Enviar arquivo",
     ed_slash_upload_desc: "Imagem, PDF ou áudio do seu dispositivo",
+    ed_slash_vault_title: "Do cofre",
+    ed_slash_vault_desc: "Inserir um arquivo que já está no cofre",
 
     ed_searching_query: 'Buscando "{query}"',
     ed_link_a_note: "Vincular uma nota",
@@ -726,6 +732,8 @@ export const dict: Module = {
     ed_always_on: "Toujours actif",
     ed_slash_upload_title: "Téléverser un fichier",
     ed_slash_upload_desc: "Image, PDF ou audio depuis votre appareil",
+    ed_slash_vault_title: "Depuis le coffre",
+    ed_slash_vault_desc: "Insérer un fichier du coffre",
 
     ed_searching_query: 'Recherche de "{query}"',
     ed_link_a_note: "Lier une note",
