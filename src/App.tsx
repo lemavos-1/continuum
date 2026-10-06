@@ -54,6 +54,7 @@ const Versions = React.lazy(() => import("./pages/Versions"));
 const SettingsPage = React.lazy(() => import("./pages/Settings"));
 const EditorSettingsPage = React.lazy(() => import("./pages/EditorSettings"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
+const Trash = React.lazy(() => import("./pages/Trash"));
 const Insights = React.lazy(() => import("./pages/Insights"));
 
 const queryPersister = createIdbPersister();
@@ -206,6 +207,7 @@ const AppRoutes = () => {
     <Route path="/projects/:id" element={<ProtectedRoute><EntityDetail /></ProtectedRoute>} />
     <Route path="/graph" element={<ProtectedRoute><KnowledgeGraph /></ProtectedRoute>} />
     <Route path="/insights" element={<ProtectedRoute><Insights /></ProtectedRoute>} />
+    <Route path="/trash" element={<ProtectedRoute><Trash /></ProtectedRoute>} />
     <Route path="/vault" element={<ProtectedRoute><Vault /></ProtectedRoute>} />
     <Route path="/vault/download/:fileId" element={<ProtectedRoute><VaultDownload /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
