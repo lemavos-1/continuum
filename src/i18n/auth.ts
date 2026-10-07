@@ -274,3 +274,4 @@ export const dict: Module = {
     au_return_home: "Retour à la page d'accueil",
   },
 };
+

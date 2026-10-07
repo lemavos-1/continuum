@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLogo from "@/components/landing/AppLogo";
 
-const NotFound = () => {
+const NotFound = () => { 
   const { t } = useLanguage();
   const location = useLocation();
 
