@@ -65,8 +65,8 @@ export const dict: Module = {
     au_authentication_error: "Authentication error",
     au_missing_state_data: "Google login redirect is missing state data. Please try again.",
     au_google_signin_error: "Something went wrong with Google sign-in.",
-    au_404_title: "Page not found",
-    au_404_desc: "Continuum helps with a lot of things, but finding this page isn't one of them.",
+    au_404_title: "This isn't one of your notes.",
+    au_404_desc: "The link you followed doesn't lead anywhere in your graph. Let's get you back to what's connected.",
     au_return_home: "Back to the home page",
   },
   es: {
@@ -133,8 +133,8 @@ export const dict: Module = {
     au_authentication_error: "Error de autenticación",
     au_missing_state_data: "Falta el dato de estado en la redirección de Google. Inténtalo de nuevo.",
     au_google_signin_error: "Algo salió mal con el inicio de sesión de Google.",
-    au_404_title: "Página no encontrada",
-    au_404_desc: "Continuum ayuda con muchas cosas, pero encontrar esta página no es una de ellas.",
+    au_404_title: "Esta no es una de tus notas.",
+    au_404_desc: "El enlace que seguiste no lleva a ningún lugar de tu grafo. Volvamos a lo que está conectado.",
     au_return_home: "Volver a la página de inicio",
   },
   pt: {
@@ -201,8 +201,8 @@ export const dict: Module = {
     au_authentication_error: "Erro de autenticação",
     au_missing_state_data: "O redirecionamento do login do Google está sem dados de estado. Tente novamente.",
     au_google_signin_error: "Algo deu errado com o login do Google.",
-    au_404_title: "Página não encontrada",
-    au_404_desc: "O Continuum ajuda em muitas coisas, mas encontrar esta página não é uma delas.",
+    au_404_title: "Esta não é uma das suas notas.",
+    au_404_desc: "O link que você seguiu não leva a lugar nenhum no seu grafo. Vamos voltar para o que está conectado.",
     au_return_home: "Voltar para a página inicial",
   },
   fr: {
@@ -269,9 +269,8 @@ export const dict: Module = {
     au_authentication_error: "Erreur d'authentification",
     au_missing_state_data: "La redirection de connexion Google ne contient pas les données d'état. Veuillez réessayer.",
     au_google_signin_error: "Une erreur s'est produite lors de la connexion avec Google.",
-    au_404_title: "Page introuvable",
-    au_404_desc: "Continuum aide à faire beaucoup de choses, mais trouver cette page n'en fait pas partie.",
+    au_404_title: "Ce n'est pas l'une de vos notes.",
+    au_404_desc: "Le lien que vous avez suivi ne mène nulle part dans votre graphe. Revenons à ce qui est connecté.",
     au_return_home: "Retour à la page d'accueil",
   },
 };
-
