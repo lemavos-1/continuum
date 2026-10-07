@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLogo from "@/components/landing/AppLogo";
 
-const NotFound = () => { 
+const NotFound = () => {
   const { t } = useLanguage();
   const location = useLocation();
 
@@ -16,10 +16,10 @@ const NotFound = () => {
       <div className="flex max-w-2xl flex-col items-center text-center">
         <div className="mb-11 flex items-center gap-2.5">
           <AppLogo className="h-7 w-7" />
-          <span className="font-serif text-2xl font-medium tracking-tight">Continuum</span>
+          <span className="font-sans text-xl font-semibold tracking-tight">Continuum</span>
         </div>
 
-        <h1 className="mb-2 font-serif text-2xl font-medium tracking-tight sm:text-[26px]">
+        <h1 className="mb-2 font-sans text-2xl font-semibold tracking-tight sm:text-[26px]">
           {t("au_404_title")}
         </h1>
 
