@@ -4,7 +4,19 @@ Every notable change to **Continuum**, from the first release to what just shipp
 
 ---
 
-## v1.3.0 — Set 25, 2026 *(current)*
+## v1.3.1 — Set 00, 2026 *(current)*
+- Fixed: scroll bugs on app.
+- Fixed: delay after open the app.
+- Fixed: PDF render inside notes and vault.
+- Add: trash to deleted itens, now users can restaure notes and entities.
+- Add: resize to photos in notes.
+Add: limit alerts.
+- Now users can add past entrys on projects and activities.
+- Now users can delete their account without contact support.
+- Now users can use files already stored in vault.
+- Some minor UI enchaces (note index, select notes/entities, mention selector, subscription banner.)
+
+## v1.3.0 — Set 25, 2026
 - Enhanced UI/UX.
 - Changed "/profile" to "/settings".
 - Enhanced "/settings" UI.
